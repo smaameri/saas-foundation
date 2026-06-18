@@ -18,13 +18,19 @@
    make setup-db
    ```
 
-5. Run the initial database migration:
+5. Generate the auth schema models:
+
+   ```bash
+   pnpm dlx auth@latest generate
+   ```
+
+6. Run the initial database migration:
 
    ```bash
    pnpm prisma migrate dev
    ```
 
-6. Start the development server:
+7. Start the development server:
 
    ```bash
    make dev
