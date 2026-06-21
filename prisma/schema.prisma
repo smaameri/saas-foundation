@@ -15,7 +15,7 @@ model User {
   name                    String
   email                   String
   emailVerified           Boolean                  @default(false) @map("email_verified")
-  platformRole            String?                  @map("platform_role")
+  platformRole            String?                  @default("admin") @map("platform_role")
   image                   String?
   createdAt               DateTime                 @default(now()) @map("created_at")
   updatedAt               DateTime                 @updatedAt @map("updated_at")

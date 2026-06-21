@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
+import { AppSidebar } from "@/components/app/app-sidebar";
 import { fetchSession } from "@/lib/session";
 
 export default async function AppLayout({
@@ -14,5 +15,12 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  return <>{children}</>;
+  const email = session.user?.email ?? null;
+
+  return (
+    <div className="flex min-h-screen bg-background">
+      <AppSidebar email={email} />
+      <div className="flex flex-1 flex-col">{children}</div>
+    </div>
+  );
 }
