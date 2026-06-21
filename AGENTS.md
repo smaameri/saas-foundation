@@ -10,3 +10,6 @@ Read the relevant guide in `node_modules/next/dist/docs/` before writing any cod
 - Better Auth provides authentication; its generated Prisma models manage users, sessions, and related entities.
 - React Hook Form handles form state; Zod schemas validate inputs on both client and server.
 - ShadCN supplies reusable UI primitives.
+
+## Conventions
+- Use the `@/…` path alias for imports (supports files in `src` and project-level scripts). The alias resolves to the `src` directory via `baseUrl`/`paths` in `tsconfig.json`—prefer it over deep relative paths.
