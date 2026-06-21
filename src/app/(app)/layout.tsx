@@ -10,7 +10,7 @@ export default async function AppLayout({
 }) {
   const session = await fetchSession();
 
-  if (!session?.data) {
+  if (!session?.session) {
     redirect("/login");
   }
 

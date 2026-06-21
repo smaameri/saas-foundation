@@ -6,7 +6,7 @@ import { fetchSession } from "@/lib/session";
 export default async function LoginPage() {
   const session = await fetchSession();
 
-  if (!session?.data) {
+  if (!session?.session) {
     return <LoginForm />;
   }
 
