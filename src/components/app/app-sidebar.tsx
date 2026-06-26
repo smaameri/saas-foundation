@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Building2, LayoutDashboard, Settings } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { UserButton } from "@/components/app/user-button";
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -12,12 +13,22 @@ const navItems = [
   { label: "Settings", href: "/settings", icon: Settings },
 ] as const;
 
-export function AppSidebar({ email }: { email?: string | null }) {
+export function AppSidebar({
+  name,
+  email,
+  role,
+  image,
+}: {
+  name: string;
+  email: string;
+  role?: string | null;
+  image?: string | null;
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-64 flex-col border-r bg-background px-6 py-6 md:flex">
-      <div>
+    <aside className="hidden w-64 flex-col border-r bg-background px-4 py-6 md:flex">
+      <div className="px-2">
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           SAAS Foundation
         </p>
@@ -27,7 +38,9 @@ export function AppSidebar({ email }: { email?: string | null }) {
       <nav className="mt-8 flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/dashboard" && pathname?.startsWith(item.href));
 
           return (
             <Link
@@ -47,11 +60,9 @@ export function AppSidebar({ email }: { email?: string | null }) {
         })}
       </nav>
 
-      {email ? (
-        <div className="mt-10 text-xs text-muted-foreground">
-          <p>Signed in as {email}</p>
-        </div>
-      ) : null}
+      <div className="mt-4">
+        <UserButton name={name} email={email} role={role} image={image} />
+      </div>
     </aside>
   );
 }
