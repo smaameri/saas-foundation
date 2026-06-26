@@ -39,8 +39,8 @@ export async function invitePlatformUser(formData: FormData) {
       body: {
         email,
         name,
-        callbackURL: `${appUrl}/dashboard`,
-        newUserCallbackURL: `${appUrl}/dashboard`,
+        callbackURL: `${appUrl}/platform/dashboard`,
+        newUserCallbackURL: `${appUrl}/platform/dashboard`,
         metadata: {
           role,
         },

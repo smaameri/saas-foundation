@@ -60,7 +60,7 @@ export function LoginForm() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/platform/dashboard");
       router.refresh();
     } catch (error) {
       setFormError("Unexpected error signing in. Please try again.");

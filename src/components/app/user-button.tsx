@@ -76,7 +76,7 @@ export function UserButton({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link href="/account">
+          <Link href="/platform/account">
             <User />
             Account
           </Link>

@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 import { UserButton } from "@/components/app/user-button";
 
 const navItems = [
-  { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Organizations", href: "/organizations", icon: Building2 },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Overview", href: "/platform/dashboard", icon: LayoutDashboard },
+  { label: "Organizations", href: "/platform/organizations", icon: Building2 },
+  { label: "Settings", href: "/platform/settings", icon: Settings },
 ] as const;
 
 export function AppSidebar({
@@ -40,7 +40,7 @@ export function AppSidebar({
           const Icon = item.icon;
           const isActive =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+            (item.href !== "/platform/dashboard" && pathname?.startsWith(item.href));
 
           return (
             <Link

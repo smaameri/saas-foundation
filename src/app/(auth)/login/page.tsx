@@ -10,5 +10,5 @@ export default async function LoginPage() {
     return <LoginForm />;
   }
 
-  redirect("/dashboard");
+  redirect("/platform/dashboard");
 }
