@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { HeaderUserButton } from "@/components/app/header-user-button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContentLayout } from "@/components/platform/content-layout";
 import { fetchSession } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -12,34 +11,12 @@ export default async function DashboardPage() {
   const session = await fetchSession();
   const rawName = session?.user?.name ?? "";
   const userName = rawName
-    ? rawName
-        .split(/\s+/)
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(" ")
+    ? rawName.split(/\s+/).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(" ")
     : "there";
-  const userEmail = session?.user?.email ?? "";
 
   return (
-    <main className="flex flex-1 flex-col bg-background">
-      <header className="flex items-center justify-between border-b px-6 py-5">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Welcome back, {userName}</h1>
-          {userEmail ? (
-            <p className="text-sm text-muted-foreground">Signed in as {userEmail}</p>
-          ) : null}
-        </div>
-
-        <HeaderUserButton />
-      </header>
-
-      <section className="flex flex-1 flex-col gap-6 px-6 py-6">
-        <Card size="sm">
-          <CardHeader>
-            <CardTitle>Dashboard</CardTitle>
-            <CardDescription>Start building your dashboard from here.</CardDescription>
-          </CardHeader>
-        </Card>
-      </section>
-    </main>
+    <ContentLayout title={`Welcome back, ${userName}`}>
+      {null}
+    </ContentLayout>
   );
 }
