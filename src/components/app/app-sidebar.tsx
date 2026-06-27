@@ -10,7 +10,7 @@ import { UserButton } from "@/components/app/user-button";
 const navItems = [
   { label: "Dashboard", href: "/platform/dashboard", icon: LayoutDashboard },
   { label: "Organizations", href: "/platform/organizations", icon: Building2 },
-  { label: "Settings", href: "/platform/settings", icon: Settings },
+  { label: "Users", href: "/platform/users", icon: Settings },
 ] as const;
 
 export function AppSidebar({

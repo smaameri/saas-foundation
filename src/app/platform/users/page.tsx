@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 import { HeaderUserButton } from "@/components/app/header-user-button";
-import { InviteUserForm } from "@/components/settings/invite-user-form";
+import { InviteUserForm } from "@/components/users/invite-user-form";
 
 export const metadata: Metadata = {
-  title: "Settings",
+  title: "Users",
 };
 
-export default function SettingsPage() {
+export default function UsersPage() {
   return (
     <main className="flex flex-1 flex-col bg-background">
       <header className="flex items-center justify-between border-b px-6 py-5">
@@ -18,7 +18,7 @@ export default function SettingsPage() {
         <HeaderUserButton />
       </header>
 
-      <section className="flex flex-1 flex-col gap-8 px-6 py-8">
+      <section className="flex justify-center px-6 py-8">
         <InviteUserForm />
       </section>
     </main>

@@ -1,3 +1,9 @@
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const FROM = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
+
 export type MagicLinkInvitePayload = {
   email: string;
   link: string;
@@ -15,10 +21,23 @@ export async function sendMagicLinkInviteEmail({
     throw new Error("Magic link email requires both email and link.");
   }
 
-  const inviter = invitedBy ? ` by ${invitedBy}` : "";
-  // Replace with your real email provider integration.
-  // For now we log to the console so you can copy the link manually in development.
-  console.info(
-    `\n[Invite email]\nTo: ${email}\nRole: ${role}\nInvited${inviter}\nLink: ${link}\n`
-  );
+  const inviterText = invitedBy ? `invited by ${invitedBy}` : "invited";
+  const capitalizedRole = role.charAt(0).toUpperCase() + role.slice(1);
+
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: email,
+    subject: "You've been invited to SaaS Foundation",
+    html: `
+      <p>You've been ${inviterText} to join SaaS Foundation as <strong>${capitalizedRole}</strong>.</p>
+      <p>Click the link below to accept your invitation and set up your account. This link is single-use and will expire shortly.</p>
+      <p><a href="${link}">Accept invitation</a></p>
+      <p>If you weren't expecting this email, you can safely ignore it.</p>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Failed to send invite email:", error);
+    throw new Error(error.message);
+  }
 }

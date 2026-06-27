@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangePasswordForm } from "@/components/settings/change-password-form";
+import { ChangePasswordForm } from "@/components/users/change-password-form";
 import { ProfileForm } from "@/components/account/profile-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
