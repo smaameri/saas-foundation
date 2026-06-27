@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { HeaderUserButton } from "@/components/app/header-user-button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchSession } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -35,12 +35,9 @@ export default async function DashboardPage() {
       <section className="flex flex-1 flex-col gap-6 px-6 py-6">
         <Card size="sm">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
-            <CardDescription>Start building your workspace from here.</CardDescription>
+            <CardTitle>Dashboard</CardTitle>
+            <CardDescription>Start building your dashboard from here.</CardDescription>
           </CardHeader>
-          <CardContent className="py-6 text-sm text-muted-foreground">
-            No insights yet. Once you connect data sources, key metrics will appear in this area.
-          </CardContent>
         </Card>
       </section>
     </main>
