@@ -7,7 +7,6 @@ import { z } from "zod";
 
 import { invitePlatformUser } from "@/app/platform/users/actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -25,17 +24,13 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function InviteUserForm() {
+export function InviteUserForm({ onSuccess }: { onSuccess?: () => void }) {
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      role: "admin",
-    },
+    defaultValues: { name: "", email: "", role: "admin" },
   });
 
   const onSubmit = (values: FormValues) => {
@@ -48,66 +43,64 @@ export function InviteUserForm() {
       formData.append("role", values.role);
 
       const result = await invitePlatformUser(formData);
-      setStatus(result.message);
 
       if (result.ok) {
         form.reset({ name: "", email: "", role: values.role });
+        onSuccess?.();
+      } else {
+        setStatus(result.message);
       }
     });
   };
 
   return (
-    <Card className="max-w-xl">
-      <CardHeader>
-        <CardTitle>Invite a platform user</CardTitle>
-        <CardDescription>Send a magic link invite so teammates can access the platform.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-1.5">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Jane Smith" {...form.register("name")}/>
-            {form.formState.errors.name ? (
-              <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-            ) : null}
-          </div>
+    <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+      <div className="space-y-1.5">
+        <Label htmlFor="invite-name">Name</Label>
+        <Input id="invite-name" placeholder="Jane Smith" {...form.register("name")} />
+        {form.formState.errors.name ? (
+          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
+        ) : null}
+      </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="jane@example.com" {...form.register("email")}/>
-            {form.formState.errors.email ? (
-              <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
-            ) : null}
-          </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="invite-email">Email</Label>
+        <Input id="invite-email" type="email" placeholder="jane@example.com" {...form.register("email")} />
+        {form.formState.errors.email ? (
+          <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
+        ) : null}
+      </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="role">Role</Label>
-            <select
-              id="role"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              {...form.register("role")}
-            >
-              {roleOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            {form.formState.errors.role ? (
-              <p className="text-sm text-destructive">{form.formState.errors.role.message}</p>
-            ) : null}
-          </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="invite-role">Role</Label>
+        <select
+          id="invite-role"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          {...form.register("role")}
+        >
+          {roleOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {form.formState.errors.role ? (
+          <p className="text-sm text-destructive">{form.formState.errors.role.message}</p>
+        ) : null}
+      </div>
 
-          <div className="flex items-center justify-between gap-4">
-            <div className="text-sm text-muted-foreground">
-              {status ? status : "Recipients will receive a single-use sign-in link."}
-            </div>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Sending..." : "Send invite"}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      {status ? (
+        <p className="text-sm text-destructive">{status}</p>
+      ) : null}
+
+      <div className="flex justify-end gap-3">
+        <p className="flex-1 text-sm text-muted-foreground">
+          Recipients will receive a single-use sign-in link.
+        </p>
+        <Button disabled={isPending} type="submit">
+          {isPending ? "Sending..." : "Send invite"}
+        </Button>
+      </div>
+    </form>
   );
 }

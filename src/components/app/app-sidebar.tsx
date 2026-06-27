@@ -32,7 +32,7 @@ export function AppSidebar({
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           SAAS Foundation
         </p>
-        <h2 className="mt-2 text-xl font-semibold">Control Center</h2>
+        <h2 className="mt-2 text-xl font-semibold">Platform</h2>
       </div>
 
       <nav className="mt-8 flex flex-1 flex-col gap-1">
