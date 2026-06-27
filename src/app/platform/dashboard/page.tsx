@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LogoutButton } from "@/components/dashboard/logout-button";
+import { HeaderUserButton } from "@/components/app/header-user-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchSession } from "@/lib/session";
 
@@ -29,7 +29,7 @@ export default async function DashboardPage() {
           ) : null}
         </div>
 
-        <LogoutButton />
+        <HeaderUserButton />
       </header>
 
       <section className="flex flex-1 flex-col gap-6 px-6 py-6">

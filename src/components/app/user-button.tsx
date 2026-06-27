@@ -25,11 +25,13 @@ export function UserButton({
   email,
   role,
   image,
+  compact = false,
 }: {
   name: string;
   email: string;
   role?: string | null;
   image?: string | null;
+  compact?: boolean;
 }) {
   const router = useRouter();
 
@@ -46,6 +48,14 @@ export function UserButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
+        {compact ? (
+          <button className="cursor-pointer rounded-full">
+            <Avatar>
+              {image ? <AvatarImage src={image} alt={name} /> : null}
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+          </button>
+        ) : (
         <button className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition hover:bg-muted">
           <Avatar>
             {image ? <AvatarImage src={image} alt={name} /> : null}
@@ -59,9 +69,10 @@ export function UserButton({
           </div>
           <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
         </button>
+        )}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side="right" align="end" className="w-64">
+      <DropdownMenuContent side={compact ? "bottom" : "right"} align="end" className="w-64">
         <div className="flex items-center gap-3 px-2 py-2.5">
           <Avatar>
             {image ? <AvatarImage src={image} alt={name} /> : null}

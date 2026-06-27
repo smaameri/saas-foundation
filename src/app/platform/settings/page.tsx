@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LogoutButton } from "@/components/dashboard/logout-button";
+import { HeaderUserButton } from "@/components/app/header-user-button";
 import { InviteUserForm } from "@/components/settings/invite-user-form";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function SettingsPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
           <p className="text-sm text-muted-foreground">Manage platform access for your team.</p>
         </div>
-        <LogoutButton />
+        <HeaderUserButton />
       </header>
 
       <section className="flex flex-1 flex-col gap-8 px-6 py-8">

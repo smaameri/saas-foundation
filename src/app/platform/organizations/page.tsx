@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LogoutButton } from "@/components/dashboard/logout-button";
+import { HeaderUserButton } from "@/components/app/header-user-button";
 
 export const metadata: Metadata = {
   title: "Organizations",
@@ -14,7 +14,7 @@ export default function OrganizationsPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Organizations</h1>
           <p className="text-sm text-muted-foreground">Manage your organizations here.</p>
         </div>
-        <LogoutButton />
+        <HeaderUserButton />
       </header>
 
       <section className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-12 text-center text-sm text-muted-foreground">
