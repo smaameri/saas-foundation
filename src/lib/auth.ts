@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { magicLink } from "better-auth/plugins";
+import { admin, magicLink } from "better-auth/plugins";
 
 import { prisma } from "@/lib/prisma";
 import { sendMagicLinkInviteEmail } from "@/lib/email";
@@ -23,6 +23,10 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(),
+    admin({
+      defaultRole: "user",
+      adminRoles: ["admin", "owner"],
+    }),
     magicLink({
       async sendMagicLink({ email, url }, ctx) {
         await sendMagicLinkInviteEmail({

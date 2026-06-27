@@ -4,9 +4,11 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 const inviteSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(120),
+  firstName: z.string().trim().min(1, "First name is required").max(60),
+  lastName: z.string().trim().min(1, "Last name is required").max(60),
   email: z.string().trim().email("Enter a valid email"),
   role: z.enum(["owner", "admin", "member"]),
 });
@@ -19,7 +21,8 @@ const appUrl =
 
 export async function invitePlatformUser(formData: FormData) {
   const parsed = inviteSchema.safeParse({
-    name: formData.get("name"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     email: formData.get("email"),
     role: formData.get("role"),
   });
@@ -31,7 +34,8 @@ export async function invitePlatformUser(formData: FormData) {
     };
   }
 
-  const { name, email, role } = parsed.data;
+  const { firstName, lastName, email, role } = parsed.data;
+  const name = `${firstName} ${lastName}`;
 
   try {
     await auth.api.signInMagicLink({
@@ -41,10 +45,13 @@ export async function invitePlatformUser(formData: FormData) {
         name,
         callbackURL: `${appUrl}/platform/dashboard`,
         newUserCallbackURL: `${appUrl}/platform/dashboard`,
-        metadata: {
-          role,
-        },
+        metadata: { role },
       },
+    });
+
+    await prisma.user.update({
+      where: { email },
+      data: { firstName, lastName },
     });
 
     return {

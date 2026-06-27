@@ -17,7 +17,8 @@ const roleOptions = [
 ] as const;
 
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Enter a valid email"),
   role: z.enum(["owner", "admin", "member"]),
 });
@@ -30,7 +31,7 @@ export function InviteUserForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", email: "", role: "admin" },
+    defaultValues: { firstName: "", lastName: "", email: "", role: "admin" },
   });
 
   const onSubmit = (values: FormValues) => {
@@ -38,14 +39,15 @@ export function InviteUserForm({ onSuccess }: { onSuccess?: () => void }) {
 
     startTransition(async () => {
       const formData = new FormData();
-      formData.append("name", values.name);
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName);
       formData.append("email", values.email);
       formData.append("role", values.role);
 
       const result = await invitePlatformUser(formData);
 
       if (result.ok) {
-        form.reset({ name: "", email: "", role: values.role });
+        form.reset({ firstName: "", lastName: "", email: "", role: values.role });
         onSuccess?.();
       } else {
         setStatus(result.message);
@@ -55,12 +57,22 @@ export function InviteUserForm({ onSuccess }: { onSuccess?: () => void }) {
 
   return (
     <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="space-y-1.5">
-        <Label htmlFor="invite-name">Name</Label>
-        <Input id="invite-name" placeholder="Jane Smith" {...form.register("name")} />
-        {form.formState.errors.name ? (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        ) : null}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="invite-firstName">First name</Label>
+          <Input id="invite-firstName" placeholder="Jane" {...form.register("firstName")} />
+          {form.formState.errors.firstName ? (
+            <p className="text-sm text-destructive">{form.formState.errors.firstName.message}</p>
+          ) : null}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="invite-lastName">Last name</Label>
+          <Input id="invite-lastName" placeholder="Smith" {...form.register("lastName")} />
+          {form.formState.errors.lastName ? (
+            <p className="text-sm text-destructive">{form.formState.errors.lastName.message}</p>
+          ) : null}
+        </div>
       </div>
 
       <div className="space-y-1.5">
@@ -84,16 +96,13 @@ export function InviteUserForm({ onSuccess }: { onSuccess?: () => void }) {
             </option>
           ))}
         </select>
-        {form.formState.errors.role ? (
-          <p className="text-sm text-destructive">{form.formState.errors.role.message}</p>
-        ) : null}
       </div>
 
       {status ? (
         <p className="text-sm text-destructive">{status}</p>
       ) : null}
 
-      <div className="flex justify-end gap-3">
+      <div className="flex items-center justify-between gap-4">
         <p className="flex-1 text-sm text-muted-foreground">
           Recipients will receive a single-use sign-in link.
         </p>

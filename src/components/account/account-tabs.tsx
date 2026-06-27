@@ -5,10 +5,12 @@ import { ProfileForm } from "@/components/account/profile-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function AccountTabs({
-  defaultName,
+  defaultFirstName,
+  defaultLastName,
   defaultImage,
 }: {
-  defaultName: string;
+  defaultFirstName: string;
+  defaultLastName: string;
   defaultImage: string;
 }) {
   return (
@@ -19,7 +21,11 @@ export function AccountTabs({
       </TabsList>
 
       <TabsContent value="profile" className="mt-6">
-        <ProfileForm defaultName={defaultName} defaultImage={defaultImage} />
+        <ProfileForm
+          defaultFirstName={defaultFirstName}
+          defaultLastName={defaultLastName}
+          defaultImage={defaultImage}
+        />
       </TabsContent>
 
       <TabsContent value="security" className="mt-6">

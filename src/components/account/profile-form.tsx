@@ -5,24 +5,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { authClient } from "@/lib/auth-client";
+import { updateProfile } from "@/app/platform/account/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   image: z.string().url("Enter a valid URL").or(z.literal("")).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export function ProfileForm({
-  defaultName,
+  defaultFirstName,
+  defaultLastName,
   defaultImage,
 }: {
-  defaultName: string;
+  defaultFirstName: string;
+  defaultLastName: string;
   defaultImage: string;
 }) {
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
@@ -31,7 +34,8 @@ export function ProfileForm({
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: defaultName,
+      firstName: defaultFirstName,
+      lastName: defaultLastName,
       image: defaultImage,
     },
   });
@@ -40,16 +44,13 @@ export function ProfileForm({
     setStatus(null);
 
     startTransition(async () => {
-      const { error } = await authClient.updateUser({
-        name: values.name,
-        image: values.image || undefined,
-      });
+      const formData = new FormData();
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName);
+      formData.append("image", values.image ?? "");
 
-      if (error) {
-        setStatus({ ok: false, message: error.message ?? "Failed to update profile." });
-      } else {
-        setStatus({ ok: true, message: "Profile updated." });
-      }
+      const result = await updateProfile(formData);
+      setStatus({ ok: result.ok, message: result.message });
     });
   };
 
@@ -57,16 +58,26 @@ export function ProfileForm({
     <Card className="max-w-xl">
       <CardHeader>
         <CardTitle>Profile</CardTitle>
-        <CardDescription>Update your display name and avatar.</CardDescription>
+        <CardDescription>Update your name and avatar.</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-1.5">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Jane Smith" {...form.register("name")} />
-            {form.formState.errors.name ? (
-              <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-            ) : null}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="firstName">First name</Label>
+              <Input id="firstName" placeholder="Jane" {...form.register("firstName")} />
+              {form.formState.errors.firstName ? (
+                <p className="text-sm text-destructive">{form.formState.errors.firstName.message}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="lastName">Last name</Label>
+              <Input id="lastName" placeholder="Smith" {...form.register("lastName")} />
+              {form.formState.errors.lastName ? (
+                <p className="text-sm text-destructive">{form.formState.errors.lastName.message}</p>
+              ) : null}
+            </div>
           </div>
 
           <div className="space-y-1.5">

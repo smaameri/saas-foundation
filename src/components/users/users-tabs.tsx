@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type User = {
   id: string;
+  firstName: string | null;
+  lastName: string | null;
   name: string;
   email: string;
   platformRole: string | null;
@@ -25,7 +27,8 @@ export function UsersTabs({ users }: { users: User[] }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">First name</th>
+                  <th className="px-4 py-3">Last name</th>
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Role</th>
                   <th className="px-4 py-3">Joined</th>
@@ -34,7 +37,8 @@ export function UsersTabs({ users }: { users: User[] }) {
               <tbody className="divide-y">
                 {users.map((user) => (
                   <tr key={user.id} className="hover:bg-muted/30">
-                    <td className="px-4 py-3 font-medium">{user.name}</td>
+                    <td className="px-4 py-3 font-medium">{user.firstName ?? user.name}</td>
+                    <td className="px-4 py-3">{user.lastName ?? "—"}</td>
                     <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
                     <td className="px-4 py-3 capitalize text-muted-foreground">
                       {user.platformRole ?? "—"}
