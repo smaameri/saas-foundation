@@ -17,7 +17,7 @@ export default async function UsersPage() {
       lastName: true,
       name: true,
       email: true,
-      platformRole: true,
+      role: true,
       createdAt: true,
     },
     orderBy: { createdAt: "asc" },

@@ -8,14 +8,14 @@ export async function HeaderUserButton() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { name: true, email: true, image: true, platformRole: true },
+    select: { name: true, email: true, image: true, role: true },
   });
 
   return (
     <UserButton
       name={user?.name ?? session.user.name ?? ""}
       email={user?.email ?? session.user.email ?? ""}
-      role={user?.platformRole}
+      role={user?.role}
       image={user?.image}
       compact
     />

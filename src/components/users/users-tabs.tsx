@@ -8,7 +8,7 @@ type User = {
   lastName: string | null;
   name: string;
   email: string;
-  platformRole: string | null;
+  role: string | null;
   createdAt: Date;
 };
 
@@ -41,7 +41,7 @@ export function UsersTabs({ users }: { users: User[] }) {
                     <td className="px-4 py-3">{user.lastName ?? "—"}</td>
                     <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
                     <td className="px-4 py-3 capitalize text-muted-foreground">
-                      {user.platformRole ?? "—"}
+                      {user.role ?? "—"}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {user.createdAt.toLocaleDateString()}

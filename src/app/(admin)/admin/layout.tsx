@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const [user, account] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { name: true, email: true, image: true, platformRole: true },
+      select: { name: true, email: true, image: true, role: true },
     }),
     prisma.account.findFirst({
       where: { userId: session.user.id, providerId: "credential" },
@@ -32,7 +32,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <AppSidebar
         name={user?.name ?? session.user.name ?? ""}
         email={user?.email ?? session.user.email ?? ""}
-        role={user?.platformRole}
+        role={user?.role}
         image={user?.image}
       />
       <div className="flex flex-1 flex-col">
