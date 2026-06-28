@@ -71,6 +71,7 @@ CREATE TABLE "organization" (
     "slug" TEXT,
     "logo" TEXT,
     "metadata" TEXT,
+    "portals" TEXT[],
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
