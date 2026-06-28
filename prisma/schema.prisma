@@ -25,25 +25,27 @@ model User {
   image                   String?
   createdAt               DateTime                 @default(now()) @map("created_at")
   updatedAt               DateTime                 @updatedAt @map("updated_at")
-  sessions                Session[]
-  accounts                Account[]
-  organizationMemberships OrganizationMembership[]
+  sessions     Session[]
+  accounts     Account[]
+  members      Member[]
+  invitations  Invitation[]
 
   @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime @map("expires_at")
-  token     String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  ipAddress      String?  @map("ip_address")
-  userAgent      String?  @map("user_agent")
-  userId         String   @map("user_id")
-  impersonatedBy String?  @map("impersonated_by")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String   @id
+  expiresAt            DateTime @map("expires_at")
+  token                String
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  ipAddress            String?  @map("ip_address")
+  userAgent            String?  @map("user_agent")
+  userId               String   @map("user_id")
+  impersonatedBy       String?  @map("impersonated_by")
+  activeOrganizationId String?  @map("active_organization_id")
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
@@ -83,26 +85,45 @@ model Verification {
 }
 
 model Organization {
-  id          String                   @id
+  id          String       @id
   name        String
-  createdAt   DateTime                 @default(now()) @map("created_at")
-  updatedAt   DateTime                 @updatedAt @map("updated_at")
-  memberships OrganizationMembership[]
+  slug        String?      @unique
+  logo        String?
+  metadata    String?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  members     Member[]
+  invitations Invitation[]
 
   @@map("organization")
 }
 
-model OrganizationMembership {
+model Member {
   id             String       @id
   userId         String       @map("user_id")
   organizationId String       @map("organization_id")
-  role           String       @map("role")
+  role           String
   createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([organizationId])
-  @@map("organization_membership")
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  email          String
+  inviterId      String       @map("inviter_id")
+  organizationId String       @map("organization_id")
+  role           String?
+  status         String
+  expiresAt      DateTime     @map("expires_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  inviter        User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("invitation")
 }

@@ -1,10 +1,10 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { admin, magicLink } from "better-auth/plugins";
+import { admin, magicLink, organization } from "better-auth/plugins";
 
 import { prisma } from "@/lib/prisma";
-import { sendMagicLinkInviteEmail } from "@/lib/email";
+import { sendMagicLinkInviteEmail, sendOrganizationInvitationEmail } from "@/lib/email";
 
 const authSecret = process.env.BETTER_AUTH_SECRET;
 
@@ -25,7 +25,16 @@ export const auth = betterAuth({
     nextCookies(),
     admin({
       defaultRole: "user",
-      adminRoles: ["admin", "owner"],
+    }),
+    organization({
+      async sendInvitationEmail(data) {
+        await sendOrganizationInvitationEmail({
+          email: data.email,
+          organizationName: data.organization.name,
+          invitedBy: data.inviter.user.name,
+          inviteLink: `${process.env.BETTER_AUTH_URL}/accept-invitation/${data.id}`,
+        });
+      },
     }),
     magicLink({
       async sendMagicLink({ email, url }, ctx) {

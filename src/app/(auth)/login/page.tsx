@@ -7,7 +7,7 @@ export default async function LoginPage() {
   const session = await fetchSession();
 
   if (session?.session) {
-    redirect("/platform/dashboard");
+    redirect("/admin/dashboard");
   }
 
   return (

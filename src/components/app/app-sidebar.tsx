@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 import { UserButton } from "@/components/app/user-button";
 
 const navItems = [
-  { label: "Dashboard", href: "/platform/dashboard", icon: LayoutDashboard },
-  { label: "Organizations", href: "/platform/organizations", icon: Building2 },
-  { label: "Users", href: "/platform/users", icon: Settings },
+  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Organizations", href: "/admin/organizations", icon: Building2 },
+  { label: "Users", href: "/admin/users", icon: Settings },
 ] as const;
 
 export function AppSidebar({
@@ -32,7 +32,7 @@ export function AppSidebar({
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           SAAS Foundation
         </p>
-        <h2 className="mt-2 text-xl font-semibold">Platform</h2>
+        <h2 className="mt-2 text-xl font-semibold">Admin Dashboard</h2>
       </div>
 
       <nav className="mt-8 flex flex-1 flex-col gap-1">
@@ -40,7 +40,7 @@ export function AppSidebar({
           const Icon = item.icon;
           const isActive =
             pathname === item.href ||
-            (item.href !== "/platform/dashboard" && pathname?.startsWith(item.href));
+            (item.href !== "/admin/dashboard" && pathname?.startsWith(item.href));
 
           return (
             <Link

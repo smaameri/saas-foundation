@@ -1,7 +1,7 @@
 ## Route Groups Overview
 
 - `src/app/(auth)`: public auth surfaces (login, register). Layout should never rely on an authenticated session. Redirects go to `/dashboard` after sign-in.
-- `src/app/platform`: authenticated experience. Layout fetches the Better Auth session via `fetchSession()` and redirects to `/login` when `session.session` is missing. Add new protected pages (e.g., `/dashboard`) inside this folder.
+- `src/app/(admin)/admin`: authenticated experience. Layout fetches the Better Auth session via `fetchSession()` and redirects to `/login` when `session.session` is missing. Add new protected pages (e.g., `/dashboard`) inside this folder.
 - `src/app/page.tsx`: root redirect to `/login`. Adjust if you introduce a marketing homepage.
 
 ## Session Helpers
