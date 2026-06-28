@@ -90,6 +90,7 @@ model Organization {
   slug        String?      @unique
   logo        String?
   metadata    String?
+  portals     String[]
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   members     Member[]
