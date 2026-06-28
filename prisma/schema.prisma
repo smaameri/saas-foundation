@@ -11,24 +11,23 @@ datasource db {
 }
 
 model User {
-  id                      String                   @id
-  name                    String
-  firstName               String?                  @map("first_name")
-  lastName                String?                  @map("last_name")
-  email                   String
-  emailVerified           Boolean                  @default(false) @map("email_verified")
-  platformRole            String?                  @default("admin") @map("platform_role")
-  role                    String?
-  banned                  Boolean?
-  banReason               String?                  @map("ban_reason")
-  banExpires              DateTime?                @map("ban_expires")
-  image                   String?
-  createdAt               DateTime                 @default(now()) @map("created_at")
-  updatedAt               DateTime                 @updatedAt @map("updated_at")
-  sessions     Session[]
-  accounts     Account[]
-  members      Member[]
-  invitations  Invitation[]
+  id            String       @id
+  name          String
+  firstName     String?      @map("first_name")
+  lastName      String?      @map("last_name")
+  email         String
+  emailVerified Boolean      @default(false) @map("email_verified")
+  image         String?
+  role          String?
+  banned        Boolean?
+  banReason     String?      @map("ban_reason")
+  banExpires    DateTime?    @map("ban_expires")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  sessions      Session[]
+  accounts      Account[]
+  members       Member[]
+  invitations   Invitation[]
 
   @@unique([email])
   @@map("user")
@@ -36,16 +35,17 @@ model User {
 
 model Session {
   id                   String   @id
+  userId               String   @map("user_id")
   expiresAt            DateTime @map("expires_at")
   token                String
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
   ipAddress            String?  @map("ip_address")
   userAgent            String?  @map("user_agent")
-  userId               String   @map("user_id")
   impersonatedBy       String?  @map("impersonated_by")
   activeOrganizationId String?  @map("active_organization_id")
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
