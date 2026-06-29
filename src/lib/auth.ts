@@ -39,6 +39,15 @@ export const auth = betterAuth({
       defaultRole: "user",
     }),
     organization({
+      allowUserToCreateOrganization: async (user) => {
+        const member = await prisma.member.findFirst({
+          where: {
+            userId: user.id,
+            organization: { portals: { has: "admin" } },
+          },
+        });
+        return member !== null;
+      },
       async sendInvitationEmail(data) {
         await sendOrganizationInvitationEmail({
           email: data.email,

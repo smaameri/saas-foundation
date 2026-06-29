@@ -10,24 +10,42 @@ export const metadata: Metadata = {
 };
 
 export default async function UsersPage() {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: "asc" },
-  });
+  const [users, organizations] = await Promise.all([
+    prisma.user.findMany({
+      where: {
+        members: {
+          some: {
+            organization: { portals: { has: "customer" } },
+          },
+        },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        members: {
+          select: {
+            organization: { select: { id: true, name: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.organization.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   return (
     <ContentLayout
       title="Users"
-      description="Manage platform access for your team."
-      actions={<InviteUserModal />}
+      description="Manage users on the platform."
+      actions={<InviteUserModal organizations={organizations} />}
     >
       <UsersTabs users={users} />
     </ContentLayout>

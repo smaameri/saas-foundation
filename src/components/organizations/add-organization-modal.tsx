@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import { createOrganization } from "@/app/(admin)/admin/organizations/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +19,71 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const formSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .max(100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Lowercase letters, numbers, and hyphens only"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+function toSlug(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
 export function AddOrganizationModal() {
   const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { name: "", slug: "" },
+  });
+
+  const handleClose = (val: boolean) => {
+    setOpen(val);
+    if (!val) {
+      form.reset();
+      setSlugManuallyEdited(false);
+      setStatus(null);
+    }
+  };
+
+  const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue("name", e.target.value);
+    if (!slugManuallyEdited) {
+      form.setValue("slug", toSlug(e.target.value), { shouldValidate: true });
+    }
+  };
+
+  const onSubmit = (values: FormValues) => {
+    setStatus(null);
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("slug", values.slug);
+
+      const result = await createOrganization(formData);
+
+      if (result.ok) {
+        handleClose(false);
+        router.refresh();
+      } else {
+        setStatus(result.message ?? "Something went wrong.");
+      }
+    });
+  };
 
   return (
     <>
@@ -24,23 +92,51 @@ export function AddOrganizationModal() {
         Add organization
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add organization</DialogTitle>
             <DialogDescription>
-              Create a new organization to manage its members and settings.
+              Create a new customer organization on the platform.
             </DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="space-y-1.5">
               <Label htmlFor="org-name">Name</Label>
-              <Input id="org-name" placeholder="Acme Inc." />
+              <Input
+                id="org-name"
+                placeholder="Acme Inc."
+                {...form.register("name")}
+                onChange={onNameChange}
+              />
+              {form.formState.errors.name ? (
+                <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
+              ) : null}
             </div>
 
+            <div className="space-y-1.5">
+              <Label htmlFor="org-slug">Slug</Label>
+              <Input
+                id="org-slug"
+                placeholder="acme-inc"
+                {...form.register("slug")}
+                onChange={(e) => {
+                  setSlugManuallyEdited(true);
+                  form.setValue("slug", e.target.value, { shouldValidate: true });
+                }}
+              />
+              {form.formState.errors.slug ? (
+                <p className="text-sm text-destructive">{form.formState.errors.slug.message}</p>
+              ) : null}
+            </div>
+
+{status ? <p className="text-sm text-destructive">{status}</p> : null}
+
             <div className="flex justify-end">
-              <Button type="submit">Create organization</Button>
+              <Button disabled={isPending} type="submit">
+                {isPending ? "Creating..." : "Create organization"}
+              </Button>
             </div>
           </form>
         </DialogContent>

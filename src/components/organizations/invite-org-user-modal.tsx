@@ -1,0 +1,133 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const roleOptions = [
+  { value: "member", label: "Member" },
+  { value: "admin", label: "Admin" },
+  { value: "owner", label: "Owner" },
+] as const;
+
+const formSchema = z.object({
+  email: z.string().email("Enter a valid email"),
+  role: z.enum(["owner", "admin", "member"]),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export function InviteOrgUserModal({ organizationId }: { organizationId: string }) {
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: "", role: "member" },
+  });
+
+  const handleClose = (val: boolean) => {
+    setOpen(val);
+    if (!val) {
+      form.reset();
+      setError(null);
+    }
+  };
+
+  const onSubmit = (values: FormValues) => {
+    setError(null);
+
+    startTransition(async () => {
+      const res = await fetch(`/api/admin/organizations/${organizationId}/invitations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (res.ok) {
+        handleClose(false);
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.message ?? "Failed to send invite. Please try again.");
+      }
+    });
+  };
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>
+        <UserPlus className="h-4 w-4" />
+        Invite user
+      </Button>
+
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Invite a user</DialogTitle>
+            <DialogDescription>
+              Send an invitation to join this organization.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-email">Email</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                placeholder="jane@example.com"
+                {...form.register("email")}
+              />
+              {form.formState.errors.email ? (
+                <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-role">Role</Label>
+              <select
+                id="invite-role"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                {...form.register("role")}
+              >
+                {roleOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {error ? <p className="text-sm text-destructive">{error}</p> : null}
+
+            <div className="flex items-center justify-between gap-4">
+              <p className="flex-1 text-sm text-muted-foreground">
+                The recipient will receive an email invitation to join.
+              </p>
+              <Button disabled={isPending} type="submit">
+                {isPending ? "Sending..." : "Send invite"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

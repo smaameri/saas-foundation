@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/dialog";
 import { InviteUserForm } from "@/components/users/invite-user-form";
 
-export function InviteUserModal() {
+type Organization = { id: string; name: string };
+
+export function InviteUserModal({ organizations }: { organizations: Organization[] }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,12 +28,12 @@ export function InviteUserModal() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Invite a platform user</DialogTitle>
+            <DialogTitle>Invite a user</DialogTitle>
             <DialogDescription>
-              Send a magic link so teammates can access the platform.
+              Send an invitation to join an organization.
             </DialogDescription>
           </DialogHeader>
-          <InviteUserForm onSuccess={() => setOpen(false)} />
+          <InviteUserForm organizations={organizations} onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
     </>

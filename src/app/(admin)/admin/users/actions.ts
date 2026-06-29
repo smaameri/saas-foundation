@@ -1,68 +1,78 @@
 "use server";
 
-import { headers } from "next/headers";
 import { z } from "zod";
 
-import { auth } from "@/lib/auth";
+import { sendOrganizationInvitationEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
+import { fetchSession } from "@/lib/session";
 
 const inviteSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required").max(60),
-  lastName: z.string().trim().min(1, "Last name is required").max(60),
   email: z.string().trim().email("Enter a valid email"),
   role: z.enum(["owner", "admin", "member"]),
+  organizationId: z.string().min(1, "Organization is required"),
 });
 
-const appUrl =
-  process.env.APP_URL ||
-  process.env.NEXT_PUBLIC_APP_URL ||
-  process.env.BETTER_AUTH_URL ||
-  "http://localhost:3000";
+const INVITATION_EXPIRES_IN_DAYS = 2;
 
-export async function invitePlatformUser(formData: FormData) {
+export async function inviteOrganizationUser(formData: FormData) {
   const parsed = inviteSchema.safeParse({
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
     email: formData.get("email"),
     role: formData.get("role"),
+    organizationId: formData.get("organizationId"),
   });
 
   if (!parsed.success) {
     return {
       ok: false,
-      message: parsed.error.issues[0]?.message || "Invalid form data",
+      message: parsed.error.issues[0]?.message ?? "Invalid form data",
     };
   }
 
-  const { firstName, lastName, email, role } = parsed.data;
-  const name = `${firstName} ${lastName}`;
+  const { email, role, organizationId } = parsed.data;
+
+  const session = await fetchSession();
+  if (!session?.user) {
+    return { ok: false, message: "Unauthorized." };
+  }
 
   try {
-    await auth.api.signInMagicLink({
-      headers: await headers(),
-      body: {
+    const org = await prisma.organization.findUnique({
+      where: { id: organizationId },
+      select: { name: true },
+    });
+
+    if (!org) {
+      return { ok: false, message: "Organization not found." };
+    }
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + INVITATION_EXPIRES_IN_DAYS);
+
+    const invitation = await prisma.invitation.create({
+      data: {
+        id: crypto.randomUUID(),
         email,
-        name,
-        callbackURL: `${appUrl}/platform/dashboard`,
-        newUserCallbackURL: `${appUrl}/platform/dashboard`,
-        metadata: { role },
+        role,
+        status: "pending",
+        organizationId,
+        inviterId: session.user.id,
+        expiresAt,
       },
     });
 
-    await prisma.user.update({
-      where: { email },
-      data: { firstName, lastName },
+    const inviteLink = `${process.env.BETTER_AUTH_URL}/accept-invitation/${invitation.id}`;
+
+    await sendOrganizationInvitationEmail({
+      email,
+      organizationName: org.name,
+      invitedBy: session.user.name,
+      inviteLink,
     });
 
-    return {
-      ok: true,
-      message: `Invitation sent to ${email}.`,
-    };
+    return { ok: true, message: `Invitation sent to ${email}.` };
   } catch (error) {
     console.error("Failed to send invite", error);
-    return {
-      ok: false,
-      message: "Failed to send invite. Please try again.",
-    };
+    const message = error instanceof Error ? error.message : "Failed to send invite. Please try again.";
+    return { ok: false, message };
   }
 }
