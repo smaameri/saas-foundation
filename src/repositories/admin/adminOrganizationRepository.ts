@@ -7,7 +7,18 @@ export async function findAdminOrganization() {
   });
 }
 
-export async function listAdminUsers() {
+const sortableFields = ["firstName", "lastName", "email", "role", "createdAt"] as const;
+type SortField = (typeof sortableFields)[number];
+type SortOrder = "asc" | "desc";
+
+function isValidSortField(field: unknown): field is SortField {
+  return sortableFields.includes(field as SortField);
+}
+
+export async function listAdminUsers(params?: { sort?: string; order?: string }) {
+  const sort: SortField = isValidSortField(params?.sort) ? params.sort : "createdAt";
+  const order: SortOrder = params?.order === "desc" ? "desc" : "asc";
+
   return prisma.user.findMany({
     where: {
       members: {
@@ -21,7 +32,7 @@ export async function listAdminUsers() {
         include: { organization: true },
       },
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { [sort]: order },
   });
 }
 
