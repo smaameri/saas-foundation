@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { InviteOrgUserModal } from "@/components/organizations/invite-org-user-modal";
+import { InviteUserModal } from "@/components/organizations/invite-user-modal";
 import { OrgDetailTabs } from "@/components/organizations/org-detail-tabs";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { prisma } from "@/lib/prisma";
@@ -58,7 +58,7 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
     <ContentLayout
       title={org.name}
       description={`/${org.slug}`}
-      actions={<InviteOrgUserModal organizationId={org.id} />}
+      actions={<InviteUserModal organizationId={org.id} />}
     >
       <div className="space-y-8">
         <div className="grid grid-cols-2 gap-4 rounded-lg border p-6 text-sm">

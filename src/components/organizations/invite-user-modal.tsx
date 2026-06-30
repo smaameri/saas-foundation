@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function InviteOrgUserModal({organizationId}: { organizationId: string }) {
+export function InviteUserModal({organizationId}: { organizationId: string }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
