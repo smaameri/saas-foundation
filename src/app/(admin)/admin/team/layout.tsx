@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
+import type {ReactNode} from "react";
 
-import { ContentLayout } from "@/components/platform/content-layout";
-import { InviteOrgUserModal } from "@/components/organizations/invite-org-user-modal";
-import { TeamTabsNav } from "@/components/users/team-tabs-nav";
-import { findAdminOrganization } from "@/repositories/admin/adminOrganizationRepository";
+import {NavTabs} from "@/components/navigation/nav-tabs";
+import {ContentLayout} from "@/components/platform/content-layout";
+import {InviteOrgUserModal} from "@/components/organizations/invite-org-user-modal";
+import {findAdminOrganization} from "@/repositories/admin/adminOrganizationRepository";
 
-export default async function TeamLayout({ children }: { children: ReactNode }) {
+export default async function TeamLayout({children}: { children: ReactNode }) {
   const adminOrganization = await findAdminOrganization();
 
   if (!adminOrganization) throw new Error("Admin organization not found");
@@ -14,10 +14,14 @@ export default async function TeamLayout({ children }: { children: ReactNode }) 
     <ContentLayout
       title="Team"
       description="Manage your internal team members and their access."
-      actions={<InviteOrgUserModal organizationId={adminOrganization.id} />}
+      actions={<InviteOrgUserModal organizationId={adminOrganization.id}/>}
     >
-      <TeamTabsNav />
+      <NavTabs tabs={[
+        {label: "Users", href: "/admin/team/users"},
+        {label: "Invitations", href: "/admin/team/invitations"},
+      ]}/>
       {children}
     </ContentLayout>
   );
 }
+
