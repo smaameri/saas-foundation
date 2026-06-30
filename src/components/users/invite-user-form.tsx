@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { inviteOrganizationUser } from "@/app/(admin)/admin/users/actions";
+import { inviteOrganizationUser } from "@/app/(admin)/admin/(customers)/users/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

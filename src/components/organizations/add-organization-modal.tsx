@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { createOrganization } from "@/app/(admin)/admin/organizations/actions";
+import { createOrganization } from "@/app/(admin)/admin/(customers)/organizations/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
