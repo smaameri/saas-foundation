@@ -71,6 +71,32 @@ export const POST = withAdmin(async (request, { params }, { session }) => {
 
 All Prisma queries must go through a repository. Route handlers, validators, and services must never import `prisma` directly — always call a repository function instead.
 
+## Data Tables
+
+Always use the reusable `DataTable` component for tabular data — never build a raw `<table>` from scratch.
+
+- `src/components/data-table/data-table.tsx` — generic `<DataTable columns={} data={} emptyMessage={} />`. Handles server-side sorting via URL params (`?sort=&order=`) and client-side pagination automatically.
+- `src/components/data-table/data-table-column-header.tsx` — use `<DataTableColumnHeader column={column} title="..." />` in column definitions to make a column sortable.
+- `src/components/data-table/data-table-pagination.tsx` — included automatically by `DataTable`, no need to add it manually.
+
+### Column file convention
+
+Co-locate a `columns.tsx` file next to the page that uses it:
+
+```
+app/(admin)/admin/team/users/
+  columns.tsx      ← "use client" — ColumnDef[] for this domain, uses DataTableColumnHeader
+  page.tsx         ← server component — fetches data, passes to <DataTable>
+```
+
+- `columns.tsx` must be a client component (`"use client"`).
+- Export the row type by inferring from the repository function: `type AdminUser = Awaited<ReturnType<typeof listAdminUsers>>[number]`
+- Columns with nested/computed data (e.g. arrays) should set `enableSorting: false`.
+
+### Server-side sorting
+
+When a repository needs to support sorting, accept `params?: { sort?: string; order?: string }`, validate the sort field against an allowlist, and pass it to Prisma's `orderBy`. See `adminOrganizationRepository.ts` for the pattern.
+
 ## Shared Utilities
 
 - `src/app/api/response.ts` — response helpers (`validationErrorResponse`, `notFoundResponse`, `conflictResponse`, `createdResponse`) and shared response types
