@@ -4,7 +4,7 @@ import {useState, useTransition} from "react";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {UserPlus} from "lucide-react";
 import {useRouter} from "next/navigation";
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {z} from "zod";
 import {ApiError} from "@/services/api/client";
 import {invitationsApi} from "@/services/api/admin/invitationsApi";
@@ -12,6 +12,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 const roleOptions = [
   {value: "member", label: "Member"},
@@ -91,17 +92,24 @@ export function InviteUserModal({organizationId}: { organizationId: string }) {
 
             <div className="space-y-1.5">
               <Label htmlFor="invite-role">Role</Label>
-              <select
-                id="invite-role"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                {...form.register("role")}
-              >
-                {roleOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="invite-role">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
