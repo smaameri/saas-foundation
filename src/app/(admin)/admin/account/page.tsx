@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 
-import { ContentLayout } from "@/components/platform/content-layout";
-import { AccountTabs } from "@/components/account/account-tabs";
-import { fetchSession } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
+import {ContentLayout} from "@/components/platform/content-layout";
+import {AccountTabs} from "@/components/account/account-tabs";
+import {fetchSession} from "@/lib/session";
+import {prisma} from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -14,9 +14,9 @@ export default async function AccountPage() {
 
   const user = session?.user?.id
     ? await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { firstName: true, lastName: true, image: true },
-      })
+      where: {id: session.user.id},
+      select: {firstName: true, lastName: true, image: true},
+    })
     : null;
 
   return (

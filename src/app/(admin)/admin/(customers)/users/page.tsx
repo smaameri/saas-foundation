@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 
-import { ContentLayout } from "@/components/platform/content-layout";
-import { InviteUserModal } from "@/components/users/invite-user-modal";
-import { UsersTabs } from "@/components/users/users-tabs";
-import { prisma } from "@/lib/prisma";
+import {ContentLayout} from "@/components/platform/content-layout";
+import {InviteUserModal} from "@/components/users/invite-user-modal";
+import {UsersTabs} from "@/components/users/users-tabs";
+import {prisma} from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Users",
@@ -15,7 +15,7 @@ export default async function UsersPage() {
       where: {
         members: {
           some: {
-            organization: { portals: { has: "customer" } },
+            organization: {portals: {has: "customer"}},
           },
         },
       },
@@ -29,15 +29,15 @@ export default async function UsersPage() {
         createdAt: true,
         members: {
           select: {
-            organization: { select: { id: true, name: true } },
+            organization: {select: {id: true, name: true}},
           },
         },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: {createdAt: "asc"},
     }),
     prisma.organization.findMany({
-      select: { id: true, name: true },
-      orderBy: { name: "asc" },
+      select: {id: true, name: true},
+      orderBy: {name: "asc"},
     }),
   ]);
 
@@ -45,9 +45,9 @@ export default async function UsersPage() {
     <ContentLayout
       title="Users"
       description="Manage users on the platform."
-      actions={<InviteUserModal organizations={organizations} />}
+      actions={<InviteUserModal organizations={organizations}/>}
     >
-      <UsersTabs users={users} />
+      <UsersTabs users={users}/>
     </ContentLayout>
   );
 }

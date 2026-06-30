@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 
-import { ContentLayout } from "@/components/platform/content-layout";
-import { fetchSession } from "@/lib/session";
+import {ContentLayout} from "@/components/platform/content-layout";
+import {fetchSession} from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "Dashboard",

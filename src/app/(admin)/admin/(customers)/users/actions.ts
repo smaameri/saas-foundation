@@ -1,10 +1,10 @@
 "use server";
 
-import { z } from "zod";
+import {z} from "zod";
 
-import { sendOrganizationInvitationEmail } from "@/lib/email";
-import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
+import {sendOrganizationInvitationEmail} from "@/lib/email";
+import {prisma} from "@/lib/prisma";
+import {fetchSession} from "@/lib/session";
 
 const inviteSchema = z.object({
   email: z.string().trim().email("Enter a valid email"),
@@ -28,21 +28,21 @@ export async function inviteOrganizationUser(formData: FormData) {
     };
   }
 
-  const { email, role, organizationId } = parsed.data;
+  const {email, role, organizationId} = parsed.data;
 
   const session = await fetchSession();
   if (!session?.user) {
-    return { ok: false, message: "Unauthorized." };
+    return {ok: false, message: "Unauthorized."};
   }
 
   try {
     const org = await prisma.organization.findUnique({
-      where: { id: organizationId },
-      select: { name: true },
+      where: {id: organizationId},
+      select: {name: true},
     });
 
     if (!org) {
-      return { ok: false, message: "Organization not found." };
+      return {ok: false, message: "Organization not found."};
     }
 
     const expiresAt = new Date();
@@ -69,10 +69,10 @@ export async function inviteOrganizationUser(formData: FormData) {
       inviteLink,
     });
 
-    return { ok: true, message: `Invitation sent to ${email}.` };
+    return {ok: true, message: `Invitation sent to ${email}.`};
   } catch (error) {
     console.error("Failed to send invite", error);
     const message = error instanceof Error ? error.message : "Failed to send invite. Please try again.";
-    return { ok: false, message };
+    return {ok: false, message};
   }
 }

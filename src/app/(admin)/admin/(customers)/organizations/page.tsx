@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 
 import Link from "next/link";
 
-import { AddOrganizationModal } from "@/components/organizations/add-organization-modal";
-import { ContentLayout } from "@/components/platform/content-layout";
+import {AddOrganizationModal} from "@/components/organizations/add-organization-modal";
+import {ContentLayout} from "@/components/platform/content-layout";
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { listOrganizations } from "@/repositories/admin/organizationRepository";
+import {listOrganizations} from "@/repositories/admin/organizationRepository";
 
 export const metadata: Metadata = {
   title: "Organizations",
@@ -25,7 +25,7 @@ export default async function OrganizationsPage() {
     <ContentLayout
       title="Organizations"
       description="Manage organizations on the platform."
-      actions={<AddOrganizationModal />}
+      actions={<AddOrganizationModal/>}
     >
       {organizations.length === 0 ? (
         <p className="text-sm text-muted-foreground">No organizations yet.</p>

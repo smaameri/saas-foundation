@@ -1,10 +1,10 @@
-import { withAdmin } from "@/app/api/admin/with-admin";
-import { validationErrorResponse } from "@/app/api/response";
-import { cancelInvitation } from "@/repositories/admin/invitationRepository";
-import { CancelInvitationValidator } from "./validator";
+import {withAdmin} from "@/app/api/admin/with-admin";
+import {validationErrorResponse} from "@/app/api/response";
+import {cancelInvitation} from "@/repositories/admin/invitationRepository";
+import {CancelInvitationValidator} from "./validator";
 
-export const DELETE = withAdmin(async (_request, { params }) => {
-  const { id } = await params;
+export const DELETE = withAdmin(async (_request, {params}) => {
+  const {id} = await params;
 
   const validator = new CancelInvitationValidator(id);
   const isValid = await validator.validate();
@@ -12,5 +12,5 @@ export const DELETE = withAdmin(async (_request, { params }) => {
 
   await cancelInvitation(validator.data.invitationId);
 
-  return new Response(null, { status: 204 });
+  return new Response(null, {status: 204});
 });

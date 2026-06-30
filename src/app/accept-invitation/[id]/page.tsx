@@ -1,24 +1,24 @@
-import { AcceptInvitationForm } from "@/components/auth/accept-invitation-form";
-import { LoginForm } from "@/components/auth/login-form";
-import { SignOutButton } from "@/components/auth/sign-out-button";
-import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
+import {AcceptInvitationForm} from "@/components/auth/accept-invitation-form";
+import {LoginForm} from "@/components/auth/login-form";
+import {SignOutButton} from "@/components/auth/sign-out-button";
+import {prisma} from "@/lib/prisma";
+import {fetchSession} from "@/lib/session";
 
-export default async function AcceptInvitationPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function AcceptInvitationPage({params}: { params: Promise<{ id: string }> }) {
+  const {id} = await params;
 
   const [session, invitation] = await Promise.all([
     fetchSession(),
     prisma.invitation.findUnique({
-      where: { id },
+      where: {id},
       select: {
         id: true,
         email: true,
         role: true,
         status: true,
         expiresAt: true,
-        organization: { select: { name: true } },
-        inviter: { select: { name: true, firstName: true, lastName: true } },
+        organization: {select: {name: true}},
+        inviter: {select: {name: true, firstName: true, lastName: true}},
       },
     }),
   ]);
@@ -60,9 +60,9 @@ export default async function AcceptInvitationPage({ params }: { params: Promise
     return (
       <InvitationShell>
         {invitationDetails}
-        <hr className="border-border" />
+        <hr className="border-border"/>
         <p className="text-sm text-muted-foreground">Sign in to accept this invitation.</p>
-        <LoginForm redirectTo={`/accept-invitation/${id}`} />
+        <LoginForm redirectTo={`/accept-invitation/${id}`}/>
       </InvitationShell>
     );
   }
@@ -71,9 +71,10 @@ export default async function AcceptInvitationPage({ params }: { params: Promise
     return (
       <InvitationShell>
         {invitationDetails}
-        <hr className="border-border" />
+        <hr className="border-border"/>
         <p className="text-sm text-muted-foreground">
-          This invitation was sent to <span className="font-medium text-foreground">{invitation.email}</span>, but you&apos;re signed in as <span className="font-medium text-foreground">{session.user.email}</span>.
+          This invitation was sent to <span className="font-medium text-foreground">{invitation.email}</span>, but
+          you&apos;re signed in as <span className="font-medium text-foreground">{session.user.email}</span>.
         </p>
         <p className="text-sm text-muted-foreground">Sign out to accept this invitation.</p>
         <SignOutButton redirectTo={`/accept-invitation/${id}`}>Sign out</SignOutButton>
@@ -84,12 +85,12 @@ export default async function AcceptInvitationPage({ params }: { params: Promise
   return (
     <InvitationShell>
       {invitationDetails}
-      <AcceptInvitationForm invitationId={invitation.id} />
+      <AcceptInvitationForm invitationId={invitation.id}/>
     </InvitationShell>
   );
 }
 
-function InvitationShell({ children }: { children: React.ReactNode }) {
+function InvitationShell({children}: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 rounded-lg border p-8">

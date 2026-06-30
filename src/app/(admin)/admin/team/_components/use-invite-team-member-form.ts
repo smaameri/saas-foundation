@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {useState, useTransition} from "react";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useRouter} from "next/navigation";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
 
-import { ApiError } from "@/services/api/client";
-import { invitationsApi } from "@/services/api/admin/invitationsApi";
+import {ApiError} from "@/services/api/client";
+import {invitationsApi} from "@/services/api/admin/invitationsApi";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -23,7 +23,7 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
 
   const form = useForm<InviteTeamMemberFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", role: "member" },
+    defaultValues: {email: "", role: "member"},
   });
 
   const onSubmit = (values: InviteTeamMemberFormValues) => {
@@ -39,5 +39,5 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
     });
   };
 
-  return { form, error, isPending, onSubmit };
+  return {form, error, isPending, onSubmit};
 }

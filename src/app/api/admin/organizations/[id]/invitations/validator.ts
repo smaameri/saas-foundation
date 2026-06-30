@@ -1,8 +1,8 @@
-import { z } from "zod";
+import {z} from "zod";
 
-import { findPendingInvitation } from "@/repositories/admin/invitationRepository";
-import { findById } from "@/repositories/admin/organizationRepository";
-import { BaseValidator } from "@/validators/BaseValidator";
+import {findPendingInvitation} from "@/repositories/admin/invitationRepository";
+import {findById} from "@/repositories/admin/organizationRepository";
+import {BaseValidator} from "@/validators/BaseValidator";
 
 const schema = z.object({
   email: z.string().trim().email("Enter a valid email"),
@@ -30,21 +30,21 @@ export class CreateInvitationValidator extends BaseValidator<ValidatedData> {
       return false;
     }
 
-    const { email, role } = parsed.data;
+    const {email, role} = parsed.data;
 
     const organization = await findById(this.organizationId);
     if (!organization) {
-      this.errors.push({ path: ["organizationId"], message: "Organization not found." });
+      this.errors.push({path: ["organizationId"], message: "Organization not found."});
       return false;
     }
 
     const existingInvitation = await findPendingInvitation(email, this.organizationId);
     if (existingInvitation) {
-      this.errors.push({ path: ["email"], message: "This person already has a pending invitation." });
+      this.errors.push({path: ["email"], message: "This person already has a pending invitation."});
       return false;
     }
 
-    this.validatedData = { email, role, organizationName: organization.name };
+    this.validatedData = {email, role, organizationName: organization.name};
     return true;
   }
 }

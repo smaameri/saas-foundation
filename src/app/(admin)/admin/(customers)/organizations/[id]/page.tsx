@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import type {Metadata} from "next";
+import {notFound} from "next/navigation";
 
-import { InviteUserModal } from "@/components/organizations/invite-user-modal";
-import { OrgDetailTabs } from "@/components/organizations/org-detail-tabs";
-import { ContentLayout } from "@/components/platform/content-layout";
-import { prisma } from "@/lib/prisma";
+import {InviteUserModal} from "@/components/organizations/invite-user-modal";
+import {OrgDetailTabs} from "@/components/organizations/org-detail-tabs";
+import {ContentLayout} from "@/components/platform/content-layout";
+import {prisma} from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Organization",
 };
 
-export default async function OrganizationPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function OrganizationPage({params}: { params: Promise<{ id: string }> }) {
+  const {id} = await params;
 
   const [org, invitations] = await Promise.all([
     prisma.organization.findUnique({
-      where: { id },
+      where: {id},
       select: {
         id: true,
         name: true,
@@ -34,13 +34,13 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
               },
             },
           },
-          orderBy: { createdAt: "asc" },
+          orderBy: {createdAt: "asc"},
         },
       },
     }),
     prisma.invitation.findMany({
-      where: { organizationId: id },
-      orderBy: { createdAt: "desc" },
+      where: {organizationId: id},
+      orderBy: {createdAt: "desc"},
       select: {
         id: true,
         email: true,
@@ -58,7 +58,7 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
     <ContentLayout
       title={org.name}
       description={`/${org.slug}`}
-      actions={<InviteUserModal organizationId={org.id} />}
+      actions={<InviteUserModal organizationId={org.id}/>}
     >
       <div className="space-y-8">
         <div className="grid grid-cols-2 gap-4 rounded-lg border p-6 text-sm">
@@ -72,7 +72,7 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
           </div>
         </div>
 
-        <OrgDetailTabs members={org.members} invitations={invitations} />
+        <OrgDetailTabs members={org.members} invitations={invitations}/>
       </div>
     </ContentLayout>
   );
