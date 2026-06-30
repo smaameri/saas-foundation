@@ -1,15 +1,8 @@
-type User = {
-  id: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  name: string;
-  email: string;
-  role?: string | null;
-  createdAt: Date;
-  members: { organization: { id: string; name: string } }[];
-};
+import { listAdminUsers } from "@/repositories/admin/adminOrganizationRepository";
 
-export function UsersTabs({ users }: { users: User[] }) {
+export default async function TeamUsersPage() {
+  const users = await listAdminUsers();
+
   return (
     <div className="mt-6">
       {users.length === 0 ? (

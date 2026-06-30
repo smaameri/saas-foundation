@@ -1,29 +1,22 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UserPlus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { ApiError } from "@/services/api/client";
-import { invitationsApi } from "@/services/api/admin/invitationsApi";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {useState, useTransition} from "react";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {UserPlus} from "lucide-react";
+import {useRouter} from "next/navigation";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {ApiError} from "@/services/api/client";
+import {invitationsApi} from "@/services/api/admin/invitationsApi";
+import {Button} from "@/components/ui/button";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
 
 const roleOptions = [
-  { value: "member", label: "Member" },
-  { value: "admin", label: "Admin" },
-  { value: "owner", label: "Owner" },
+  {value: "member", label: "Member"},
+  {value: "admin", label: "Admin"},
+  {value: "owner", label: "Owner"},
 ] as const;
 
 const formSchema = z.object({
@@ -33,7 +26,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function InviteOrgUserModal({ organizationId }: { organizationId: string }) {
+export function InviteOrgUserModal({organizationId}: { organizationId: string }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -41,7 +34,7 @@ export function InviteOrgUserModal({ organizationId }: { organizationId: string 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", role: "member" },
+    defaultValues: {email: "", role: "member"},
   });
 
   const handleClose = (val: boolean) => {
@@ -69,7 +62,7 @@ export function InviteOrgUserModal({ organizationId }: { organizationId: string 
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        <UserPlus className="h-4 w-4" />
+        <UserPlus className="h-4 w-4"/>
         Invite user
       </Button>
 
