@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 
-import { LoginForm } from "@/components/auth/login-form";
-import { fetchSession } from "@/lib/session";
+import {LoginForm} from "@/components/auth/login-form";
+import {fetchSession} from "@/lib/session";
 
 export default async function LoginPage() {
   const session = await fetchSession();
@@ -16,7 +16,7 @@ export default async function LoginPage() {
         <div className="text-white">
           <p className="mt-1 text-xl font-semibold">SaaS Foundation</p>
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-            2026 Inc.
+            {new Date().getFullYear()} Inc.
           </p>
         </div>
       </div>
@@ -25,7 +25,7 @@ export default async function LoginPage() {
         <div className="w-full max-w-sm">
           <h1 className="mb-1 text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="mb-8 text-sm text-muted-foreground">Sign in to access your dashboard.</p>
-          <LoginForm />
+          <LoginForm/>
         </div>
       </div>
     </div>

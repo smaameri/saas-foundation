@@ -5,6 +5,7 @@ import { admin, magicLink, organization } from "better-auth/plugins";
 
 import { prisma } from "@/lib/prisma";
 import { sendMagicLinkInviteEmail, sendOrganizationInvitationEmail } from "@/lib/email";
+import { belongsToAdminPortal } from "@/repositories/auth/memberRepository";
 
 const authSecret = process.env.BETTER_AUTH_SECRET;
 
@@ -40,13 +41,7 @@ export const auth = betterAuth({
     }),
     organization({
       allowUserToCreateOrganization: async (user) => {
-        const member = await prisma.member.findFirst({
-          where: {
-            userId: user.id,
-            organization: { portals: { has: "admin" } },
-          },
-        });
-        return member !== null;
+        return belongsToAdminPortal(user.id);
       },
       async sendInvitationEmail(data) {
         await sendOrganizationInvitationEmail({

@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { cancelInvitation } from "@/app/(admin)/admin/organizations/actions";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +43,7 @@ function CancelButton({ invitationId }: { invitationId: string }) {
 
   const handleCancel = () => {
     startTransition(async () => {
-      await cancelInvitation(invitationId);
+      await invitationsApi.cancelInvitation(invitationId);
       router.refresh();
     });
   };

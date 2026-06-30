@@ -1,6 +1,6 @@
-import { headers } from "next/headers";
+import {headers} from "next/headers";
 
-import { auth } from "@/lib/auth";
+import {auth} from "@/lib/auth";
 
 type SessionResult = Awaited<ReturnType<typeof auth.api.getSession>>;
 

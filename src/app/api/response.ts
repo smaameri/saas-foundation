@@ -1,9 +1,4 @@
-import type { ZodIssue } from "zod";
-
-export type ValidationErrorDetail = {
-  field: string;
-  message: string;
-};
+export type { ValidationError as ValidationErrorDetail } from "@/validators/BaseValidator";
 
 export type ValidationErrorResponse = {
   code: "validation_failed";
@@ -20,15 +15,12 @@ export type SuccessResponse<T = void> = T extends void
   ? { message: string }
   : { message: string; data: T };
 
-export function validationErrorResponse(issues: ZodIssue[]): Response {
+export function validationErrorResponse(details: ValidationErrorDetail[]): Response {
   return Response.json(
     {
       code: "validation_failed",
       message: "One or more fields are invalid.",
-      details: issues.map((issue) => ({
-        field: issue.path[0] as string,
-        message: issue.message,
-      })),
+      details,
     } satisfies ValidationErrorResponse,
     { status: 400 }
   );

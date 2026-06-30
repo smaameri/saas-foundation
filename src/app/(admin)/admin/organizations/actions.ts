@@ -60,23 +60,3 @@ export async function createOrganization(formData: FormData) {
     return { ok: false, message };
   }
 }
-
-export async function cancelInvitation(invitationId: string) {
-  const session = await fetchSession();
-  if (!session?.user) {
-    return { ok: false, message: "Unauthorized." };
-  }
-
-  try {
-    await prisma.invitation.update({
-      where: { id: invitationId },
-      data: { status: "canceled" },
-    });
-
-    return { ok: true };
-  } catch (error) {
-    console.error("Failed to cancel invitation", error);
-    const message = error instanceof Error ? error.message : "Failed to cancel invitation.";
-    return { ok: false, message };
-  }
-}

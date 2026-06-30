@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { ApiError } from "@/services/api/client";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -54,18 +56,12 @@ export function InviteOrgUserModal({ organizationId }: { organizationId: string 
     setError(null);
 
     startTransition(async () => {
-      const res = await fetch(`/api/admin/organizations/${organizationId}/invitations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-
-      if (res.ok) {
+      try {
+        await invitationsApi.sendInvitation(organizationId, values);
         handleClose(false);
         router.refresh();
-      } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data.message ?? "Failed to send invite. Please try again.");
+      } catch (err) {
+        setError(err instanceof ApiError ? err.message : "Failed to send invite. Please try again.");
       }
     });
   };

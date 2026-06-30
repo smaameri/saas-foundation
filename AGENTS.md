@@ -13,3 +13,4 @@ Read the relevant guide in `node_modules/next/dist/docs/` before writing any cod
 
 ## Conventions
 - Use the `@/…` path alias for imports (supports files in `src` and project-level scripts). The alias resolves to the `src` directory via `baseUrl`/`paths` in `tsconfig.json`—prefer it over deep relative paths.
+- Prefer using full names for variable names, e.g organizationId instead of orgId.
