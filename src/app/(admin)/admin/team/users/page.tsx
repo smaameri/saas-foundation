@@ -13,11 +13,7 @@ export default async function TeamUsersPage({ searchParams }: TeamUsersPageProps
 
   return (
     <div className="mt-6">
-      {users.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No users yet.</p>
-      ) : (
-        <DataTable columns={columns} data={users} />
-      )}
+      <DataTable columns={columns} data={users} emptyMessage="No users yet." />
     </div>
   );
 }

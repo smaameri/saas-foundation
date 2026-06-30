@@ -23,10 +23,11 @@ import { DataTablePagination } from "./data-table-pagination";
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
+  emptyMessage?: string;
   pageSize?: number;
 }
 
-export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProps<TData>) {
+export function DataTable<TData>({ columns, data, emptyMessage = "No results.", pageSize = 20 }: DataTableProps<TData>) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -56,6 +57,10 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (data.length === 0) {
+    return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;
+  }
 
   return (
     <div>

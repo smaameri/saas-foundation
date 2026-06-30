@@ -36,9 +36,19 @@ export async function listAdminUsers(params?: { sort?: string; order?: string })
   });
 }
 
-export async function listAdminInvitations() {
+const invitationSortableFields = ["email", "role", "status", "createdAt", "expiresAt"] as const;
+type InvitationSortField = (typeof invitationSortableFields)[number];
+
+function isValidInvitationSortField(field: unknown): field is InvitationSortField {
+  return invitationSortableFields.includes(field as InvitationSortField);
+}
+
+export async function listAdminInvitations(params?: { sort?: string; order?: string }) {
+  const sort: InvitationSortField = isValidInvitationSortField(params?.sort) ? params.sort : "createdAt";
+  const order: SortOrder = params?.order === "asc" ? "asc" : "desc";
+
   return prisma.invitation.findMany({
     where: { organization: { portals: { has: Portal.admin } } },
-    orderBy: { createdAt: "desc" },
+    orderBy: { [sort]: order },
   });
 }
