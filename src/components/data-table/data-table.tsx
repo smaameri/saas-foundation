@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -8,7 +9,6 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Table,
@@ -20,40 +20,40 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "./data-table-pagination";
 
+type FetcherParams = { sort: string; order: string };
+
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
-  data: TData[];
+  fetcher?: (params: FetcherParams) => Promise<TData[]>;
+  data?: TData[];
   emptyMessage?: string;
   pageSize?: number;
 }
 
-export function DataTable<TData>({ columns, data, emptyMessage = "No results.", pageSize = 20 }: DataTableProps<TData>) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export function DataTable<TData>({
+  columns,
+  fetcher,
+  data: staticData,
+  emptyMessage = "No results.",
+  pageSize = 20,
+}: DataTableProps<TData>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [data, setData] = useState<TData[]>(staticData ?? []);
 
-  const sort = searchParams.get("sort") ?? "createdAt";
-  const order = searchParams.get("order") ?? "asc";
-
-  const sorting: SortingState = [{ id: sort, desc: order === "desc" }];
+  useEffect(() => {
+    if (!fetcher) return;
+    const sort = sorting[0]?.id ?? "createdAt";
+    const order = sorting[0]?.desc ? "desc" : "asc";
+    fetcher({ sort, order }).then(setData);
+  }, [fetcher, sorting]);
 
   const table = useReactTable({
     data,
     columns,
-    manualSorting: true,
+    manualSorting: !!fetcher,
     state: { sorting },
+    onSortingChange: setSorting,
     initialState: { pagination: { pageSize } },
-    onSortingChange: (updater) => {
-      const next = typeof updater === "function" ? updater(sorting) : updater;
-      const params = new URLSearchParams(searchParams.toString());
-      if (next.length > 0) {
-        params.set("sort", next[0].id);
-        params.set("order", next[0].desc ? "desc" : "asc");
-      } else {
-        params.delete("sort");
-        params.delete("order");
-      }
-      router.replace(`?${params.toString()}`);
-    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
@@ -80,26 +80,15 @@ export function DataTable<TData>({ columns, data, emptyMessage = "No results.", 
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No results.
-                </TableCell>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </div>

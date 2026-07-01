@@ -1,5 +1,6 @@
 import { Portal } from "@/config/portals";
 import { prisma } from "@/lib/prisma";
+import type { SortOrder } from "@/repositories/types";
 
 export async function findAdminOrganization() {
   return prisma.organization.findFirst({
@@ -7,18 +8,7 @@ export async function findAdminOrganization() {
   });
 }
 
-const sortableFields = ["firstName", "lastName", "email", "role", "createdAt"] as const;
-type SortField = (typeof sortableFields)[number];
-type SortOrder = "asc" | "desc";
-
-function isValidSortField(field: unknown): field is SortField {
-  return sortableFields.includes(field as SortField);
-}
-
-export async function listAdminUsers(params?: { sort?: string; order?: string }) {
-  const sort: SortField = isValidSortField(params?.sort) ? params.sort : "createdAt";
-  const order: SortOrder = params?.order === "desc" ? "desc" : "asc";
-
+export async function listAdminUsers(params?: { sort?: string; order?: SortOrder }) {
   return prisma.user.findMany({
     where: {
       members: {
@@ -32,23 +22,13 @@ export async function listAdminUsers(params?: { sort?: string; order?: string })
         include: { organization: true },
       },
     },
-    orderBy: { [sort]: order },
+    orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "asc" },
   });
 }
 
-const invitationSortableFields = ["email", "role", "status", "createdAt", "expiresAt"] as const;
-type InvitationSortField = (typeof invitationSortableFields)[number];
-
-function isValidInvitationSortField(field: unknown): field is InvitationSortField {
-  return invitationSortableFields.includes(field as InvitationSortField);
-}
-
-export async function listAdminInvitations(params?: { sort?: string; order?: string }) {
-  const sort: InvitationSortField = isValidInvitationSortField(params?.sort) ? params.sort : "createdAt";
-  const order: SortOrder = params?.order === "asc" ? "asc" : "desc";
-
+export async function listAdminInvitations(params?: { sort?: string; order?: SortOrder }) {
   return prisma.invitation.findMany({
     where: { organization: { portals: { has: Portal.admin } } },
-    orderBy: { [sort]: order },
+    orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "desc" },
   });
 }

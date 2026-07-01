@@ -1,15 +1,12 @@
-export type ApiErrorBody = {
-  code?: string;
-  message: string;
-  details?: { path: string[]; message: string }[];
-};
+import type { ApiSuccessResponse, ApiErrorResponse } from "@/app/api/response";
 
 export class ApiError extends Error {
   constructor(
     public status: number,
-    public body: ApiErrorBody
+    public code: string | undefined,
+    public details: ApiErrorResponse["error"]["details"]
   ) {
-    super(body.message);
+    super(code ?? "An unexpected error occurred.");
   }
 }
 
@@ -23,16 +20,25 @@ export class ApiClient {
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 
+    if (res.status === 204) return undefined as T;
+
+    const json = await res.json().catch(() => null);
+
     if (!res.ok) {
-      const error = await res.json().catch(() => ({ message: "An unexpected error occurred." }));
-      throw new ApiError(res.status, error);
+      const error = (json as ApiErrorResponse)?.error ?? {};
+      throw new ApiError(res.status, error.code, error.details);
     }
 
-    if (res.status === 204) return undefined as T;
-    return res.json() as Promise<T>;
+    return (json as ApiSuccessResponse<T>).data;
   }
 
-  get<T>(path: string) {
+  get<T>(path: string, params?: Record<string, string | undefined>) {
+    if (params) {
+      const query = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([, v]) => v != null)) as Record<string, string>
+      ).toString();
+      if (query) path = `${path}?${query}`;
+    }
     return this.request<T>("GET", path);
   }
 

@@ -1,4 +1,4 @@
-import {apiClient} from "@/services/api/client";
+import { apiClient } from "@/api/client";
 
 type SendInvitationParams = {
   email: string;

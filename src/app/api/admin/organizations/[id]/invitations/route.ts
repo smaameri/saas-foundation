@@ -22,5 +22,5 @@ export const POST = withAdmin(async (request, {params}, {session}) => {
     inviterName: session.user.name,
   });
 
-  return createdResponse(`Invitation sent to ${email}.`);
+  return createdResponse({ message: `Invitation sent to ${email}.` });
 });

@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { invitationsApi } from "@/services/api/admin/invitationsApi";
+import { invitationsApi } from "@/api/admin/invitationsApi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

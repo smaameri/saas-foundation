@@ -1,45 +1,79 @@
-export type {ValidationError as ValidationErrorDetail} from "@/validators/BaseValidator";
+import type {ValidationError} from "@/validators/BaseValidator";
 
-export type ValidationErrorResponse = {
-  code: "validation_failed";
-  message: string;
-  details: ValidationErrorDetail[];
+export interface ApiSuccessResponse<T> {
+  success: true;
+  data: T;
+}
+
+export interface ApiErrorResponse {
+  success: false;
+  error: {
+    code?: string;
+    message?: string;
+    details?: Array<{ field?: string; message?: string }> | null;
+  };
+}
+
+export type ApiResult<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+export interface PaginationData {
+  page: number;
+  per_page: number;
+  total_pages: number;
+  total_results: number;
+}
+
+export type ListResponse<T> = ApiResult<T[]>;
+
+export type DetailResponse<T> = ApiResult<T>;
+
+export type PaginatedResponse<T> = ApiSuccessResponse<T[]> & {
+  pagination: PaginationData;
 };
 
-export type ErrorResponse = {
-  code: string;
-  message: string;
-};
+export function listResponse<T>(results: T[]): Response {
+  return Response.json({success: true, data: results} satisfies ListResponse<T>, {status: 200});
+}
 
-export type SuccessResponse<T = void> = T extends void
-  ? { message: string }
-  : { message: string; data: T };
+export function detailResponse<T>(item: T): Response {
+  return Response.json({success: true, data: item} satisfies DetailResponse<T>, {status: 200});
+}
 
-export function validationErrorResponse(details: ValidationErrorDetail[]): Response {
+export function paginatedResponse<T>(results: T[], pagination: PaginationData): Response {
   return Response.json(
-    {
-      code: "validation_failed",
-      message: "One or more fields are invalid.",
-      details,
-    } satisfies ValidationErrorResponse,
-    {status: 400}
+    {success: true, data: results, pagination} satisfies PaginatedResponse<T>,
+    {status: 200}
   );
+}
+
+export function createdResponse<T>(data: T): Response {
+  return Response.json({success: true, data} satisfies ApiSuccessResponse<T>, {status: 201});
 }
 
 export function notFoundResponse(message = "Not found."): Response {
   return Response.json(
-    {code: "not_found", message} satisfies ErrorResponse,
+    {success: false, error: {code: "not_found", message}} satisfies ApiErrorResponse,
     {status: 404}
   );
 }
 
 export function conflictResponse(message: string): Response {
   return Response.json(
-    {code: "conflict", message} satisfies ErrorResponse,
+    {success: false, error: {code: "conflict", message}} satisfies ApiErrorResponse,
     {status: 409}
   );
 }
 
-export function createdResponse(message: string): Response {
-  return Response.json({message}, {status: 201});
+export function validationErrorResponse(errors: ValidationError[]): Response {
+  return Response.json(
+    {
+      success: false,
+      error: {
+        code: "validation_failed",
+        message: "One or more fields are invalid.",
+        details: errors.map((e) => ({field: e.path[0], message: e.message})),
+      },
+    } satisfies ApiErrorResponse,
+    {status: 400}
+  );
 }

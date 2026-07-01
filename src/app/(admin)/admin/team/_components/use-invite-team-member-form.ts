@@ -6,8 +6,8 @@ import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 
-import {ApiError} from "@/services/api/client";
-import {invitationsApi} from "@/services/api/admin/invitationsApi";
+import {ApiError} from "@/api/client";
+import {invitationsApi} from "@/api/admin/invitationsApi";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),

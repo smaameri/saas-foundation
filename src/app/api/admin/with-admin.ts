@@ -2,6 +2,7 @@ import {Portal} from "@/config/portals";
 import {prisma} from "@/lib/prisma";
 import {fetchSession} from "@/lib/session";
 import type {Session, User} from "better-auth";
+import {withErrorHandler} from "@/app/api/with-error-handler";
 
 export type AdminContext = {
   session: { user: User; session: Session };
@@ -16,7 +17,7 @@ type AdminHandler = (
 ) => Promise<Response>;
 
 export function withAdmin(handler: AdminHandler) {
-  return async (request: Request, context: RouteContext): Promise<Response> => {
+  return withErrorHandler(async (request, context) => {
     const session = await fetchSession();
 
     if (!session?.user) {
@@ -35,5 +36,5 @@ export function withAdmin(handler: AdminHandler) {
     }
 
     return handler(request, context, {session});
-  };
+  });
 }
