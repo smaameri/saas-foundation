@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin, magicLink, organization } from "better-auth/plugins";
+import { apiKey } from "@better-auth/api-key"
 
 import { prisma } from "@/lib/prisma";
 import { sendMagicLinkInviteEmail, sendOrganizationInvitationEmail } from "@/lib/email";
@@ -50,6 +51,12 @@ export const auth = betterAuth({
           invitedBy: data.inviter.user.name,
           inviteLink: `${process.env.BETTER_AUTH_URL}/accept-invitation/${data.id}`,
         });
+      },
+    }),
+    apiKey({
+      enableSessionForAPIKeys: true,
+      rateLimit: {
+        enabled: false,
       },
     }),
     magicLink({

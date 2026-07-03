@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, LayoutDashboard, Users, UsersRound } from "lucide-react";
+import { Building2, KeyRound, LayoutDashboard, Users, UsersRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { UserButton } from "@/components/app/user-button";
@@ -24,6 +24,7 @@ const navSections = [
     label: "Administration",
     items: [
       { label: "Team", href: "/admin/team", icon: UsersRound },
+      { label: "API Keys", href: "/admin/api-keys", icon: KeyRound },
     ],
   },
 ] as const;

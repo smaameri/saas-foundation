@@ -1,3 +1,5 @@
+"use client";
+
 import {DataTable} from "@/components/data-table/data-table";
 import {columns} from "@/app/(admin)/admin/team/users/columns";
 import {usersApi} from "@/api/admin/usersApi";
