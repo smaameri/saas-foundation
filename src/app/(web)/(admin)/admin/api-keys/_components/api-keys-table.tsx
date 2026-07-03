@@ -8,7 +8,7 @@ export function ApiKeysTable() {
   return (
     <DataTable
       columns={columns}
-      fetcher={apiKeysApi.listApiKeys}
+        fetcher={apiKeysApi.listApiKeys}
       emptyMessage="No API keys yet."
     />
   );

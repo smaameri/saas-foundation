@@ -20,11 +20,11 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "./data-table-pagination";
 
-type FetcherParams = { sort: string; order: string };
+type FetcherParams = { sort?: string; order?: string };
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
-  fetcher?: (params: FetcherParams) => Promise<TData[]>;
+  fetcher?: (params?: FetcherParams) => Promise<TData[]>;
   data?: TData[];
   emptyMessage?: string;
   pageSize?: number;
