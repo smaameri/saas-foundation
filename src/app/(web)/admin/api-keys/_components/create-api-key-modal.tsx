@@ -1,40 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound } from "lucide-react";
-import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ApiError } from "@/api/client";
-import { apiKeysApi } from "@/api/admin/apiKeysApi";
-import { CopyButton } from "@/components/buttons/copy-button";
-import { PrimaryButton } from "@/components/buttons/primary-button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {KeyRound} from "lucide-react";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {ApiError} from "@/api/client";
+import {apiKeysApi} from "@/api/admin/apiKeysApi";
+import {createApiKeySchema, type CreateApiKeyBody} from "@/app/api/admin/api-keys/schema";
+import {CopyButton} from "@/components/buttons/copy-button";
+import {PrimaryButton} from "@/components/buttons/primary-button";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 export function CreateApiKeyModal() {
   const [open, setOpen] = useState(false);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { name: "" },
+  const form = useForm<CreateApiKeyBody>({
+    resolver: zodResolver(createApiKeySchema),
+    defaultValues: {name: ""},
   });
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: (values: FormValues) => apiKeysApi.createApiKey(values),
+  const {mutate, isPending, error} = useMutation({
+    mutationFn: (values: CreateApiKeyBody) => apiKeysApi.createApiKey(values),
     onSuccess: (result) => {
       setCreatedKey(result.key);
-      queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
+      queryClient.invalidateQueries({queryKey: ["admin", "api-keys"]});
     },
   });
 
@@ -51,7 +46,7 @@ export function CreateApiKeyModal() {
   return (
     <>
       <PrimaryButton onClick={() => setOpen(true)}>
-        <KeyRound className="h-4 w-4" />
+        <KeyRound className="h-4 w-4"/>
         Create API key
       </PrimaryButton>
 
@@ -70,7 +65,7 @@ export function CreateApiKeyModal() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 rounded-md border bg-muted px-3 py-2">
                 <code className="flex-1 break-all text-sm">{createdKey}</code>
-                <CopyButton value={createdKey} />
+                <CopyButton value={createdKey}/>
               </div>
               <PrimaryButton className="w-full" onClick={() => handleClose(false)}>
                 Done

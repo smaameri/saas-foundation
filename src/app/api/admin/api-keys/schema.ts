@@ -12,4 +12,4 @@ export const createApiKeySchema = z.object({
 });
 
 export type ListApiKeysParams = z.infer<typeof listApiKeysSchema>;
-export type CreateApiKeyParams = z.infer<typeof createApiKeySchema>;
+export type CreateApiKeyBody = z.infer<typeof createApiKeySchema>;
