@@ -15,6 +15,7 @@ import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { ConnectedDataTable } from "./_components/connected-data-table";
 import { CreateApiKeyModal } from "./_components/create-api-key-modal";
+import { DeleteApiKeyButton } from "./_components/delete-api-key-button";
 
 const columnHelper = createColumnHelper<ApiKey>();
 
@@ -40,6 +41,10 @@ const columns = [
   columnHelper.accessor("createdAt", {
     header: "Created At",
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.display({
+    id: "actions",
+    cell: (info) => <DeleteApiKeyButton id={info.row.original.id} />,
   }),
 ];
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,20 +15,19 @@ import {
 
 interface DeleteApiKeyButtonProps {
   id: string;
-  onDeleted?: () => void;
 }
 
-export function DeleteApiKeyButton({ id, onDeleted }: DeleteApiKeyButtonProps) {
+export function DeleteApiKeyButton({ id }: DeleteApiKeyButtonProps) {
   const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const queryClient = useQueryClient();
 
-  const handleConfirm = () => {
-    startTransition(async () => {
-      await apiKeysApi.deleteApiKey(id);
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => apiKeysApi.deleteApiKey(id),
+    onSuccess: () => {
       setOpen(false);
-      onDeleted?.();
-    });
-  };
+      queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
+    },
+  });
 
   return (
     <>
@@ -52,7 +52,7 @@ export function DeleteApiKeyButton({ id, onDeleted }: DeleteApiKeyButtonProps) {
             <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleConfirm} disabled={isPending}>
+            <Button variant="destructive" onClick={() => mutate()} disabled={isPending}>
               {isPending ? "Deleting..." : "Delete"}
             </Button>
           </div>
