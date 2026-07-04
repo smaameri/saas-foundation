@@ -1,53 +1,39 @@
-import type {Metadata} from "next";
+"use client";
 
-import {ContentLayout} from "@/components/platform/content-layout";
-import {InviteUserModal} from "@/components/users/invite-user-modal";
-import {UsersTabs} from "@/components/users/users-tabs";
-import {prisma} from "@/lib/prisma";
+import { useQuery } from "@tanstack/react-query";
+import { customerUsersApi } from "@/api/admin/customerUsersApi";
+import type { ListCustomerUsersParams } from "@/app/api/admin/customer-users/schema";
+import { useConnectedTable } from "@/hooks/use-connected-table";
+import { ContentLayout } from "@/components/platform/content-layout";
+import { DataTable } from "@/components/connected-data-table/data-table";
+import { InviteUserModal } from "@/components/users/invite-user-modal";
+import { columns } from "./columns";
 
-export const metadata: Metadata = {
-  title: "Users",
-};
+export default function UsersPage() {
+  const { data: organizations = [] } = useQuery({
+    queryKey: ["admin", "organizations"],
+    queryFn: () => customerUsersApi.listOrganizations(),
+  });
 
-export default async function UsersPage() {
-  const [users, organizations] = await Promise.all([
-    prisma.user.findMany({
-      where: {
-        members: {
-          some: {
-            organization: {portals: {has: "customer"}},
-          },
-        },
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        members: {
-          select: {
-            organization: {select: {id: true, name: true}},
-          },
-        },
-      },
-      orderBy: {createdAt: "asc"},
-    }),
-    prisma.organization.findMany({
-      select: {id: true, name: true},
-      orderBy: {name: "asc"},
-    }),
-  ]);
+  const { table } = useConnectedTable({
+    queryKey: ["admin", "customer-users"],
+    queryFn: ({ sort, order, page, perPage }) =>
+      customerUsersApi.listCustomerUsers({
+        sort: sort as ListCustomerUsersParams["sort"],
+        order,
+        page,
+        perPage,
+      }),
+    columns,
+  });
 
   return (
     <ContentLayout
       title="Users"
       description="Manage users on the platform."
-      actions={<InviteUserModal organizations={organizations}/>}
+      actions={<InviteUserModal organizations={organizations} />}
     >
-      <UsersTabs users={users}/>
+      <DataTable table={table} />
     </ContentLayout>
   );
 }
