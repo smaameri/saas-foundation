@@ -11,9 +11,8 @@ import {createApiKeySchema, type CreateApiKeyBody} from "@/app/api/admin/api-key
 import {CopyButton} from "@/components/buttons/copy-button";
 import {PrimaryButton} from "@/components/buttons/primary-button";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-
 
 export function CreateApiKeyModal() {
   const [open, setOpen] = useState(false);
@@ -72,27 +71,31 @@ export function CreateApiKeyModal() {
               </PrimaryButton>
             </div>
           ) : (
-            <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
-              <div className="space-y-1.5">
-                <Label htmlFor="api-key-name">Name</Label>
-                <Input
-                  id="api-key-name"
-                  placeholder="e.g. Production"
-                  {...form.register("name")}
+            <Form {...form}>
+              <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Production" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {form.formState.errors.name ? (
-                  <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-                ) : null}
-              </div>
 
-              {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
+                {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
 
-              <div className="flex justify-end">
-                <PrimaryButton type="submit" isPending={isPending} pendingLabel="Creating...">
-                  Create key
-                </PrimaryButton>
-              </div>
-            </form>
+                <div className="flex justify-end">
+                  <PrimaryButton type="submit" isPending={isPending} pendingLabel="Creating...">
+                    Create key
+                  </PrimaryButton>
+                </div>
+              </form>
+            </Form>
           )}
         </DialogContent>
       </Dialog>
