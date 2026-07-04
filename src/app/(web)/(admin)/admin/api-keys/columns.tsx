@@ -5,7 +5,8 @@ import type { ApiKey } from "@/api/types/apiKey";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DeleteApiKeyButton } from "./_components/delete-api-key-button";
 
-export const columns: ColumnDef<ApiKey>[] = [
+export function getColumns(onDeleted: () => void): ColumnDef<ApiKey>[] {
+  return [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
@@ -54,6 +55,7 @@ export const columns: ColumnDef<ApiKey>[] = [
   {
     id: "actions",
     enableSorting: false,
-    cell: ({ row }) => <DeleteApiKeyButton id={row.original.id} />,
+    cell: ({ row }) => <DeleteApiKeyButton id={row.original.id} onDeleted={onDeleted} />,
   },
-];
+  ];
+}

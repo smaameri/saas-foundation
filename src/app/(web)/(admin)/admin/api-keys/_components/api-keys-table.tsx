@@ -1,15 +1,21 @@
 "use client";
 
 import { DataTable } from "@/components/data-table/data-table";
-import { columns } from "@/app/(web)/(admin)/admin/api-keys/columns";
+import { getColumns } from "@/app/(web)/(admin)/admin/api-keys/columns";
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
 
-export function ApiKeysTable() {
+interface ApiKeysTableProps {
+  refreshTrigger?: number;
+  onDeleted?: () => void;
+}
+
+export function ApiKeysTable({ refreshTrigger, onDeleted }: ApiKeysTableProps) {
   return (
     <DataTable
-      columns={columns}
-        fetcher={apiKeysApi.listApiKeys}
+      columns={getColumns(onDeleted ?? (() => {}))}
+      fetcher={apiKeysApi.listApiKeys}
       emptyMessage="No API keys yet."
+      refreshTrigger={refreshTrigger}
     />
   );
 }

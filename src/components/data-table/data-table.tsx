@@ -28,6 +28,7 @@ interface DataTableProps<TData> {
   data?: TData[];
   emptyMessage?: string;
   pageSize?: number;
+  refreshTrigger?: number;
 }
 
 export function DataTable<TData>({
@@ -36,6 +37,7 @@ export function DataTable<TData>({
   data: staticData,
   emptyMessage = "No results.",
   pageSize = 20,
+  refreshTrigger,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<TData[]>(staticData ?? []);
@@ -45,7 +47,7 @@ export function DataTable<TData>({
     const sort = sorting[0]?.id ?? "createdAt";
     const order = sorting[0]?.desc ? "desc" : "asc";
     fetcher({ sort, order }).then(setData);
-  }, [fetcher, sorting]);
+  }, [fetcher, sorting, refreshTrigger]);
 
   const table = useReactTable({
     data,

@@ -19,7 +19,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function CreateApiKeyModal() {
+interface CreateApiKeyModalProps {
+  onCreated?: () => void;
+}
+
+export function CreateApiKeyModal({ onCreated }: CreateApiKeyModalProps) {
   const [open, setOpen] = useState(false);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -55,6 +59,7 @@ export function CreateApiKeyModal() {
       try {
         const result = await apiKeysApi.createApiKey(values);
         setCreatedKey(result.key);
+        onCreated?.();
         router.refresh();
       } catch (err) {
         setError(err instanceof ApiError ? err.message : "Failed to create API key. Please try again.");
