@@ -5,7 +5,6 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {KeyRound} from "lucide-react";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ApiError} from "@/api/client";
 import {apiKeysApi} from "@/api/admin/apiKeysApi";
 import {createApiKeySchema, type CreateApiKeyBody} from "@/app/api/admin/api-keys/schema";
 import {CopyButton} from "@/components/buttons/copy-button";
@@ -24,11 +23,11 @@ export function CreateApiKeyModal() {
     defaultValues: {name: ""},
   });
 
-  const {mutate, isPending, error} = useMutation({
+  const {mutate, isPending, isError, error} = useMutation({
     mutationFn: (values: CreateApiKeyBody) => apiKeysApi.createApiKey(values),
     onSuccess: (result) => {
-      setCreatedKey(result.key);
       queryClient.invalidateQueries({queryKey: ["admin", "api-keys"]});
+      setCreatedKey(result.key);
     },
   });
 
@@ -40,7 +39,6 @@ export function CreateApiKeyModal() {
     }
   };
 
-  const errorMessage = error instanceof ApiError ? error.message : error ? "Failed to create API key. Please try again." : null;
 
   return (
     <>
@@ -87,7 +85,7 @@ export function CreateApiKeyModal() {
                   )}
                 />
 
-                {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
+                {isError ? <p className="text-sm text-destructive">{error.message}</p> : null}
 
                 <div className="flex justify-end">
                   <PrimaryButton type="submit" isPending={isPending} pendingLabel="Creating...">
