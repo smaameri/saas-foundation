@@ -14,6 +14,7 @@ import type { ApiKey } from "@/api/types/apiKey";
 import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { ConnectedDataTable } from "./_components/connected-data-table";
+import { CreateApiKeyModal } from "./_components/create-api-key-modal";
 
 const columnHelper = createColumnHelper<ApiKey>();
 
@@ -76,6 +77,7 @@ export default function ApiKeysPage() {
     <ContentLayout
       title="API Keys"
       description="Manage API keys for programmatic access."
+      actions={<CreateApiKeyModal />}
     >
       <ConnectedDataTable table={table} />
     </ContentLayout>

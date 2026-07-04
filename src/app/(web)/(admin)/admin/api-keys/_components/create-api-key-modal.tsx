@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound, Copy, Check } from "lucide-react";
 import { z } from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "@/api/client";
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
 import { Button } from "@/components/ui/button";
@@ -19,21 +19,23 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface CreateApiKeyModalProps {
-  onCreated?: () => void;
-}
-
-export function CreateApiKeyModal({ onCreated }: CreateApiKeyModalProps) {
+export function CreateApiKeyModal() {
   const [open, setOpen] = useState(false);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "" },
+  });
+
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (values: FormValues) => apiKeysApi.createApiKey(values),
+    onSuccess: (result) => {
+      setCreatedKey(result.key);
+      queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
+    },
   });
 
   const handleClose = (val: boolean) => {
@@ -42,7 +44,6 @@ export function CreateApiKeyModal({ onCreated }: CreateApiKeyModalProps) {
       form.reset();
       setCreatedKey(null);
       setCopied(false);
-      setError(null);
     }
   };
 
@@ -53,19 +54,7 @@ export function CreateApiKeyModal({ onCreated }: CreateApiKeyModalProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const onSubmit = (values: FormValues) => {
-    setError(null);
-    startTransition(async () => {
-      try {
-        const result = await apiKeysApi.createApiKey(values);
-        setCreatedKey(result.key);
-        onCreated?.();
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof ApiError ? err.message : "Failed to create API key. Please try again.");
-      }
-    });
-  };
+  const errorMessage = error instanceof ApiError ? error.message : error ? "Failed to create API key. Please try again." : null;
 
   return (
     <>
@@ -98,7 +87,7 @@ export function CreateApiKeyModal({ onCreated }: CreateApiKeyModalProps) {
               </Button>
             </div>
           ) : (
-            <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+            <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
               <div className="space-y-1.5">
                 <Label htmlFor="api-key-name">Name</Label>
                 <Input
@@ -111,7 +100,7 @@ export function CreateApiKeyModal({ onCreated }: CreateApiKeyModalProps) {
                 ) : null}
               </div>
 
-              {error ? <p className="text-sm text-destructive">{error}</p> : null}
+              {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
 
               <div className="flex justify-end">
                 <Button disabled={isPending} type="submit">
