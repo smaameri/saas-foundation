@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
-import { DeleteButton } from "@/components/delete-button";
+import { DeleteButton } from "@/components/buttons/delete-button";
 
 interface DeleteApiKeyButtonProps {
   id: string;

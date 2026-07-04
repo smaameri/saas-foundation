@@ -10,6 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CancelButton } from "@/components/buttons/cancel-button";
+import { DestructiveButton } from "@/components/buttons/destructive-button";
 
 interface DeleteButtonProps {
   title: string;
@@ -39,12 +41,8 @@ export function DeleteButton({ title, description, onDelete, isPending = false }
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={onDelete} disabled={isPending}>
-              {isPending ? "Deleting..." : "Delete"}
-            </Button>
+            <CancelButton onClick={() => setOpen(false)} disabled={isPending} />
+            <DestructiveButton onClick={onDelete} isPending={isPending} />
           </div>
         </DialogContent>
       </Dialog>
