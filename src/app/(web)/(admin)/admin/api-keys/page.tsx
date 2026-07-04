@@ -8,6 +8,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { useQuery } from "@tanstack/react-query";
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
 import type { ApiKey } from "@/api/types/apiKey";
 import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
@@ -42,33 +43,31 @@ const columns = [
 ];
 
 export default function ApiKeysPage() {
-  const [data, setData] = React.useState<ApiKey[]>([]);
-  const [rowCount, setRowCount] = React.useState(0);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
 
-  React.useEffect(() => {
-    const sort = sorting[0];
-    const params: ListApiKeysParams = {
-      page: pagination.pageIndex + 1,
-      perPage: pagination.pageSize,
-      ...(sort ? { sort: sort.id as ListApiKeysParams["sort"], order: sort.desc ? "desc" : "asc" } : {}),
-    };
-    apiKeysApi.listApiKeys(params).then(({ data, pagination: p }) => {
-      setData(data);
-      setRowCount(p.total_results);
-    });
-  }, [sorting, pagination]);
+  const { data } = useQuery({
+    queryKey: ["admin", "api-keys", sorting, pagination],
+    queryFn: () => {
+      const sort = sorting[0];
+      const params: ListApiKeysParams = {
+        page: pagination.pageIndex + 1,
+        perPage: pagination.pageSize,
+        ...(sort ? { sort: sort.id as ListApiKeysParams["sort"], order: sort.desc ? "desc" : "asc" } : {}),
+      };
+      return apiKeysApi.listApiKeys(params);
+    },
+  });
 
   const table = useReactTable({
-    data,
+    data: data?.data ?? [],
     columns,
     state: { sorting, pagination },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     manualSorting: true,
     manualPagination: true,
-    rowCount,
+    rowCount: data?.pagination.total_results ?? 0,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
