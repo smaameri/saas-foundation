@@ -3,21 +3,16 @@
 import * as React from "react";
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
 import type { ApiKey } from "@/api/types/apiKey";
+import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
 import { ContentLayout } from "@/components/platform/content-layout";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { ConnectedDataTable } from "./_components/connected-data-table";
 
 const columnHelper = createColumnHelper<ApiKey>();
 
@@ -29,10 +24,12 @@ const columns = [
   columnHelper.accessor("start", {
     header: "Key",
     cell: (info) => info.getValue(),
+    enableSorting: false,
   }),
   columnHelper.accessor("enabled", {
     header: "Enabled",
     cell: (info) => (info.getValue() ? "Yes" : "No"),
+    enableSorting: false,
   }),
   columnHelper.accessor("expiresAt", {
     header: "Expires At",
@@ -46,15 +43,34 @@ const columns = [
 
 export default function ApiKeysPage() {
   const [data, setData] = React.useState<ApiKey[]>([]);
+  const [rowCount, setRowCount] = React.useState(0);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
 
   React.useEffect(() => {
-    apiKeysApi.listApiKeys().then(setData);
-  }, []);
+    const sort = sorting[0];
+    const params: ListApiKeysParams = {
+      page: pagination.pageIndex + 1,
+      perPage: pagination.pageSize,
+      ...(sort ? { sort: sort.id as ListApiKeysParams["sort"], order: sort.desc ? "desc" : "asc" } : {}),
+    };
+    apiKeysApi.listApiKeys(params).then(({ data, pagination: p }) => {
+      setData(data);
+      setRowCount(p.total_results);
+    });
+  }, [sorting, pagination]);
 
   const table = useReactTable({
     data,
     columns,
+    state: { sorting, pagination },
+    onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    manualSorting: true,
+    manualPagination: true,
+    rowCount,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
@@ -62,32 +78,7 @@ export default function ApiKeysPage() {
       title="API Keys"
       description="Manage API keys for programmatic access."
     >
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <ConnectedDataTable table={table} />
     </ContentLayout>
   );
 }

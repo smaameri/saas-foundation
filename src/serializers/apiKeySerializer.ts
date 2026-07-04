@@ -1,7 +1,7 @@
 import type { listApiKeys } from "@/repositories/admin/apiKeyRepository";
 import type { ApiKey } from "@/api/types/apiKey";
 
-type PrismaApiKey = Awaited<ReturnType<typeof listApiKeys>>[number];
+type PrismaApiKey = Awaited<ReturnType<typeof listApiKeys>>["data"][number];
 
 export function serializeApiKey(apiKey: PrismaApiKey): ApiKey {
   return {

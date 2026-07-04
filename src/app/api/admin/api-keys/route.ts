@@ -1,5 +1,5 @@
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { createdResponse, listResponse } from "@/app/api/response";
+import { createdResponse, paginatedResponse } from "@/app/api/response";
 import { parseQuery } from "@/lib/api";
 import { listApiKeys } from "@/repositories/admin/apiKeyRepository";
 import { serializeApiKey } from "@/serializers/apiKeySerializer";
@@ -9,8 +9,15 @@ import type { CreatedApiKey } from "@/api/types/apiKey";
 
 export const GET = withAdmin(async (request) => {
   const parsed = parseQuery(request, listApiKeysSchema);
-  const apiKeys = await listApiKeys(parsed);
-  return listResponse(apiKeys.map(serializeApiKey));
+  const { data, total } = await listApiKeys(parsed);
+  const page = parsed.page ?? 1;
+  const perPage = parsed.perPage ?? 10;
+  return paginatedResponse(data.map(serializeApiKey), {
+    page,
+    per_page: perPage,
+    total_pages: Math.ceil(total / perPage),
+    total_results: total,
+  });
 });
 
 export const POST = withAdmin(async (request, _context, { session }) => {

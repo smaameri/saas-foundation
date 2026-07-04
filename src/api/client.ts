@@ -1,4 +1,4 @@
-import type { ApiSuccessResponse, ApiErrorResponse } from "@/app/api/response";
+import type { ApiSuccessResponse, ApiErrorResponse, PaginationData } from "@/app/api/response";
 
 export class ApiError extends Error {
   constructor(
@@ -40,6 +40,30 @@ export class ApiClient {
       if (query) path = `${path}?${query}`;
     }
     return this.request<T>("GET", path);
+  }
+
+  async getPaginated<T>(
+    path: string,
+    params?: Record<string, string | number | undefined>
+  ): Promise<{ data: T[]; pagination: PaginationData }> {
+    if (params) {
+      const query = new URLSearchParams(
+        Object.fromEntries(
+          Object.entries(params)
+            .filter(([, v]) => v != null)
+            .map(([k, v]) => [k, String(v)])
+        )
+      ).toString();
+      if (query) path = `${path}?${query}`;
+    }
+    const res = await fetch(`${this.basePath}${path}`);
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      const error = (json as ApiErrorResponse)?.error ?? {};
+      throw new ApiError(res.status, error.code, error.details);
+    }
+    const { data, pagination } = json as ApiSuccessResponse<T[]> & { pagination: PaginationData };
+    return { data, pagination };
   }
 
   post<T>(path: string, body: unknown) {
