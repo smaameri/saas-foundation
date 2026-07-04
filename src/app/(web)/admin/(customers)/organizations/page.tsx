@@ -43,7 +43,7 @@ export default async function OrganizationsPage() {
               <TableRow key={org.id}>
                 <TableCell className="font-medium">
                   <Link
-                    href={`/src/app/(web)/(admin)/admin/(customers)/organizations/${org.id}`}
+                    href={`/src/app/(web)/admin/(customers)/organizations/${org.id}`}
                     className="hover:underline"
                   >
                     {org.name}
