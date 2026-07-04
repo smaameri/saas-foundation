@@ -1,19 +1,27 @@
-import {listAdminInvitations} from "@/repositories/admin/adminOrganizationRepository";
-import {DataTable} from "@/components/data-table/data-table";
+"use client";
 
-import {columns} from "./columns";
+import { invitationsApi } from "@/api/admin/invitationsApi";
+import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
+import { useConnectedTable } from "@/hooks/use-connected-table";
+import { DataTable } from "@/components/connected-data-table/data-table";
+import { columns } from "./columns";
 
-interface TeamInvitationsPageProps {
-  searchParams: Promise<{ sort?: string; order?: string }>;
-}
-
-export default async function TeamInvitationsPage({searchParams}: TeamInvitationsPageProps) {
-  const {sort, order} = await searchParams;
-  const invitations = await listAdminInvitations({sort, order});
+export default function TeamInvitationsPage() {
+  const { table } = useConnectedTable({
+    queryKey: ["admin", "invitations"],
+    queryFn: ({ sort, order, page, perPage }) =>
+      invitationsApi.listInvitations({
+        sort: sort as ListInvitationsParams["sort"],
+        order,
+        page,
+        perPage,
+      }),
+    columns,
+  });
 
   return (
     <div className="mt-6">
-      <DataTable columns={columns} data={invitations} emptyMessage="No invitations sent yet."/>
+      <DataTable table={table} />
     </div>
   );
 }

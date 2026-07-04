@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 
-interface ConnectedDataTableProps<TData> {
+interface DataTableProps<TData> {
   table: Table<TData>;
 }
 
-export function ConnectedDataTable<TData>({ table }: ConnectedDataTableProps<TData>) {
+export function DataTable<TData>({ table }: DataTableProps<TData>) {
   return (
     <>
       <ShadTable>

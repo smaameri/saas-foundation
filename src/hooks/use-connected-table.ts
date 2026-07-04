@@ -1,16 +1,18 @@
 import * as React from "react";
-import type {ColumnDef, PaginationState, SortingState} from "@tanstack/react-table";
+import type { ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
 import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {useQuery} from "@tanstack/react-query";
-import type {PaginationData} from "@/app/api/response";
+import { useQuery } from "@tanstack/react-query";
+import type { PaginationData } from "@/app/api/response";
 
 export interface ConnectedTableParams {
-  sorting: SortingState;
-  pagination: PaginationState;
+  sort?: string;
+  order?: "asc" | "desc";
+  page: number;
+  perPage: number;
 }
 
 interface UseConnectedTableOptions<TData> {
@@ -20,26 +22,43 @@ interface UseConnectedTableOptions<TData> {
   pageSize?: number;
 }
 
-export function useConnectedTable<TData>(
-  {
-    queryKey,
-    queryFn,
-    columns,
-    pageSize = 10,
-  }: UseConnectedTableOptions<TData>) {
+function toConnectedTableParams(
+  sorting: SortingState,
+  pagination: PaginationState,
+): ConnectedTableParams {
+  const sort = sorting[0];
+  return {
+    sort: sort?.id,
+    order: sort ? (sort.desc ? "desc" : "asc") : undefined,
+    page: pagination.pageIndex + 1,
+    perPage: pagination.pageSize,
+  };
+}
+
+export function useConnectedTable<TData>({
+  queryKey,
+  queryFn,
+  columns,
+  pageSize = 10,
+}: UseConnectedTableOptions<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState<PaginationState>({pageIndex: 0, pageSize});
+  const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize });
+
+  const params = toConnectedTableParams(sorting, pagination);
 
   const queryResult = useQuery({
-    queryKey: [...queryKey, sorting, pagination],
-    queryFn: () => queryFn({sorting, pagination}),
+    queryKey: [...queryKey, params],
+    queryFn: () => queryFn(params),
   });
 
   const table = useReactTable({
     data: queryResult.data?.data ?? [],
     columns,
-    state: {sorting, pagination},
-    onSortingChange: setSorting,
+    state: { sorting, pagination },
+    onSortingChange: (updater) => {
+      setSorting(updater);
+      setPagination((p) => ({ ...p, pageIndex: 0 }));
+    },
     onPaginationChange: setPagination,
     manualSorting: true,
     manualPagination: true,
@@ -48,5 +67,5 @@ export function useConnectedTable<TData>(
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  return table;
+  return { table };
 }
