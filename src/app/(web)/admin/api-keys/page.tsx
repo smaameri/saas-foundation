@@ -4,9 +4,9 @@ import { apiKeysApi } from "@/api/admin/apiKeysApi";
 import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
 import { useConnectedTable } from "@/hooks/use-connected-table";
 import { ContentLayout } from "@/components/platform/content-layout";
-import { columns } from "./columns";
+import { columns } from "@/app/(web)/admin/api-keys/columns";
 import { DataTable } from "@/components/connected-data-table/data-table";
-import { CreateApiKeyButton } from "./_components/create-api-key-button";
+import { CreateApiKeyButton } from "@/app/(web)/admin/api-keys/_components/create-api-key-button";
 
 export default function ApiKeysPage() {
   const { table } = useConnectedTable({
