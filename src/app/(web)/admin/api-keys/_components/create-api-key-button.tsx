@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { KeyRound } from "lucide-react";
-import { apiKeysApi } from "@/api/admin/apiKeysApi";
 import { type CreateApiKeyBody, createApiKeySchema } from "@/app/api/admin/api-keys/schema";
 import { CopyButton } from "@/components/buttons/copy-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
@@ -26,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 
 export function CreateApiKeyButton() {
   const [open, setOpen] = useState(false);

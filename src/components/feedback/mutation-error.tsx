@@ -1,6 +1,6 @@
 "use client";
 
-import { ApiError } from "@/api/client";
+import { ApiError } from "@/services/api/client";
 
 type Props = {
   isError: boolean;

@@ -5,8 +5,8 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { invitationsApi } from "@/api/admin/invitationsApi";
-import { ApiError } from "@/api/client";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
+import { ApiError } from "@/services/api/client";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
