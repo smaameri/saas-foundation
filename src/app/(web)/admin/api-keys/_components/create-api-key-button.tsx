@@ -1,18 +1,31 @@
 "use client";
 
-import {useState} from "react";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {KeyRound} from "lucide-react";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {apiKeysApi} from "@/api/admin/apiKeysApi";
-import {createApiKeySchema, type CreateApiKeyBody} from "@/app/api/admin/api-keys/schema";
-import {CopyButton} from "@/components/buttons/copy-button";
-import {PrimaryButton} from "@/components/buttons/primary-button";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {MutationError} from "@/components/feedback/mutation-error";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { KeyRound } from "lucide-react";
+import { apiKeysApi } from "@/api/admin/apiKeysApi";
+import { type CreateApiKeyBody, createApiKeySchema } from "@/app/api/admin/api-keys/schema";
+import { CopyButton } from "@/components/buttons/copy-button";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 export function CreateApiKeyButton() {
   const [open, setOpen] = useState(false);
@@ -21,13 +34,13 @@ export function CreateApiKeyButton() {
 
   const form = useForm<CreateApiKeyBody>({
     resolver: zodResolver(createApiKeySchema),
-    defaultValues: {name: ""},
+    defaultValues: { name: "" },
   });
 
-  const {mutate, isPending, isError, error} = useMutation({
+  const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: CreateApiKeyBody) => apiKeysApi.createApiKey(values),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({queryKey: ["admin", "api-keys"]});
+      queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
       setCreatedKey(result.key);
     },
   });
@@ -39,11 +52,11 @@ export function CreateApiKeyButton() {
       setCreatedKey(null);
     }
   };
-  
+
   return (
     <>
       <PrimaryButton onClick={() => setOpen(true)}>
-        <KeyRound className="h-4 w-4"/>
+        <KeyRound className="h-4 w-4" />
         Create API key
       </PrimaryButton>
 
@@ -62,7 +75,7 @@ export function CreateApiKeyButton() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 rounded-md border bg-muted px-3 py-2">
                 <code className="flex-1 break-all text-sm">{createdKey}</code>
-                <CopyButton value={createdKey}/>
+                <CopyButton value={createdKey} />
               </div>
               <PrimaryButton className="w-full" onClick={() => handleClose(false)}>
                 Done
@@ -74,7 +87,7 @@ export function CreateApiKeyButton() {
                 <FormField
                   control={form.control}
                   name="name"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
@@ -85,7 +98,11 @@ export function CreateApiKeyButton() {
                   )}
                 />
 
-                <MutationError isError={isError} error={error} fallback="Unable to create API key. Please try again." />
+                <MutationError
+                  isError={isError}
+                  error={error}
+                  fallback="Unable to create API key. Please try again."
+                />
 
                 <div className="flex justify-end">
                   <PrimaryButton type="submit" isPending={isPending} pendingLabel="Creating...">

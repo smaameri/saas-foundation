@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronsUpDown, LogOut, User } from "lucide-react";
-
-import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { authClient } from "@/lib/auth-client";
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -22,7 +21,7 @@ function getInitials(name: string): string {
 
 export function UserButton({
   name,
-  email,
+  email: _email,
   role,
   image,
   compact = false,
@@ -56,19 +55,17 @@ export function UserButton({
             </Avatar>
           </button>
         ) : (
-        <button className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition hover:bg-muted">
-          <Avatar>
-            {image ? <AvatarImage src={image} alt={name} /> : null}
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-medium text-foreground">{name}</p>
-            <p className="truncate text-xs capitalize text-muted-foreground">
-              {role ?? ""}
-            </p>
-          </div>
-          <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-        </button>
+          <button className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition hover:bg-muted">
+            <Avatar>
+              {image ? <AvatarImage src={image} alt={name} /> : null}
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-medium text-foreground">{name}</p>
+              <p className="truncate text-xs capitalize text-muted-foreground">{role ?? ""}</p>
+            </div>
+            <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+          </button>
         )}
       </DropdownMenuTrigger>
 

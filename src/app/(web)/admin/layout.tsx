@@ -1,11 +1,10 @@
-import type {ReactNode} from "react";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
+import type { ReactNode } from "react";
+import { AppSidebar } from "@/components/app/app-sidebar";
+import { HeaderUserButton } from "@/components/app/header-user-button";
+import { fetchSession } from "@/lib/session";
 
-import {AppSidebar} from "@/components/app/app-sidebar";
-import {HeaderUserButton} from "@/components/app/header-user-button";
-import {fetchSession} from "@/lib/session";
-
-export default async function AppLayout({children}: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
   const session = await fetchSession();
 
   if (!session?.session) {
@@ -16,15 +15,10 @@ export default async function AppLayout({children}: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <AppSidebar
-        name={user.name}
-        email={user.email}
-        role={user.role}
-        image={user.image}
-      />
+      <AppSidebar name={user.name} email={user.email} role={user.role} image={user.image} />
       <div className="flex flex-1 flex-col">
         <header className="flex h-12 shrink-0 items-center justify-end border-b px-4">
-          <HeaderUserButton/>
+          <HeaderUserButton />
         </header>
         {children}
       </div>

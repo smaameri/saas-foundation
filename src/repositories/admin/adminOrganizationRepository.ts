@@ -1,6 +1,6 @@
-import { Portal } from "@/config/portals";
 import { prisma } from "@/lib/prisma";
 import type { SortOrder } from "@/repositories/types";
+import { Portal } from "@/config/portals";
 
 export async function findAdminOrganization() {
   return prisma.organization.findFirst({

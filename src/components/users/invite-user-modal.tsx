@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { UserPlus } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,9 +28,7 @@ export function InviteUserModal({ organizations }: { organizations: Organization
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite a user</DialogTitle>
-            <DialogDescription>
-              Send an invitation to join an organization.
-            </DialogDescription>
+            <DialogDescription>Send an invitation to join an organization.</DialogDescription>
           </DialogHeader>
           <InviteUserForm organizations={organizations} onSuccess={() => setOpen(false)} />
         </DialogContent>

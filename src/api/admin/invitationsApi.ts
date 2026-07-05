@@ -1,7 +1,7 @@
 import { apiClient } from "@/api/client";
 import type { Invitation } from "@/api/types/invitation";
-import type { PaginationData } from "@/app/api/response";
 import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
+import type { PaginationData } from "@/app/api/response";
 
 type SendInvitationParams = {
   email: string;
@@ -9,7 +9,9 @@ type SendInvitationParams = {
 };
 
 export const invitationsApi = {
-  listInvitations(params?: ListInvitationsParams): Promise<{ data: Invitation[]; pagination: PaginationData }> {
+  listInvitations(
+    params?: ListInvitationsParams,
+  ): Promise<{ data: Invitation[]; pagination: PaginationData }> {
     return apiClient.getPaginated<Invitation>("/admin/invitations", params);
   },
 

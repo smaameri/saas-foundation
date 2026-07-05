@@ -2,7 +2,6 @@
 
 import type { Column } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 
 interface DataTableColumnHeaderProps<TData, TValue> {
@@ -19,7 +18,11 @@ export function DataTableColumnHeader<TData, TValue>({
   const sorted = column.getIsSorted();
 
   return (
-    <Button variant="ghost" className="-ml-3" onClick={() => column.toggleSorting(sorted === "asc")}>
+    <Button
+      variant="ghost"
+      className="-ml-3"
+      onClick={() => column.toggleSorting(sorted === "asc")}
+    >
       {title}
       {sorted === "asc" ? (
         <ArrowUp className="ml-2 size-4" />

@@ -1,9 +1,9 @@
+import { listInvitationsSchema } from "./schema";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 import { parseQuery } from "@/lib/api";
 import { listAdminInvitations } from "@/repositories/admin/adminOrganizationRepository";
 import { serializeInvitation } from "@/serializers/invitationSerializer";
-import { listInvitationsSchema } from "./schema";
 
 export const GET = withAdmin(async (request) => {
   const parsed = parseQuery(request, listInvitationsSchema);

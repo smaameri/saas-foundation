@@ -1,11 +1,10 @@
+import { apiKey } from "@better-auth/api-key";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin, magicLink, organization } from "better-auth/plugins";
-import { apiKey } from "@better-auth/api-key"
-
-import { prisma } from "@/lib/prisma";
 import { sendMagicLinkInviteEmail, sendOrganizationInvitationEmail } from "@/lib/email";
+import { prisma } from "@/lib/prisma";
 import { belongsToAdminPortal } from "@/repositories/auth/memberRepository";
 
 const authSecret = process.env.BETTER_AUTH_SECRET;

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { CancelButton } from "@/components/buttons/cancel-button";
+import { DestructiveButton } from "@/components/buttons/destructive-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,8 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CancelButton } from "@/components/buttons/cancel-button";
-import { DestructiveButton } from "@/components/buttons/destructive-button";
 
 interface DeleteButtonProps {
   title: string;
@@ -20,7 +20,12 @@ interface DeleteButtonProps {
   isPending?: boolean;
 }
 
-export function DeleteButton({ title, description, onDelete, isPending = false }: DeleteButtonProps) {
+export function DeleteButton({
+  title,
+  description,
+  onDelete,
+  isPending = false,
+}: DeleteButtonProps) {
   const [open, setOpen] = useState(false);
 
   return (

@@ -3,15 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Building2, KeyRound, LayoutDashboard, Users, UsersRound } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 import { UserButton } from "@/components/app/user-button";
+import { cn } from "@/lib/utils";
 
 const navSections = [
   {
-    items: [
-      { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    ],
+    items: [{ label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard }],
   },
   {
     label: "Customers",
@@ -73,7 +70,7 @@ export function AppSidebar({
                       "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition",
                       isActive
                         ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
                     )}
                     href={item.href}
                   >

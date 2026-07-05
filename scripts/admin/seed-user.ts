@@ -1,10 +1,7 @@
-import "dotenv/config";
-
-import process from "node:process";
-
-import { APIError, isAPIError } from "better-auth/api";
 import { cancel, intro, isCancel, outro, password, text } from "@clack/prompts";
-
+import { APIError, isAPIError } from "better-auth/api";
+import "dotenv/config";
+import process from "node:process";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -15,13 +12,21 @@ async function promptOrExit() {
     message: "First name",
     validate: (value) => (!value?.trim() ? "First name is required" : undefined),
   });
-  if (isCancel(firstName)) { cancel("Seed cancelled."); process.exitCode = 1; return null; }
+  if (isCancel(firstName)) {
+    cancel("Seed cancelled.");
+    process.exitCode = 1;
+    return null;
+  }
 
   const lastName = await text({
     message: "Last name",
     validate: (value) => (!value?.trim() ? "Last name is required" : undefined),
   });
-  if (isCancel(lastName)) { cancel("Seed cancelled."); process.exitCode = 1; return null; }
+  if (isCancel(lastName)) {
+    cancel("Seed cancelled.");
+    process.exitCode = 1;
+    return null;
+  }
 
   const email = await text({
     message: "Email",
@@ -31,7 +36,11 @@ async function promptOrExit() {
       return undefined;
     },
   });
-  if (isCancel(email)) { cancel("Seed cancelled."); process.exitCode = 1; return null; }
+  if (isCancel(email)) {
+    cancel("Seed cancelled.");
+    process.exitCode = 1;
+    return null;
+  }
 
   let pwdValue: string | null = null;
   const minPasswordLength = 8;
@@ -41,11 +50,16 @@ async function promptOrExit() {
       message: `Password (min ${minPasswordLength} characters)`,
       validate: (value) => {
         if (!value) return "Password is required";
-        if (value.length < minPasswordLength) return `Password must be at least ${minPasswordLength} characters.`;
+        if (value.length < minPasswordLength)
+          return `Password must be at least ${minPasswordLength} characters.`;
         return undefined;
       },
     });
-    if (isCancel(pwd)) { cancel("Seed cancelled."); process.exitCode = 1; return null; }
+    if (isCancel(pwd)) {
+      cancel("Seed cancelled.");
+      process.exitCode = 1;
+      return null;
+    }
     pwdValue = String(pwd);
   }
 
@@ -53,7 +67,11 @@ async function promptOrExit() {
     message: "Organization name",
     validate: (value) => (!value?.trim() ? "Organization name is required" : undefined),
   });
-  if (isCancel(orgName)) { cancel("Seed cancelled."); process.exitCode = 1; return null; }
+  if (isCancel(orgName)) {
+    cancel("Seed cancelled.");
+    process.exitCode = 1;
+    return null;
+  }
 
   const defaultSlug = String(orgName)
     .trim()
@@ -67,11 +85,16 @@ async function promptOrExit() {
     initialValue: defaultSlug,
     validate: (value) => {
       if (!value?.trim()) return "Slug is required";
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)) return "Slug must be lowercase letters, numbers, and hyphens only";
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
+        return "Slug must be lowercase letters, numbers, and hyphens only";
       return undefined;
     },
   });
-  if (isCancel(orgSlug)) { cancel("Seed cancelled."); process.exitCode = 1; return null; }
+  if (isCancel(orgSlug)) {
+    cancel("Seed cancelled.");
+    process.exitCode = 1;
+    return null;
+  }
 
   const firstNameStr = String(firstName).trim();
   const lastNameStr = String(lastName).trim();
@@ -121,7 +144,7 @@ async function main() {
     });
 
     outro(
-      `Done! User ${email} created and added to "${orgName}" (${orgSlug}) with the admin portal.`
+      `Done! User ${email} created and added to "${orgName}" (${orgSlug}) with the admin portal.`,
     );
   } catch (error) {
     if (isAPIError(error)) {

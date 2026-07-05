@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DataTablePagination } from "./data-table-pagination";
 import {
+  type ColumnDef,
+  type SortingState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-  type ColumnDef,
-  type SortingState,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -18,12 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTablePagination } from "./data-table-pagination";
 
 type FetcherParams = { sort?: string; order?: string };
 
 interface DataTableProps<TData> {
-  columns: ColumnDef<TData, any>[];
+  columns: ColumnDef<TData, unknown>[];
   fetcher?: (params?: FetcherParams) => Promise<TData[]>;
   data?: TData[];
   emptyMessage?: string;

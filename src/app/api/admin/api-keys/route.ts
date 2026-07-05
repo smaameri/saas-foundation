@@ -1,11 +1,11 @@
+import { createApiKeySchema, listApiKeysSchema } from "./schema";
+import type { CreatedApiKey } from "@/api/types/apiKey";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { createdResponse, paginatedResponse } from "@/app/api/response";
 import { parseQuery } from "@/lib/api";
+import { auth } from "@/lib/auth";
 import { listApiKeys } from "@/repositories/admin/apiKeyRepository";
 import { serializeApiKey } from "@/serializers/apiKeySerializer";
-import { createApiKeySchema, listApiKeysSchema } from "./schema";
-import { auth } from "@/lib/auth";
-import type { CreatedApiKey } from "@/api/types/apiKey";
 
 export const GET = withAdmin(async (request) => {
   const parsed = parseQuery(request, listApiKeysSchema);

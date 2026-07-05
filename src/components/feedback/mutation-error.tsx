@@ -8,7 +8,11 @@ type Props = {
   fallback?: string;
 };
 
-export function MutationError({ isError, error, fallback = "Something went wrong. Please try again." }: Props) {
+export function MutationError({
+  isError,
+  error,
+  fallback = "Something went wrong. Please try again.",
+}: Props) {
   if (!isError || !error) return null;
 
   if (error instanceof ApiError && error.status === 400 && error.details?.length) {

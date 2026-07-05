@@ -1,12 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { createOrganization } from "@/app/(web)/admin/(customers)/organizations/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -131,7 +130,7 @@ export function AddOrganizationModal() {
               ) : null}
             </div>
 
-{status ? <p className="text-sm text-destructive">{status}</p> : null}
+            {status ? <p className="text-sm text-destructive">{status}</p> : null}
 
             <div className="flex justify-end">
               <Button disabled={isPending} type="submit">

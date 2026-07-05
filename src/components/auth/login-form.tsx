@@ -1,14 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email address"),
@@ -19,6 +19,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -43,7 +44,7 @@ export function LoginForm() {
         return;
       }
 
-      window.location.href = "/admin/dashboard";
+      router.push("/admin/dashboard");
     } catch {
       setFormError("Unexpected error signing in. Please try again.");
     }
@@ -61,9 +62,7 @@ export function LoginForm() {
           aria-invalid={Boolean(errors.email)}
           {...register("email")}
         />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-1.5">
@@ -75,9 +74,7 @@ export function LoginForm() {
           aria-invalid={Boolean(errors.password)}
           {...register("password")}
         />
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
       {formError && (
@@ -89,7 +86,6 @@ export function LoginForm() {
       <Button className="w-full" disabled={isSubmitting} type="submit">
         {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
-
     </form>
   );
 }

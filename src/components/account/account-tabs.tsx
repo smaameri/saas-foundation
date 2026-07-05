@@ -1,8 +1,8 @@
 "use client";
 
-import { ChangePasswordForm } from "@/components/users/change-password-form";
 import { ProfileForm } from "@/components/account/profile-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChangePasswordForm } from "@/components/users/change-password-form";
 
 export function AccountTabs({
   defaultFirstName,

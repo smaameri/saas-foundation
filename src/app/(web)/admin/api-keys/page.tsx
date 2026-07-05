@@ -1,12 +1,12 @@
 "use client";
 
 import { apiKeysApi } from "@/api/admin/apiKeysApi";
-import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
-import { useConnectedTable } from "@/hooks/use-connected-table";
-import { ContentLayout } from "@/components/platform/content-layout";
-import { columns } from "@/app/(web)/admin/api-keys/columns";
-import { DataTable } from "@/components/connected-data-table/data-table";
 import { CreateApiKeyButton } from "@/app/(web)/admin/api-keys/_components/create-api-key-button";
+import { columns } from "@/app/(web)/admin/api-keys/columns";
+import type { ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
+import { DataTable } from "@/components/connected-data-table/data-table";
+import { ContentLayout } from "@/components/platform/content-layout";
+import { useConnectedTable } from "@/hooks/use-connected-table";
 
 export default function ApiKeysPage() {
   const { table } = useConnectedTable({

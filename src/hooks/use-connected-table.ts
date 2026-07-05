@@ -1,11 +1,7 @@
 import * as React from "react";
-import type { ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
-import {
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import type { ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
+import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import type { PaginationData } from "@/app/api/response";
 
 export interface ConnectedTableParams {

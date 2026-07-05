@@ -1,13 +1,12 @@
 "use client";
 
-import {useState, useTransition} from "react";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useRouter} from "next/navigation";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
-
-import {ApiError} from "@/api/client";
-import {invitationsApi} from "@/api/admin/invitationsApi";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { invitationsApi } from "@/api/admin/invitationsApi";
+import { ApiError } from "@/api/client";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -23,7 +22,7 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
 
   const form = useForm<InviteTeamMemberFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {email: "", role: "member"},
+    defaultValues: { email: "", role: "member" },
   });
 
   const onSubmit = (values: InviteTeamMemberFormValues) => {
@@ -31,13 +30,16 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
     startTransition(async () => {
       try {
         await invitationsApi.sendInvitation(organizationId, values);
+        form.reset();
         onSuccess();
         router.refresh();
       } catch (err) {
-        setError(err instanceof ApiError ? err.message : "Failed to send invite. Please try again.");
+        setError(
+          err instanceof ApiError ? err.message : "Failed to send invite. Please try again.",
+        );
       }
     });
   };
 
-  return {form, error, isPending, onSubmit};
+  return { form, error, isPending, onSubmit };
 }

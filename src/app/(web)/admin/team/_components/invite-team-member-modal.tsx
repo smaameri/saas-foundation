@@ -1,48 +1,57 @@
 "use client";
 
-import {useState} from "react";
-import {Controller} from "react-hook-form";
-import {UserPlus} from "lucide-react";
-
-import {Button} from "@/components/ui/button";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {useInviteTeamMemberForm} from "./use-invite-team-member-form";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import { useInviteTeamMemberForm } from "./use-invite-team-member-form";
+import { UserPlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const roleOptions = [
-  {value: "member", label: "Member"},
-  {value: "admin", label: "Admin"},
-  {value: "owner", label: "Owner"},
+  { value: "member", label: "Member" },
+  { value: "admin", label: "Admin" },
+  { value: "owner", label: "Owner" },
 ] as const;
 
-export function InviteTeamMemberModal({organizationId}: { organizationId: string }) {
+export function InviteTeamMemberModal({ organizationId }: { organizationId: string }) {
   const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
-    setOpen(false);
-    form.reset();
-  };
+  const handleClose = () => setOpen(false);
 
-  const {form, error, isPending, onSubmit} = useInviteTeamMemberForm(organizationId, handleClose);
+  const { form, error, isPending, onSubmit } = useInviteTeamMemberForm(organizationId, handleClose);
 
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        <UserPlus className="h-4 w-4"/>
+        <UserPlus className="h-4 w-4" />
         Invite team member
       </Button>
 
-      <Dialog open={open} onOpenChange={(val) => {
-        if (!val) handleClose();
-      }}>
+      <Dialog
+        open={open}
+        onOpenChange={(val) => {
+          if (!val) handleClose();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite a team member</DialogTitle>
-            <DialogDescription>
-              Send an invitation to join your internal team.
-            </DialogDescription>
+            <DialogDescription>Send an invitation to join your internal team.</DialogDescription>
           </DialogHeader>
 
           <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
@@ -64,10 +73,10 @@ export function InviteTeamMemberModal({organizationId}: { organizationId: string
               <Controller
                 control={form.control}
                 name="role"
-                render={({field}) => (
+                render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger id="invite-role">
-                      <SelectValue/>
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {roleOptions.map((option) => (

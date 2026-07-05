@@ -49,9 +49,7 @@ export function UsersTabs({ users }: { users: User[] }) {
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 capitalize text-muted-foreground">
-                    {user.role ?? "—"}
-                  </td>
+                  <td className="px-4 py-3 capitalize text-muted-foreground">{user.role ?? "—"}</td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {user.createdAt.toLocaleDateString()}
                   </td>

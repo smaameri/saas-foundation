@@ -1,10 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-
-import { authClient } from "@/lib/auth-client";
+import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 export function AcceptInvitationForm({ invitationId }: { invitationId: string }) {
   const [isPending, startTransition] = useTransition();

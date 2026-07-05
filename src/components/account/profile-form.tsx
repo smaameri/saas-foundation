@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
 import { updateProfile } from "@/app/(web)/admin/account/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,7 +66,9 @@ export function ProfileForm({
               <Label htmlFor="firstName">First name</Label>
               <Input id="firstName" placeholder="Jane" {...form.register("firstName")} />
               {form.formState.errors.firstName ? (
-                <p className="text-sm text-destructive">{form.formState.errors.firstName.message}</p>
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.firstName.message}
+                </p>
               ) : null}
             </div>
 
@@ -94,7 +95,9 @@ export function ProfileForm({
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <div className={`text-sm ${status && !status.ok ? "text-destructive" : "text-muted-foreground"}`}>
+            <div
+              className={`text-sm ${status && !status.ok ? "text-destructive" : "text-muted-foreground"}`}
+            >
               {status ? status.message : null}
             </div>
             <Button disabled={isPending} type="submit">

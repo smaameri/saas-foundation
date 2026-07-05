@@ -1,13 +1,13 @@
 "use client";
 
+import { columns } from "./columns";
 import { useQuery } from "@tanstack/react-query";
 import { customerUsersApi } from "@/api/admin/customerUsersApi";
 import type { ListCustomerUsersParams } from "@/app/api/admin/customer-users/schema";
-import { useConnectedTable } from "@/hooks/use-connected-table";
-import { ContentLayout } from "@/components/platform/content-layout";
 import { DataTable } from "@/components/connected-data-table/data-table";
+import { ContentLayout } from "@/components/platform/content-layout";
 import { InviteUserModal } from "@/components/users/invite-user-modal";
-import { columns } from "./columns";
+import { useConnectedTable } from "@/hooks/use-connected-table";
 
 export default function UsersPage() {
   const { data: organizations = [] } = useQuery({

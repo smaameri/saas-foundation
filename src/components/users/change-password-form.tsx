@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z
   .object({
@@ -68,7 +67,9 @@ export function ChangePasswordForm() {
             <Label htmlFor="currentPassword">Current password</Label>
             <Input id="currentPassword" type="password" {...form.register("currentPassword")} />
             {form.formState.errors.currentPassword ? (
-              <p className="text-sm text-destructive">{form.formState.errors.currentPassword.message}</p>
+              <p className="text-sm text-destructive">
+                {form.formState.errors.currentPassword.message}
+              </p>
             ) : null}
           </div>
 
@@ -76,7 +77,9 @@ export function ChangePasswordForm() {
             <Label htmlFor="newPassword">New password</Label>
             <Input id="newPassword" type="password" {...form.register("newPassword")} />
             {form.formState.errors.newPassword ? (
-              <p className="text-sm text-destructive">{form.formState.errors.newPassword.message}</p>
+              <p className="text-sm text-destructive">
+                {form.formState.errors.newPassword.message}
+              </p>
             ) : null}
           </div>
 
@@ -84,12 +87,16 @@ export function ChangePasswordForm() {
             <Label htmlFor="confirmPassword">Confirm new password</Label>
             <Input id="confirmPassword" type="password" {...form.register("confirmPassword")} />
             {form.formState.errors.confirmPassword ? (
-              <p className="text-sm text-destructive">{form.formState.errors.confirmPassword.message}</p>
+              <p className="text-sm text-destructive">
+                {form.formState.errors.confirmPassword.message}
+              </p>
             ) : null}
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <div className={`text-sm ${status && !status.ok ? "text-destructive" : "text-muted-foreground"}`}>
+            <div
+              className={`text-sm ${status && !status.ok ? "text-destructive" : "text-muted-foreground"}`}
+            >
               {status ? status.message : null}
             </div>
             <Button disabled={isPending} type="submit">

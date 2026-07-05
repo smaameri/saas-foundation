@@ -2,6 +2,7 @@
 
 import type { Table } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import {
   Table as ShadTable,
   TableBody,
@@ -10,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 
 interface DataTableProps<TData> {
   table: Table<TData>;

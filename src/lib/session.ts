@@ -1,6 +1,5 @@
-import {headers} from "next/headers";
-
-import {auth} from "@/lib/auth";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 type SessionResult = Awaited<ReturnType<typeof auth.api.getSession>>;
 
@@ -16,7 +15,7 @@ export async function fetchSession(): Promise<SessionResult | null> {
     }
 
     return result;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

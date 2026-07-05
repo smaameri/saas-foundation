@@ -1,23 +1,35 @@
 "use client";
 
-import {useState, useTransition} from "react";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {UserPlus} from "lucide-react";
-import {useRouter} from "next/navigation";
-import {Controller, useForm} from "react-hook-form";
-import {z} from "zod";
-import {ApiError} from "@/api/client";
-import {invitationsApi} from "@/api/admin/invitationsApi";
-import {Button} from "@/components/ui/button";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserPlus } from "lucide-react";
+import { z } from "zod";
+import { invitationsApi } from "@/api/admin/invitationsApi";
+import { ApiError } from "@/api/client";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const roleOptions = [
-  {value: "member", label: "Member"},
-  {value: "admin", label: "Admin"},
-  {value: "owner", label: "Owner"},
+  { value: "member", label: "Member" },
+  { value: "admin", label: "Admin" },
+  { value: "owner", label: "Owner" },
 ] as const;
 
 const formSchema = z.object({
@@ -27,7 +39,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function InviteUserModal({organizationId}: { organizationId: string }) {
+export function InviteUserModal({ organizationId }: { organizationId: string }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -35,7 +47,7 @@ export function InviteUserModal({organizationId}: { organizationId: string }) {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {email: "", role: "member"},
+    defaultValues: { email: "", role: "member" },
   });
 
   const handleClose = (val: boolean) => {
@@ -55,7 +67,9 @@ export function InviteUserModal({organizationId}: { organizationId: string }) {
         handleClose(false);
         router.refresh();
       } catch (err) {
-        setError(err instanceof ApiError ? err.message : "Failed to send invite. Please try again.");
+        setError(
+          err instanceof ApiError ? err.message : "Failed to send invite. Please try again.",
+        );
       }
     });
   };
@@ -63,7 +77,7 @@ export function InviteUserModal({organizationId}: { organizationId: string }) {
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        <UserPlus className="h-4 w-4"/>
+        <UserPlus className="h-4 w-4" />
         Invite user
       </Button>
 
@@ -71,9 +85,7 @@ export function InviteUserModal({organizationId}: { organizationId: string }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite a user</DialogTitle>
-            <DialogDescription>
-              Send an invitation to join this organization.
-            </DialogDescription>
+            <DialogDescription>Send an invitation to join this organization.</DialogDescription>
           </DialogHeader>
 
           <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
