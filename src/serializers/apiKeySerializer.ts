@@ -1,5 +1,5 @@
-import type { listApiKeys } from "@/repositories/admin/apiKeyRepository";
 import type { ApiKey } from "@/services/api/types/apiKey";
+import type { listApiKeys } from "@/repositories/admin/apiKeyRepository";
 
 type PrismaApiKey = Awaited<ReturnType<typeof listApiKeys>>["data"][number];
 

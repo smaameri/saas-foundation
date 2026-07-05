@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
-import { validationErrorResponse } from "@/app/api/response";
 import { mapZodErrors } from "@/validators/BaseValidator";
+import { validationErrorResponse } from "@/app/api/response";
 
 type RouteHandler = (
   request: Request,

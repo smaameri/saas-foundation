@@ -1,7 +1,7 @@
 import { CancelInvitationValidator } from "./validator";
+import { cancelInvitation } from "@/repositories/admin/invitationRepository";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { validationErrorResponse } from "@/app/api/response";
-import { cancelInvitation } from "@/repositories/admin/invitationRepository";
 
 export const DELETE = withAdmin(async (_request, { params }) => {
   const { id } = await params;

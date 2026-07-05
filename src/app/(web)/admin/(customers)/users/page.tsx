@@ -2,12 +2,12 @@
 
 import { columns } from "./columns";
 import { useQuery } from "@tanstack/react-query";
-import type { ListCustomerUsersParams } from "@/app/api/admin/customer-users/schema";
+import { customerUsersApi } from "@/services/api/admin/customerUsersApi";
 import { DataTable } from "@/components/connected-data-table/data-table";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { InviteUserModal } from "@/components/users/invite-user-modal";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import { customerUsersApi } from "@/services/api/admin/customerUsersApi";
+import type { ListCustomerUsersParams } from "@/app/api/admin/customer-users/schema";
 
 export default function UsersPage() {
   const { data: organizations = [] } = useQuery({

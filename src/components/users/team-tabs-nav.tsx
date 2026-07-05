@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { tabsListVariants } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { tabsListVariants } from "@/components/ui/tabs";
 
 const tabs = [
   { label: "Users", href: "/admin/team/users" },

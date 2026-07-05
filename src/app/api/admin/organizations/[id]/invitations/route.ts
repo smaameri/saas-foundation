@@ -1,7 +1,7 @@
 import { CreateInvitationValidator } from "./validator";
+import { sendInvitation } from "@/services/admin/invitationService";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { createdResponse, validationErrorResponse } from "@/app/api/response";
-import { sendInvitation } from "@/services/admin/invitationService";
 
 export const POST = withAdmin(async (request, { params }, { session }) => {
   const { id: organizationId } = await params;

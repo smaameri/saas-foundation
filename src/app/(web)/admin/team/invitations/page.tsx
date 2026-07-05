@@ -1,10 +1,10 @@
 "use client";
 
 import { columns } from "./columns";
-import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { DataTable } from "@/components/connected-data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import { invitationsApi } from "@/services/api/admin/invitationsApi";
+import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
 
 export default function TeamInvitationsPage() {
   const { table } = useConnectedTable({

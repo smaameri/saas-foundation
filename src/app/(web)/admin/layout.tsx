@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { fetchSession } from "@/lib/session";
 import { AppSidebar } from "@/components/app/app-sidebar";
 import { HeaderUserButton } from "@/components/app/header-user-button";
-import { fetchSession } from "@/lib/session";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const session = await fetchSession();

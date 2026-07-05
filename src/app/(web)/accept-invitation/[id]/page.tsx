@@ -1,8 +1,8 @@
+import { prisma } from "@/lib/prisma";
+import { fetchSession } from "@/lib/session";
 import { AcceptInvitationForm } from "@/components/auth/accept-invitation-form";
 import { LoginForm } from "@/components/auth/login-form";
 import { SignOutButton } from "@/components/auth/sign-out-button";
-import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
 
 export default async function AcceptInvitationPage({
   params,

@@ -1,6 +1,6 @@
+import { prisma } from "@/lib/prisma";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { notFoundResponse } from "@/app/api/response";
-import { prisma } from "@/lib/prisma";
 
 export const DELETE = withAdmin(async (_request, { params }) => {
   const { id } = await params;

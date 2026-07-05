@@ -1,10 +1,10 @@
 "use client";
 
 import { columns } from "./columns";
-import type { ListUsersParams } from "@/app/api/admin/users/schema";
+import { usersApi } from "@/services/api/admin/usersApi";
 import { DataTable } from "@/components/connected-data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import { usersApi } from "@/services/api/admin/usersApi";
+import type { ListUsersParams } from "@/app/api/admin/users/schema";
 
 export default function TeamUsersPage() {
   const { table } = useConnectedTable({

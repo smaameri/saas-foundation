@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Building2, KeyRound, LayoutDashboard, Users, UsersRound } from "lucide-react";
-import { UserButton } from "@/components/app/user-button";
 import { cn } from "@/lib/utils";
+import { UserButton } from "@/components/app/user-button";
 
 const navSections = [
   {

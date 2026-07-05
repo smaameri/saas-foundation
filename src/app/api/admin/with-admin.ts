@@ -1,7 +1,7 @@
 import type { Session, User } from "better-auth";
-import { withErrorHandler } from "@/app/api/with-error-handler";
 import { prisma } from "@/lib/prisma";
 import { fetchSession } from "@/lib/session";
+import { withErrorHandler } from "@/app/api/with-error-handler";
 import { Portal } from "@/config/portals";
 
 export type AdminContext = {

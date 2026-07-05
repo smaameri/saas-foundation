@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DeleteButton } from "@/components/buttons/delete-button";
 import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
+import { DeleteButton } from "@/components/buttons/delete-button";
 
 interface DeleteApiKeyButtonProps {
   id: string;

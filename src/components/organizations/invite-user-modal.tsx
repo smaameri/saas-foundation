@@ -6,6 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlus } from "lucide-react";
 import { z } from "zod";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
+import { ApiError } from "@/services/api/client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,8 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { invitationsApi } from "@/services/api/admin/invitationsApi";
-import { ApiError } from "@/services/api/client";
 
 const roleOptions = [
   { value: "member", label: "Member" },

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { InviteUserModal } from "@/components/organizations/invite-user-modal";
 import { OrgDetailTabs } from "@/components/organizations/org-detail-tabs";
 import { ContentLayout } from "@/components/platform/content-layout";
-import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Organization",

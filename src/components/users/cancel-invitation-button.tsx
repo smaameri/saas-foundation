@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
+import { Button } from "@/components/ui/button";
 
 export function CancelInvitationButton({ invitationId }: { invitationId: string }) {
   const [isPending, startTransition] = useTransition();

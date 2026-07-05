@@ -1,5 +1,5 @@
-import type { listAdminInvitations } from "@/repositories/admin/adminOrganizationRepository";
 import type { Invitation } from "@/services/api/types/invitation";
+import type { listAdminInvitations } from "@/repositories/admin/adminOrganizationRepository";
 
 type PrismaInvitation = Awaited<ReturnType<typeof listAdminInvitations>>["data"][number];
 

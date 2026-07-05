@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { AccountTabs } from "@/components/account/account-tabs";
-import { ContentLayout } from "@/components/platform/content-layout";
 import { prisma } from "@/lib/prisma";
 import { fetchSession } from "@/lib/session";
+import { AccountTabs } from "@/components/account/account-tabs";
+import { ContentLayout } from "@/components/platform/content-layout";
 
 export const metadata: Metadata = {
   title: "Account",

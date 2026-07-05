@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { z } from "zod";
-import { createOrganization } from "@/app/(web)/admin/(customers)/organizations/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createOrganization } from "@/app/(web)/admin/(customers)/organizations/actions";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),

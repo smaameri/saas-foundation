@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { listOrganizations } from "@/repositories/admin/organizationRepository";
 import { AddOrganizationModal } from "@/components/organizations/add-organization-modal";
 import { ContentLayout } from "@/components/platform/content-layout";
 import {
@@ -10,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { listOrganizations } from "@/repositories/admin/organizationRepository";
 
 export const metadata: Metadata = {
   title: "Organizations",
