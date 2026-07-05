@@ -1,9 +1,16 @@
-import type { ZodIssue } from "zod";
+import { z } from "zod";
 
 export type ValidationError = {
   path: string[];
   message: string;
 };
+
+export function mapZodErrors(issues: z.core.$ZodIssue[]): ValidationError[] {
+  return issues.map((issue) => ({
+    path: issue.path.map(String),
+    message: issue.message,
+  }));
+}
 
 export abstract class BaseValidator<T> {
   public errors: ValidationError[] = [];
@@ -16,10 +23,7 @@ export abstract class BaseValidator<T> {
     return this.validatedData;
   }
 
-  protected mapZodErrors(issues: ZodIssue[]): void {
-    this.errors = issues.map((issue) => ({
-      path: issue.path.map(String),
-      message: issue.message,
-    }));
+  protected mapZodErrors(issues: z.core.$ZodIssue[]): void {
+    this.errors = mapZodErrors(issues);
   }
 }

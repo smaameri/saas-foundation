@@ -10,7 +10,7 @@ export interface ApiErrorResponse {
   error: {
     code?: string;
     message?: string;
-    details?: Array<{ field?: string; message?: string }> | null;
+    details?: Array<{ path?: string; message?: string }> | null;
   };
 }
 
@@ -71,7 +71,7 @@ export function validationErrorResponse(errors: ValidationError[]): Response {
       error: {
         code: "validation_failed",
         message: "One or more fields are invalid.",
-        details: errors.map((e) => ({field: e.path[0], message: e.message})),
+        details: errors.map((e) => ({path: e.path.join("."), message: e.message})),
       },
     } satisfies ApiErrorResponse,
     {status: 400}

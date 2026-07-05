@@ -4,9 +4,10 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     public code: string | undefined,
+    public apiMessage: string | undefined,
     public details: ApiErrorResponse["error"]["details"]
   ) {
-    super(code ?? "An unexpected error occurred.");
+    super(apiMessage ?? code ?? "An unexpected error occurred.");
   }
 }
 
@@ -26,7 +27,7 @@ export class ApiClient {
 
     if (!res.ok) {
       const error = (json as ApiErrorResponse)?.error ?? {};
-      throw new ApiError(res.status, error.code, error.details);
+      throw new ApiError(res.status, error.code, error.message, error.details);
     }
 
     return (json as ApiSuccessResponse<T>).data;
@@ -60,7 +61,7 @@ export class ApiClient {
     const json = await res.json().catch(() => null);
     if (!res.ok) {
       const error = (json as ApiErrorResponse)?.error ?? {};
-      throw new ApiError(res.status, error.code, error.details);
+      throw new ApiError(res.status, error.code, error.message, error.details);
     }
     const { data, pagination } = json as ApiSuccessResponse<T[]> & { pagination: PaginationData };
     return { data, pagination };

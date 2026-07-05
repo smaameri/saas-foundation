@@ -1,4 +1,6 @@
 import { ZodError } from "zod";
+import { validationErrorResponse } from "@/app/api/response";
+import { mapZodErrors } from "@/validators/BaseValidator";
 
 type RouteHandler = (request: Request, context: { params: Promise<Record<string, string>> }) => Promise<Response>;
 
@@ -8,7 +10,7 @@ export function withErrorHandler(handler: RouteHandler): RouteHandler {
       return await handler(request, context);
     } catch (err) {
       if (err instanceof ZodError) {
-        return Response.json({ errors: err.flatten() }, { status: 400 });
+        return validationErrorResponse(mapZodErrors(err.issues));
       }
       throw err;
     }

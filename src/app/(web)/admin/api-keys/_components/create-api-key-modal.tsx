@@ -12,6 +12,7 @@ import {PrimaryButton} from "@/components/buttons/primary-button";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import {MutationError} from "@/components/feedback/mutation-error";
 
 export function CreateApiKeyModal() {
   const [open, setOpen] = useState(false);
@@ -38,8 +39,7 @@ export function CreateApiKeyModal() {
       setCreatedKey(null);
     }
   };
-
-
+  
   return (
     <>
       <PrimaryButton onClick={() => setOpen(true)}>
@@ -85,7 +85,7 @@ export function CreateApiKeyModal() {
                   )}
                 />
 
-                {isError ? <p className="text-sm text-destructive">{error.message}</p> : null}
+                <MutationError isError={isError} error={error} fallback="Unable to create API key. Please try again." />
 
                 <div className="flex justify-end">
                   <PrimaryButton type="submit" isPending={isPending} pendingLabel="Creating...">
