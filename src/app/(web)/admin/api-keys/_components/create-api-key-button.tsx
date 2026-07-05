@@ -14,7 +14,7 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {MutationError} from "@/components/feedback/mutation-error";
 
-export function CreateApiKeyModal() {
+export function CreateApiKeyButton() {
   const [open, setOpen] = useState(false);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const queryClient = useQueryClient();

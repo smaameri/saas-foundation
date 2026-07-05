@@ -6,7 +6,7 @@ import { useConnectedTable } from "@/hooks/use-connected-table";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { columns } from "./columns";
 import { DataTable } from "@/components/connected-data-table/data-table";
-import { CreateApiKeyModal } from "./_components/create-api-key-modal";
+import { CreateApiKeyButton } from "./_components/create-api-key-button";
 
 export default function ApiKeysPage() {
   const { table } = useConnectedTable({
@@ -25,7 +25,7 @@ export default function ApiKeysPage() {
     <ContentLayout
       title="API Keys"
       description="Manage API keys for programmatic access."
-      actions={<CreateApiKeyModal />}
+      actions={<CreateApiKeyButton />}
     >
       <DataTable table={table} />
     </ContentLayout>
