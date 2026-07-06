@@ -2,26 +2,19 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
 import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import type { ListParams } from "@/services/api/listParams";
 import type { PaginationData } from "@/app/api/response";
 
-export interface ConnectedTableParams {
-  sort?: string;
-  order?: "asc" | "desc";
-  page: number;
-  perPage: number;
-}
+export type { ListParams };
 
 interface UseConnectedTableOptions<TData> {
   queryKey: unknown[];
-  queryFn: (params: ConnectedTableParams) => Promise<{ data: TData[]; pagination: PaginationData }>;
+  queryFn: (params: ListParams) => Promise<{ data: TData[]; pagination: PaginationData }>;
   columns: ColumnDef<TData>[];
   pageSize?: number;
 }
 
-function toConnectedTableParams(
-  sorting: SortingState,
-  pagination: PaginationState,
-): ConnectedTableParams {
+function toListParams(sorting: SortingState, pagination: PaginationState): ListParams {
   const sort = sorting[0];
   return {
     sort: sort?.id,
@@ -40,7 +33,7 @@ export function useConnectedTable<TData>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize });
 
-  const params = toConnectedTableParams(sorting, pagination);
+  const params = toListParams(sorting, pagination);
 
   const queryResult = useQuery({
     queryKey: [...queryKey, params],

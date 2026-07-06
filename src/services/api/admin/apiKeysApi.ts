@@ -1,10 +1,11 @@
 import { apiClient } from "@/services/api/client";
+import type { ListParams } from "@/services/api/listParams";
 import type { ApiKey, CreatedApiKey } from "@/services/api/types/apiKey";
-import type { CreateApiKeyBody, ListApiKeysParams } from "@/app/api/admin/api-keys/schema";
+import type { CreateApiKeyBody } from "@/app/api/admin/api-keys/schema";
 import type { PaginationData } from "@/app/api/response";
 
 export const apiKeysApi = {
-  listApiKeys(params?: ListApiKeysParams): Promise<{ data: ApiKey[]; pagination: PaginationData }> {
+  listApiKeys(params?: ListParams): Promise<{ data: ApiKey[]; pagination: PaginationData }> {
     return apiClient.getPaginated<ApiKey>("/admin/api-keys", params);
   },
 

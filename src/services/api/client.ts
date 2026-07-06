@@ -1,3 +1,4 @@
+import type { ListParams } from "@/services/api/listParams";
 import type { ApiErrorResponse, ApiSuccessResponse, PaginationData } from "@/app/api/response";
 
 export class ApiError extends Error {
@@ -48,12 +49,13 @@ export class ApiClient {
 
   async getPaginated<T>(
     path: string,
-    params?: Record<string, string | number | undefined>,
+    params?: ListParams,
   ): Promise<{ data: T[]; pagination: PaginationData }> {
     if (params) {
+      const { sort, order, page, perPage } = params;
       const query = new URLSearchParams(
         Object.fromEntries(
-          Object.entries(params)
+          Object.entries({ sort, order, page, perPage })
             .filter(([, v]) => v != null)
             .map(([k, v]) => [k, String(v)]),
         ),
