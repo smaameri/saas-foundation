@@ -29,13 +29,27 @@ type Filter = {
 interface DataTableProps<TData> {
   table: TanstackTable<TData>;
   searchPlaceholder?: string;
+  showSearch?: boolean;
+  showViewOptions?: boolean;
   filters?: Filter[];
 }
 
-export function DataTable<TData>({ table, searchPlaceholder, filters }: DataTableProps<TData>) {
+export function DataTable<TData>({
+  table,
+  searchPlaceholder,
+  showSearch,
+  showViewOptions,
+  filters,
+}: DataTableProps<TData>) {
   return (
     <div className="@container/content flex flex-col gap-4">
-      <DataTableToolbar table={table} searchPlaceholder={searchPlaceholder} filters={filters} />
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder={searchPlaceholder}
+        showSearch={showSearch}
+        showViewOptions={showViewOptions}
+        filters={filters}
+      />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
