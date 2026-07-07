@@ -2,12 +2,6 @@ import { type SidebarData } from "../types";
 import { Building2, KeyRound, LayoutDashboard, Users, UsersRound } from "lucide-react";
 
 export const sidebarData: SidebarData = {
-  user: {
-    name: "",
-    email: "",
-    avatar: "",
-  },
-  teams: [],
   navGroups: [
     {
       title: "General",

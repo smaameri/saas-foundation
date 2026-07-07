@@ -10,5 +10,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     redirect("/login");
   }
 
-  return <AdminLayout>{children}</AdminLayout>;
+  const user = session.user;
+
+  return (
+    <AdminLayout user={{ name: user.name ?? "", email: user.email, image: user.image ?? "" }}>
+      {children}
+    </AdminLayout>
+  );
 }

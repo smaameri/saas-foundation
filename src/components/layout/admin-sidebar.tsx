@@ -1,6 +1,8 @@
+"use client";
+
 import { sidebarData } from "./data/sidebar-data";
 import { NavGroup } from "./nav-group";
-// import { NavUser } from "./nav-user";
+import { NavUser } from "./nav-user";
 import { AppTitle } from "@/components/layout/app-title";
 import {
   Sidebar,
@@ -11,7 +13,15 @@ import {
 } from "@/components/ui/sidebar";
 import { useLayout } from "@/context/layout-provider";
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  user: {
+    name: string;
+    email: string;
+    image: string;
+  };
+};
+
+export function AppSidebar({ user }: AppSidebarProps) {
   const { collapsible, variant } = useLayout();
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
@@ -23,7 +33,9 @@ export function AppSidebar() {
           <NavGroup key={props.title} {...props} />
         ))}
       </SidebarContent>
-      <SidebarFooter>{/*<NavUser user={sidebarData.user} />*/}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
