@@ -52,8 +52,8 @@ export class ApiClient {
     params?: ListParams,
   ): Promise<{ data: T[]; pagination: PaginationData }> {
     if (params) {
-      const { sort, order, page, perPage, filters } = params;
-      const entries: [string, string][] = Object.entries({ sort, order, page, perPage })
+      const { search, sort, order, page, perPage, filters } = params;
+      const entries: [string, string][] = Object.entries({ search, sort, order, page, perPage })
         .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]);
       if (filters) {

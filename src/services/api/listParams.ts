@@ -1,4 +1,5 @@
 export interface ListParams {
+  search?: string;
   filters?: Record<string, unknown>;
   sort?: string;
   order?: "asc" | "desc";

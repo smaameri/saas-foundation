@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const listApiKeysSchema = z.object({
+  search: z.string().optional(),
   sort: z.enum(["name", "createdAt", "expiresAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
   page: z.coerce.number().int().positive().optional().default(1),

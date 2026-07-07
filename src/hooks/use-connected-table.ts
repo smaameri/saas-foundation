@@ -28,12 +28,14 @@ function toListParams(
   sorting: SortingState,
   pagination: PaginationState,
   columnFilters: ColumnFiltersState,
+  globalFilter: string,
 ): ListParams {
   const sort = sorting[0];
   const filters = columnFilters.length
     ? Object.fromEntries(columnFilters.map((f) => [f.id, f.value as string[]]))
     : undefined;
   return {
+    search: globalFilter || undefined,
     sort: sort?.id,
     order: sort ? (sort.desc ? "desc" : "asc") : undefined,
     page: pagination.pageIndex + 1,
@@ -51,8 +53,9 @@ export function useConnectedTable<TData>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize });
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
-  const params = toListParams(sorting, pagination, columnFilters);
+  const params = toListParams(sorting, pagination, columnFilters, globalFilter);
 
   const queryResult = useQuery({
     queryKey: [...queryKey, params],
@@ -62,7 +65,7 @@ export function useConnectedTable<TData>({
   const table = useReactTable({
     data: queryResult.data?.data ?? [],
     columns,
-    state: { sorting, pagination, columnFilters },
+    state: { sorting, pagination, columnFilters, globalFilter },
     onSortingChange: (updater) => {
       setSorting(updater);
       setPagination((p) => ({ ...p, pageIndex: 0 }));
@@ -70,6 +73,10 @@ export function useConnectedTable<TData>({
     onPaginationChange: setPagination,
     onColumnFiltersChange: (updater) => {
       setColumnFilters(updater);
+      setPagination((p) => ({ ...p, pageIndex: 0 }));
+    },
+    onGlobalFilterChange: (updater) => {
+      setGlobalFilter(updater);
       setPagination((p) => ({ ...p, pageIndex: 0 }));
     },
     manualSorting: true,
