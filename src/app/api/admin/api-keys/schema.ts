@@ -5,6 +5,10 @@ export const listApiKeysSchema = z.object({
   order: z.enum(["asc", "desc"]).optional(),
   page: z.coerce.number().int().positive().optional().default(1),
   perPage: z.coerce.number().int().positive().optional().default(10),
+  enabled: z
+    .string()
+    .transform((v) => v.split(","))
+    .optional(),
 });
 
 export const createApiKeySchema = z.object({

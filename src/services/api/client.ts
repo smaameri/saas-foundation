@@ -52,14 +52,18 @@ export class ApiClient {
     params?: ListParams,
   ): Promise<{ data: T[]; pagination: PaginationData }> {
     if (params) {
-      const { sort, order, page, perPage } = params;
-      const query = new URLSearchParams(
-        Object.fromEntries(
-          Object.entries({ sort, order, page, perPage })
-            .filter(([, v]) => v != null)
-            .map(([k, v]) => [k, String(v)]),
-        ),
-      ).toString();
+      const { sort, order, page, perPage, filters } = params;
+      const entries: [string, string][] = Object.entries({ sort, order, page, perPage })
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => [k, String(v)]);
+      if (filters) {
+        for (const [key, value] of Object.entries(filters)) {
+          if (Array.isArray(value) && value.length > 0) {
+            entries.push([key, value.join(",")]);
+          }
+        }
+      }
+      const query = new URLSearchParams(entries).toString();
       if (query) path = `${path}?${query}`;
     }
     const res = await fetch(`${this.basePath}${path}`);

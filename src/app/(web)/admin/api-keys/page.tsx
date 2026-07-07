@@ -20,7 +20,19 @@ export default function ApiKeysPage() {
       description="Manage API keys for programmatic access."
       actions={<CreateApiKeyButton />}
     >
-      <DataTable table={table} />
+      <DataTable
+        table={table}
+        filters={[
+          {
+            columnId: "enabled",
+            title: "Status",
+            options: [
+              { label: "Active", value: "true" },
+              { label: "Disabled", value: "false" },
+            ],
+          },
+        ]}
+      />
     </ContentLayout>
   );
 }
