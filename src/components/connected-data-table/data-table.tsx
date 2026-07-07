@@ -18,7 +18,7 @@ interface DataTableProps<TData> {
 
 export function DataTable<TData>({ table }: DataTableProps<TData>) {
   return (
-    <>
+    <div className="overflow-hidden rounded-md border">
       <ShadTable>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -52,6 +52,6 @@ export function DataTable<TData>({ table }: DataTableProps<TData>) {
         </TableBody>
       </ShadTable>
       <DataTablePagination table={table} />
-    </>
+    </div>
   );
 }
