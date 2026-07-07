@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Menu, X } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   SidebarMenu,
@@ -37,7 +37,7 @@ export function AppTitle() {
 }
 
 function ToggleSidebar({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, open } = useSidebar();
 
   return (
     <Button
@@ -53,7 +53,11 @@ function ToggleSidebar({ className, onClick, ...props }: React.ComponentProps<ty
       {...props}
     >
       <X className="md:hidden" />
-      <Menu className="max-md:hidden" />
+      {open ? (
+        <PanelLeftClose className="max-md:hidden text-muted-foreground" />
+      ) : (
+        <PanelLeftOpen className="max-md:hidden" />
+      )}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

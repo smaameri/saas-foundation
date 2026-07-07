@@ -7,10 +7,15 @@ import { LayoutProvider } from "@/context/layout-provider";
 
 type BaseAuthenticatedLayoutProps = {
   sidebar: React.ReactNode;
+  header?: React.ReactNode;
   children?: React.ReactNode;
 };
 
-export function BaseAuthenticatedLayout({ sidebar, children }: BaseAuthenticatedLayoutProps) {
+export function BaseAuthenticatedLayout({
+  sidebar,
+  header,
+  children,
+}: BaseAuthenticatedLayoutProps) {
   const defaultOpen = getCookie("sidebar_state") !== "false";
   return (
     <LayoutProvider>
@@ -23,6 +28,7 @@ export function BaseAuthenticatedLayout({ sidebar, children }: BaseAuthenticated
             "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]",
           )}
         >
+          {header}
           {children}
         </SidebarInset>
       </SidebarProvider>
