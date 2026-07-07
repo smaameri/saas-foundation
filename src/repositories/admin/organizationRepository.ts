@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { SortOrder } from "@/repositories/types";
 
 export async function findById(id: string) {
   return prisma.organization.findUnique({
@@ -6,16 +7,33 @@ export async function findById(id: string) {
   });
 }
 
-export async function listOrganizations() {
-  return prisma.organization.findMany({
-    where: { portals: { has: "customer" } },
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      portals: true,
-      createdAt: true,
-      _count: { select: { members: true } },
-    },
-  });
+export async function listOrganizations(params?: {
+  sort?: string;
+  order?: SortOrder;
+  page?: number;
+  perPage?: number;
+}) {
+  const page = params?.page ?? 1;
+  const perPage = params?.perPage ?? 10;
+
+  const where = { portals: { has: "customer" } };
+  const select = {
+    id: true,
+    name: true,
+    createdAt: true,
+    _count: { select: { members: true } },
+  };
+
+  const [data, total] = await prisma.$transaction([
+    prisma.organization.findMany({
+      where,
+      select,
+      orderBy: { [params?.sort ?? "name"]: params?.order ?? "asc" },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.organization.count({ where }),
+  ]);
+
+  return { data, total };
 }

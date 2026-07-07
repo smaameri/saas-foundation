@@ -1,10 +1,6 @@
 export type Organization = {
   id: string;
   name: string;
-  slug: string | null;
-  logo: string | null;
-  metadata: string | null;
-  portals: string[];
+  memberCount: number;
   createdAt: string;
-  updatedAt: string;
 };

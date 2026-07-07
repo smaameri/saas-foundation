@@ -1,61 +1,21 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { listOrganizations } from "@/repositories/admin/organizationRepository";
-import { AddOrganizationModal } from "@/components/organizations/add-organization-modal";
+"use client";
+
+import { organizationsApi } from "@/services/api/admin/organizationsApi";
+import { DataTable } from "@/components/connected-data-table/data-table";
 import { ContentLayout } from "@/components/platform/content-layout";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useConnectedTable } from "@/hooks/use-connected-table";
+import { columns } from "@/app/(web)/admin/(customers)/organizations/columns";
 
-export const metadata: Metadata = {
-  title: "Organizations",
-};
-
-export default async function OrganizationsPage() {
-  const organizations = await listOrganizations();
+export default function OrganizationsPage() {
+  const { table } = useConnectedTable({
+    queryKey: ["admin", "organizations"],
+    queryFn: (params) => organizationsApi.listOrganizations(params),
+    columns,
+  });
 
   return (
-    <ContentLayout
-      title="Organizations"
-      description="Manage organizations on the platform."
-      actions={<AddOrganizationModal />}
-    >
-      {organizations.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No organizations yet.</p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Members</TableHead>
-              <TableHead>Created</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {organizations.map((org) => (
-              <TableRow key={org.id}>
-                <TableCell className="font-medium">
-                  <Link
-                    href={`/src/app/(web)/admin/(customers)/organizations/${org.id}`}
-                    className="hover:underline"
-                  >
-                    {org.name}
-                  </Link>
-                </TableCell>
-                <TableCell className="text-muted-foreground">{org._count.members}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {org.createdAt.toLocaleDateString()}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+    <ContentLayout title="Organizations" description="Manage organizations on the platform.">
+      <DataTable table={table} />
     </ContentLayout>
   );
 }
