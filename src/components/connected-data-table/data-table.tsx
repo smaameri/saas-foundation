@@ -19,7 +19,7 @@ interface DataTableProps<TData> {
 
 export function DataTable<TData>({ table }: DataTableProps<TData>) {
   return (
-    <>
+    <div className="@container/content">
       <div className="overflow-hidden rounded-md border">
         <ShadTable>
           <TableHeader>
@@ -75,7 +75,7 @@ export function DataTable<TData>({ table }: DataTableProps<TData>) {
           </TableBody>
         </ShadTable>
       </div>
-      <DataTablePagination table={table} className="mt-2" />
-    </>
+      <DataTablePagination table={table} className="mt-4" />
+    </div>
   );
 }
