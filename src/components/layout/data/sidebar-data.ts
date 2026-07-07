@@ -1,5 +1,5 @@
 import { type SidebarData } from "../types";
-import { Building2, KeyRound, LayoutDashboard, Users, UsersRound } from "lucide-react";
+import { Building2, KeyRound, LayoutDashboard, UserCog, Users } from "lucide-react";
 
 export const sidebarData: SidebarData = {
   navGroups: [
@@ -34,7 +34,7 @@ export const sidebarData: SidebarData = {
         {
           title: "Team",
           url: "/admin/team",
-          icon: UsersRound,
+          icon: UserCog,
         },
         {
           title: "API Keys",
