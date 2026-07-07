@@ -1,11 +1,12 @@
 "use client";
 
-import type { Table } from "@tanstack/react-table";
+import type { Table as TanstackTable } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 import { DataTablePagination } from "@/components/connected-data-table/pagination";
+import { DataTableToolbar } from "@/components/connected-data-table/toolbar";
 import {
-  Table as ShadTable,
+  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -13,15 +14,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+type FilterOption = {
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+};
+
+type Filter = {
+  columnId: string;
+  title: string;
+  options: FilterOption[];
+};
+
 interface DataTableProps<TData> {
-  table: Table<TData>;
+  table: TanstackTable<TData>;
+  searchPlaceholder?: string;
+  filters?: Filter[];
 }
 
-export function DataTable<TData>({ table }: DataTableProps<TData>) {
+export function DataTable<TData>({ table, searchPlaceholder, filters }: DataTableProps<TData>) {
   return (
-    <div className="@container/content">
+    <div className="@container/content flex flex-col gap-4">
+      <DataTableToolbar table={table} searchPlaceholder={searchPlaceholder} filters={filters} />
       <div className="overflow-hidden rounded-md border">
-        <ShadTable>
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -73,7 +89,7 @@ export function DataTable<TData>({ table }: DataTableProps<TData>) {
               </TableRow>
             )}
           </TableBody>
-        </ShadTable>
+        </Table>
       </div>
       <DataTablePagination table={table} className="mt-4" />
     </div>
