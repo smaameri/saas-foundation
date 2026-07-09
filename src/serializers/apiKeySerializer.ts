@@ -1,9 +1,7 @@
-import type { ApiKey } from "@/services/api/types/apiKey";
-import type { listApiKeys } from "@/repositories/admin/apiKeyRepository";
+import type { Apikey as PrismaApikey } from "@generated/prisma/client";
+import type { ApiKey, CreatedApiKey } from "@/services/api/types/apiKey";
 
-type PrismaApiKey = Awaited<ReturnType<typeof listApiKeys>>["data"][number];
-
-export function serializeApiKey(apiKey: PrismaApiKey): ApiKey {
+export function serializeApiKey(apiKey: PrismaApikey): ApiKey {
   return {
     id: apiKey.id,
     name: apiKey.name,
@@ -12,5 +10,12 @@ export function serializeApiKey(apiKey: PrismaApiKey): ApiKey {
     enabled: apiKey.enabled,
     expiresAt: apiKey.expiresAt?.toISOString() ?? null,
     createdAt: apiKey.createdAt.toISOString(),
+  };
+}
+
+export function serializeCreatedApiKey(apiKey: PrismaApikey & { key: string }): CreatedApiKey {
+  return {
+    ...serializeApiKey(apiKey),
+    key: apiKey.key,
   };
 }

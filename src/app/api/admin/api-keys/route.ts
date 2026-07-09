@@ -1,9 +1,8 @@
 import { createApiKeySchema, listApiKeysSchema } from "./schema";
 import { validateQuery } from "@/lib/api";
 import { auth } from "@/lib/auth";
-import type { CreatedApiKey } from "@/services/api/types/apiKey";
 import { listApiKeys } from "@/repositories/admin/apiKeyRepository";
-import { serializeApiKey } from "@/serializers/apiKeySerializer";
+import { serializeApiKey, serializeCreatedApiKey } from "@/serializers/apiKeySerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { createdResponse, paginatedResponse } from "@/app/api/response";
 
@@ -25,16 +24,5 @@ export const POST = withAdmin(async (request, _context, { session }) => {
     body: { name, userId: session.user.id },
   });
 
-  const result: CreatedApiKey = {
-    id: created.id,
-    name: created.name,
-    start: created.start ?? null,
-    prefix: created.prefix ?? null,
-    enabled: created.enabled ?? null,
-    expiresAt: created.expiresAt ? new Date(created.expiresAt).toISOString() : null,
-    createdAt: new Date(created.createdAt).toISOString(),
-    key: created.key,
-  };
-
-  return createdResponse(result);
+  return createdResponse(serializeCreatedApiKey(created));
 });
