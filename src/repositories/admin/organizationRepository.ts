@@ -4,6 +4,14 @@ import type { SortOrder } from "@/repositories/types";
 export async function findById(id: string) {
   return prisma.organization.findUnique({
     where: { id },
+    include: {
+      members: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+        },
+      },
+    },
   });
 }
 
