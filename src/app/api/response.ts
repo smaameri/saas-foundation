@@ -16,6 +16,12 @@ export interface ApiErrorResponse {
 
 export type ApiResult<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
+export interface PaginationInput {
+  page: number;
+  perPage: number;
+  total: number;
+}
+
 export interface PaginationData {
   page: number;
   per_page: number;
@@ -39,7 +45,16 @@ export function detailResponse<T>(item: T): Response {
   return Response.json({ success: true, data: item } satisfies DetailResponse<T>, { status: 200 });
 }
 
-export function paginatedResponse<T>(results: T[], pagination: PaginationData): Response {
+export function paginatedResponse<T>(
+  results: T[],
+  { page, perPage, total }: PaginationInput,
+): Response {
+  const pagination: PaginationData = {
+    page,
+    per_page: perPage,
+    total_pages: Math.ceil(total / perPage),
+    total_results: total,
+  };
   return Response.json(
     { success: true, data: results, pagination } satisfies PaginatedResponse<T>,
     { status: 200 },

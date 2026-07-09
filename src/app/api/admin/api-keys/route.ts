@@ -12,9 +12,8 @@ export const GET = withAdmin(async (request) => {
   const { data, total } = await listApiKeys(validated);
   return paginatedResponse(data.map(serializeApiKey), {
     page: validated.page,
-    per_page: validated.perPage,
-    total_pages: Math.ceil(total / validated.perPage),
-    total_results: total,
+    perPage: validated.perPage,
+    total,
   });
 });
 
