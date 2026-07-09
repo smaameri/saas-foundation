@@ -1,12 +1,12 @@
 import { listUsersSchema } from "./schema";
-import { parseQuery } from "@/lib/api";
+import { validateQuery } from "@/lib/api";
 import { listAdminUsers } from "@/repositories/admin/adminOrganizationRepository";
 import { serializeUser } from "@/serializers/userSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
-  const parsed = parseQuery(request, listUsersSchema);
+  const parsed = validateQuery(request, listUsersSchema);
   const { data, total } = await listAdminUsers(parsed);
   const page = parsed.page ?? 1;
   const perPage = parsed.perPage ?? 10;

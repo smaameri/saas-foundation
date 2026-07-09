@@ -1,5 +1,5 @@
 import { createApiKeySchema, listApiKeysSchema } from "./schema";
-import { parseQuery } from "@/lib/api";
+import { validateQuery } from "@/lib/api";
 import { auth } from "@/lib/auth";
 import type { CreatedApiKey } from "@/services/api/types/apiKey";
 import { listApiKeys } from "@/repositories/admin/apiKeyRepository";
@@ -8,14 +8,12 @@ import { withAdmin } from "@/app/api/admin/with-admin";
 import { createdResponse, paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
-  const parsed = parseQuery(request, listApiKeysSchema);
-  const { data, total } = await listApiKeys(parsed);
-  const page = parsed.page ?? 1;
-  const perPage = parsed.perPage ?? 10;
+  const validated = validateQuery(request, listApiKeysSchema);
+  const { data, total } = await listApiKeys(validated);
   return paginatedResponse(data.map(serializeApiKey), {
-    page,
-    per_page: perPage,
-    total_pages: Math.ceil(total / perPage),
+    page: validated.page,
+    per_page: validated.perPage,
+    total_pages: Math.ceil(total / validated.perPage),
     total_results: total,
   });
 });

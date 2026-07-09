@@ -1,33 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import type { SortOrder } from "@/repositories/types";
 
-export async function listApiKeys(params?: {
+export async function listApiKeys(params: {
+  enabled?: string[];
   search?: string;
   sort?: string;
   order?: SortOrder;
-  page?: number;
-  perPage?: number;
-  enabled?: string[];
+  page: number;
+  perPage: number;
 }) {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 10;
-
-  const enabledFilter = params?.enabled;
-  const enabledWhere =
-    enabledFilter && enabledFilter.length === 1
-      ? { enabled: enabledFilter[0] === "true" }
-      : undefined;
-
-  const searchWhere = params?.search
-    ? {
-        OR: [
-          { name: { contains: params.search, mode: "insensitive" as const } },
-          { start: { contains: params.search, mode: "insensitive" as const } },
-        ],
-      }
-    : undefined;
-
-  const where = { ...enabledWhere, ...searchWhere };
+  const { page, perPage } = params;
+  const where = {
+    ...enabledFilter(params.enabled),
+    ...searchFilter(params.search),
+  };
 
   const [data, total] = await prisma.$transaction([
     prisma.apikey.findMany({
@@ -40,4 +26,23 @@ export async function listApiKeys(params?: {
   ]);
 
   return { data, total };
+}
+
+function enabledFilter(enabled?: string[]) {
+  const hasTrue = enabled?.includes("true") ?? false;
+  const hasFalse = enabled?.includes("false") ?? false;
+
+  if (hasTrue && !hasFalse) return { enabled: true };
+  if (hasFalse && !hasTrue) return { enabled: false };
+  return undefined;
+}
+
+function searchFilter(search?: string) {
+  if (!search) return undefined;
+  return {
+    OR: [
+      { name: { contains: search, mode: "insensitive" as const } },
+      { start: { contains: search, mode: "insensitive" as const } },
+    ],
+  };
 }

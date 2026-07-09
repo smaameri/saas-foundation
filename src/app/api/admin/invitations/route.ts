@@ -1,12 +1,12 @@
 import { listInvitationsSchema } from "./schema";
-import { parseQuery } from "@/lib/api";
+import { validateQuery } from "@/lib/api";
 import { listAdminInvitations } from "@/repositories/admin/adminOrganizationRepository";
 import { serializeInvitation } from "@/serializers/invitationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
-  const parsed = parseQuery(request, listInvitationsSchema);
+  const parsed = validateQuery(request, listInvitationsSchema);
   const { data, total } = await listAdminInvitations(parsed);
   const page = parsed.page ?? 1;
   const perPage = parsed.perPage ?? 10;
