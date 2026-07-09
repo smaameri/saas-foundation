@@ -1,15 +1,13 @@
 import { z } from "zod";
+import { listSchema } from "@/app/api/schemas";
 
-export const listApiKeysSchema = z.object({
+export const listApiKeysSchema = listSchema.extend({
   search: z.string().optional(),
-  sort: z.enum(["name", "createdAt", "expiresAt"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
-  page: z.coerce.number().int().positive().optional().default(1),
-  perPage: z.coerce.number().int().positive().optional().default(10),
   enabled: z
     .string()
     .transform((v) => v.split(","))
     .optional(),
+  sort: z.enum(["name", "createdAt", "expiresAt"]).optional(),
 });
 
 export const createApiKeySchema = z.object({
