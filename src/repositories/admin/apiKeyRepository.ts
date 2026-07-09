@@ -18,7 +18,7 @@ export async function listApiKeys(params: {
   const [data, total] = await prisma.$transaction([
     prisma.apikey.findMany({
       where,
-      orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "desc" },
+      orderBy: { [params.sort ?? "createdAt"]: params.order ?? "desc" },
       skip: (page - 1) * perPage,
       take: perPage,
     }),
