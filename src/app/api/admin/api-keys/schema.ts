@@ -14,5 +14,4 @@ export const createApiKeySchema = z.object({
   name: z.string().min(1, "Name is required"),
 });
 
-export type ListApiKeysParams = z.infer<typeof listApiKeysSchema>;
 export type CreateApiKeyBody = z.infer<typeof createApiKeySchema>;

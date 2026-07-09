@@ -1,14 +1,14 @@
-import { prisma } from "@/lib/prisma";
+import { deleteApiKeyById, findApiKeyById } from "@/repositories/admin/apiKeyRepository";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { notFoundResponse } from "@/app/api/response";
+import { noContentResponse, notFoundResponse } from "@/app/api/response";
 
 export const DELETE = withAdmin(async (_request, { params }) => {
   const { id } = await params;
 
-  const apiKey = await prisma.apikey.findUnique({ where: { id } });
+  const apiKey = await findApiKeyById(id);
   if (!apiKey) return notFoundResponse("API key not found.");
 
-  await prisma.apikey.delete({ where: { id } });
+  await deleteApiKeyById(id);
 
-  return new Response(null, { status: 204 });
+  return noContentResponse();
 });

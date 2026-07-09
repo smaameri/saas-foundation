@@ -61,6 +61,10 @@ export function paginatedResponse<T>(
   );
 }
 
+export function noContentResponse(): Response {
+  return new Response(null, { status: 204 });
+}
+
 export function createdResponse<T>(data: T): Response {
   return Response.json({ success: true, data } satisfies ApiSuccessResponse<T>, { status: 201 });
 }
