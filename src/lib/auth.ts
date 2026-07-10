@@ -4,6 +4,12 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin, magicLink, organization } from "better-auth/plugins";
 import { sendMagicLinkInviteEmail, sendOrganizationInvitationEmail } from "@/lib/email";
+import {
+  ac,
+  admin as adminRole,
+  member as memberRole,
+  owner as ownerRole,
+} from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { belongsToAdminPortal } from "@/repositories/auth/memberRepository";
 
@@ -40,6 +46,8 @@ export const auth = betterAuth({
       defaultRole: "user",
     }),
     organization({
+      ac,
+      roles: { owner: ownerRole, admin: adminRole, member: memberRole },
       allowUserToCreateOrganization: async (user) => {
         return belongsToAdminPortal(user.id);
       },
