@@ -11,6 +11,7 @@ import {
   owner as ownerRole,
 } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { findMemberByUserId } from "@/repositories/admin/memberRepository";
 import { belongsToAdminPortal } from "@/repositories/auth/memberRepository";
 
 const authSecret = process.env.BETTER_AUTH_SECRET;
@@ -25,6 +26,21 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const member = await findMemberByUserId(session.userId);
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: member?.organizationId,
+            },
+          };
+        },
+      },
+    },
+  },
   user: {
     additionalFields: {
       firstName: {
