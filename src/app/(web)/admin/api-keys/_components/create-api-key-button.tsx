@@ -67,7 +67,7 @@ export function CreateApiKeyButton() {
             <DialogDescription>
               {createdKey
                 ? "Copy your key now — it won't be shown again."
-                : "Give your API key a name to identify it later."}
+                : "This API key will be owned by you and tied to your account. Keep it secret and do not share it with others."}
             </DialogDescription>
           </DialogHeader>
 
