@@ -40,6 +40,7 @@ export const sidebarData: SidebarData = {
           title: "API Keys",
           url: "/admin/api-keys",
           icon: KeyRound,
+          permissions: { apiKey: ["read:any"] },
         },
       ],
     },
