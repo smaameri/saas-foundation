@@ -22,6 +22,12 @@ export const columns: ColumnDef<ApiKey>[] = [
     },
   },
   {
+    accessorKey: "user",
+    header: "Owner",
+    enableSorting: false,
+    cell: ({ row }) => row.original.user?.name ?? <span className="text-muted-foreground">—</span>,
+  },
+  {
     accessorKey: "enabled",
     header: "Status",
     enableSorting: false,

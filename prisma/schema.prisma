@@ -28,6 +28,7 @@ model User {
   accounts      Account[]
   members       Member[]
   invitations   Invitation[]
+  apiKeys       Apikey[]
 
   @@unique([email])
   @@map("user")
@@ -152,6 +153,7 @@ model Apikey {
   updatedAt          DateTime  @updatedAt @map("updated_at")
   permissions        String?
   metadata           String?
+  user               User      @relation(fields: [referenceId], references: [id])
 
   @@unique([key])
   @@index([referenceId])

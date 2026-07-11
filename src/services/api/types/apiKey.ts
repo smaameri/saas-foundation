@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 export type ApiKey = {
   id: string;
   name: string | null;
@@ -6,6 +8,7 @@ export type ApiKey = {
   enabled: boolean | null;
   expiresAt: string | null;
   createdAt: string;
+  user: User | null;
 };
 
 export type CreatedApiKey = ApiKey & {

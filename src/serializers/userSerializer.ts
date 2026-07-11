@@ -1,7 +1,5 @@
+import type { User as PrismaUser } from "@generated/prisma/client";
 import type { User } from "@/services/api/types/user";
-import type { listAdminUsers } from "@/repositories/admin/adminOrganizationRepository";
-
-type PrismaUser = Awaited<ReturnType<typeof listAdminUsers>>["data"][number];
 
 export function serializeUser(user: PrismaUser): User {
   return {
@@ -18,9 +16,5 @@ export function serializeUser(user: PrismaUser): User {
     banExpires: user.banExpires?.toISOString() ?? null,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
-    organizations: user.members.map((m) => ({
-      id: m.organization.id,
-      name: m.organization.name,
-    })),
   };
 }

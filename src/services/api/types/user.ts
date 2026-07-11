@@ -1,5 +1,3 @@
-import type { Organization } from "./organization";
-
 export type User = {
   id: string;
   name: string;
@@ -14,5 +12,4 @@ export type User = {
   banExpires: string | null;
   createdAt: string;
   updatedAt: string;
-  organizations: Organization[];
 };
