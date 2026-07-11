@@ -3,17 +3,17 @@
 import { authClient } from "@/lib/auth-client";
 import { type Permissions } from "@/lib/permissions";
 
-type OrgRole = "owner" | "admin" | "member";
+type AdminRole = "admin" | "user";
 
-let cachedRole: OrgRole | null = null;
+let cachedRole: AdminRole | null = null;
 
-async function getRole(): Promise<OrgRole | null> {
+async function getRole(): Promise<AdminRole | null> {
   if (cachedRole) return cachedRole;
 
-  const result = await authClient.organization.getActiveMember();
+  const { data } = await authClient.getSession();
 
-  if (result.data?.role) {
-    cachedRole = result.data.role as OrgRole;
+  if (data?.user?.role) {
+    cachedRole = data.user.role as AdminRole;
   }
 
   return cachedRole;
@@ -23,7 +23,7 @@ export const permissionsService = {
   can: async (permissions: Permissions): Promise<boolean> => {
     const role = await getRole();
     if (!role) return false;
-    return authClient.organization.checkRolePermission({ permissions, role });
+    return authClient.admin.checkRolePermission({ permissions, role });
   },
 
   clearCache: () => {

@@ -10,9 +10,12 @@ type RouteHandler = (
 export function withPermission(permissions: Permissions) {
   return (handler: RouteHandler): RouteHandler =>
     async (request, context) => {
-      const { success } = await auth.api.hasPermission({
-        headers: request.headers,
-        body: { permissions },
+      const session = await auth.api.getSession({ headers: request.headers });
+      const { success } = await auth.api.userHasPermission({
+        body: {
+          userId: session?.user.id,
+          permissions: permissions as Record<string, string[]>,
+        },
       });
 
       if (!success) {

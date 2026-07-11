@@ -1,28 +1,18 @@
 import { createAccessControl } from "better-auth/plugins/access";
-import {
-  adminAc,
-  defaultStatements,
-  memberAc,
-  ownerAc,
-} from "better-auth/plugins/organization/access";
+import { adminAc, defaultStatements, userAc } from "better-auth/plugins/admin/access";
 
 export const ac = createAccessControl({
   ...defaultStatements,
   apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"] as const,
 });
 
-export const owner = ac.newRole({
-  ...ownerAc.statements,
-  apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"],
-});
-
-export const admin = ac.newRole({
+export const adminRole = ac.newRole({
   ...adminAc.statements,
   apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"],
 });
 
-export const member = ac.newRole({
-  ...memberAc.statements,
+export const userRole = ac.newRole({
+  ...userAc.statements,
   apiKey: ["create", "read", "update", "delete"],
 });
 

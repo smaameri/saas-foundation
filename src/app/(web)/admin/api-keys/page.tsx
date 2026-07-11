@@ -1,18 +1,20 @@
-"use client";
-
-import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
-import { DataTable } from "@/components/connected-data-table/data-table";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { ContentLayout } from "@/components/platform/content-layout";
-import { useConnectedTable } from "@/hooks/use-connected-table";
+import { ApiKeysTable } from "@/app/(web)/admin/api-keys/_components/api-keys-table";
 import { CreateApiKeyButton } from "@/app/(web)/admin/api-keys/_components/create-api-key-button";
-import { columns } from "@/app/(web)/admin/api-keys/columns";
 
-export default function ApiKeysPage() {
-  const { table } = useConnectedTable({
-    queryKey: ["admin", "api-keys"],
-    queryFn: (params) => apiKeysApi.listApiKeys(params),
-    columns,
+export default async function ApiKeysPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const hasPermission = await auth.api.userHasPermission({
+    body: {
+      userId: session?.user.id,
+      permissions: { apiKey: ["read:any"] } as Record<string, string[]>,
+    },
   });
+
+  if (!hasPermission.success) redirect("/admin/dashboard");
 
   return (
     <ContentLayout
@@ -20,21 +22,7 @@ export default function ApiKeysPage() {
       description="Manage API keys for programmatic access."
       actions={<CreateApiKeyButton />}
     >
-      <DataTable
-        table={table}
-        showSearch
-        searchPlaceholder="Search by name or key..."
-        filters={[
-          {
-            columnId: "enabled",
-            title: "Status",
-            options: [
-              { label: "Active", value: "true" },
-              { label: "Disabled", value: "false" },
-            ],
-          },
-        ]}
-      />
+      <ApiKeysTable />
     </ContentLayout>
   );
 }
