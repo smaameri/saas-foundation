@@ -8,7 +8,7 @@ export interface ApiSuccessResponse<T> {
 export interface ApiErrorResponse {
   success: false;
   error: {
-    code?: string;
+    code: string;
     message?: string;
     details?: Array<{ path?: string; message?: string }> | null;
   };
@@ -67,6 +67,20 @@ export function noContentResponse(): Response {
 
 export function createdResponse<T>(data: T): Response {
   return Response.json({ success: true, data } satisfies ApiSuccessResponse<T>, { status: 201 });
+}
+
+export function unauthorizedResponse(message = "Unauthorized."): Response {
+  return Response.json(
+    { success: false, error: { code: "unauthorized", message } } satisfies ApiErrorResponse,
+    { status: 401 },
+  );
+}
+
+export function forbiddenResponse(message = "Forbidden."): Response {
+  return Response.json(
+    { success: false, error: { code: "forbidden", message } } satisfies ApiErrorResponse,
+    { status: 403 },
+  );
 }
 
 export function notFoundResponse(message = "Not found."): Response {

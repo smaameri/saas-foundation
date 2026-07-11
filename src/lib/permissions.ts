@@ -25,3 +25,10 @@ export const member = ac.newRole({
   ...memberAc.statements,
   apiKey: ["create", "read", "update", "delete"],
 });
+
+/**
+ * @example { member: ["create"], apiKey: ["read", "read:any"],  }
+ */
+export type Permissions = {
+  [K in keyof typeof ac.statements]?: (typeof ac.statements)[K][number][];
+};
