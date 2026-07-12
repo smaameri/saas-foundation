@@ -39,6 +39,18 @@ export const columns: ColumnDef<ApiKey>[] = [
       ),
   },
   {
+    accessorKey: "lastRequest",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Last Request" />,
+    cell: ({ row }) =>
+      row.original.lastRequest ? (
+        <span className="text-muted-foreground">
+          {new Date(row.original.lastRequest).toLocaleDateString()}
+        </span>
+      ) : (
+        <span className="text-muted-foreground">Never</span>
+      ),
+  },
+  {
     accessorKey: "expiresAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Expires" />,
     cell: ({ row }) =>

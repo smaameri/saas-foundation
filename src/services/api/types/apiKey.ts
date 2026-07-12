@@ -7,6 +7,7 @@ export type ApiKey = {
   prefix: string | null;
   enabled: boolean | null;
   expiresAt: string | null;
+  lastRequest: string | null;
   createdAt: string;
   user: User | null;
 };

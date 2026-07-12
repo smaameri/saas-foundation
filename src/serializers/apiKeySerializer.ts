@@ -12,6 +12,7 @@ export function serializeApiKey(apiKey: ApiKeyInput): ApiKey {
     prefix: apiKey.prefix,
     enabled: apiKey.enabled,
     expiresAt: apiKey.expiresAt?.toISOString() ?? null,
+    lastRequest: apiKey.lastRequest?.toISOString() ?? null,
     createdAt: apiKey.createdAt.toISOString(),
     user: apiKey.user ? serializeUser(apiKey.user) : null,
   };

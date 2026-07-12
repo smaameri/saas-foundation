@@ -17,6 +17,10 @@ export const apiKeysApi = {
     return apiClient.post<CreatedApiKey>("/admin/account/api-keys", params);
   },
 
+  updateAccountApiKey(id: string, body: { name: string }): Promise<ApiKey> {
+    return apiClient.patch<ApiKey>(`/admin/account/api-keys/${id}`, body);
+  },
+
   deleteApiKey(id: string): Promise<void> {
     return apiClient.delete(`/admin/api-keys/${id}`);
   },

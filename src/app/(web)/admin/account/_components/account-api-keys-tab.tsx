@@ -6,8 +6,8 @@ import type { ApiKey } from "@/services/api/types/apiKey";
 import { DataTableColumnHeader } from "@/components/connected-data-table/column-header";
 import { DataTable } from "@/components/connected-data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
+import { ApiKeyRowActions } from "@/app/(web)/admin/account/_components/api-key-row-actions";
 import { CreateApiKeyButton } from "@/app/(web)/admin/api-keys/_components/create-api-key-button";
-import { DeleteApiKeyButton } from "@/app/(web)/admin/api-keys/_components/delete-api-key-button";
 
 const columns: ColumnDef<ApiKey>[] = [
   {
@@ -37,6 +37,18 @@ const columns: ColumnDef<ApiKey>[] = [
       ),
   },
   {
+    accessorKey: "lastRequest",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Last Request" />,
+    cell: ({ row }) =>
+      row.original.lastRequest ? (
+        <span className="text-muted-foreground">
+          {new Date(row.original.lastRequest).toLocaleDateString()}
+        </span>
+      ) : (
+        <span className="text-muted-foreground">Never</span>
+      ),
+  },
+  {
     accessorKey: "expiresAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Expires" />,
     cell: ({ row }) =>
@@ -58,7 +70,7 @@ const columns: ColumnDef<ApiKey>[] = [
   {
     id: "actions",
     enableSorting: false,
-    cell: ({ row }) => <DeleteApiKeyButton id={row.original.id} />,
+    cell: ({ row }) => <ApiKeyRowActions id={row.original.id} name={row.original.name} />,
   },
 ];
 
