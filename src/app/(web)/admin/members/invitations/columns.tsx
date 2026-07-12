@@ -19,8 +19,15 @@ export const columns: ColumnDef<Invitation>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
   },
   {
+    accessorKey: "platformRole",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Platform Role" />,
+    cell: ({ row }) => (
+      <span className="capitalize text-muted-foreground">{row.original.platformRole}</span>
+    ),
+  },
+  {
     accessorKey: "role",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Organization Role" />,
     cell: ({ row }) => (
       <span className="capitalize text-muted-foreground">{row.original.role}</span>
     ),

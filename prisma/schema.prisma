@@ -119,8 +119,8 @@ model Invitation {
   email          String
   inviterId      String       @map("inviter_id")
   organizationId String       @map("organization_id")
-  role           String?
-  platformRole   String       @default("user") @map("platform_role")
+  role           String
+  platformRole   String?      @default("user") @map("platform_role")
   status         String
   expiresAt      DateTime     @map("expires_at")
   createdAt      DateTime     @default(now()) @map("created_at")
@@ -132,29 +132,29 @@ model Invitation {
 }
 
 model Apikey {
-  id                 String    @id
-  configId           String    @default("default") @map("config_id")
-  name               String?
-  start              String?
-  prefix             String?
-  key                String
-  referenceId        String    @map("reference_id")
-  refillInterval     Int?      @map("refill_interval")
-  refillAmount       Int?      @map("refill_amount")
-  lastRefillAt       DateTime? @map("last_refill_at")
-  enabled            Boolean?
-  rateLimitEnabled   Boolean?  @map("rate_limit_enabled")
-  rateLimitTimeWindow Int?     @map("rate_limit_time_window")
-  rateLimitMax       Int?      @map("rate_limit_max")
-  requestCount       Int?      @map("request_count")
-  remaining          Int?
-  lastRequest        DateTime? @map("last_request")
-  expiresAt          DateTime? @map("expires_at")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
-  permissions        String?
-  metadata           String?
-  user               User      @relation(fields: [referenceId], references: [id])
+  id                  String    @id
+  configId            String    @default("default") @map("config_id")
+  name                String?
+  start               String?
+  prefix              String?
+  key                 String
+  referenceId         String    @map("reference_id")
+  refillInterval      Int?      @map("refill_interval")
+  refillAmount        Int?      @map("refill_amount")
+  lastRefillAt        DateTime? @map("last_refill_at")
+  enabled             Boolean?
+  rateLimitEnabled    Boolean?  @map("rate_limit_enabled")
+  rateLimitTimeWindow Int?      @map("rate_limit_time_window")
+  rateLimitMax        Int?      @map("rate_limit_max")
+  requestCount        Int?      @map("request_count")
+  remaining           Int?
+  lastRequest         DateTime? @map("last_request")
+  expiresAt           DateTime? @map("expires_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  permissions         String?
+  metadata            String?
+  user                User      @relation(fields: [referenceId], references: [id])
 
   @@unique([key])
   @@index([referenceId])

@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberDetailsSheet } from "./_components/member-details-sheet";
 import { MembersProvider } from "./_components/members-provider";
 import { columns } from "./columns";
 import { membersApi } from "@/services/api/admin/membersApi";
@@ -28,6 +29,7 @@ export default function MembersPage() {
     <div className="mt-6">
       <MembersProvider>
         <MembersTable />
+        <MemberDetailsSheet />
       </MembersProvider>
     </div>
   );

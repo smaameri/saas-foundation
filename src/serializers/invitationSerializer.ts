@@ -8,6 +8,7 @@ export function serializeInvitation(invitation: PrismaInvitation): Invitation {
     id: invitation.id,
     email: invitation.email,
     role: invitation.role,
+    platformRole: invitation.platformRole,
     status: invitation.status,
     createdAt: invitation.createdAt.toISOString(),
     expiresAt: invitation.expiresAt.toISOString(),

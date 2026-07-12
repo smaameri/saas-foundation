@@ -7,6 +7,41 @@ export async function findMemberByUserId(userId: string) {
   });
 }
 
+export async function findMemberById(id: string, organizationId: string) {
+  return prisma.member.findFirst({
+    where: { id, organizationId },
+    include: { user: true },
+  });
+}
+
+export async function updateMember(
+  id: string,
+  organizationId: string,
+  params: {
+    role: string;
+    platformRole: string;
+    firstName?: string | null;
+    lastName?: string | null;
+  },
+) {
+  const member = await prisma.member.update({
+    where: { id, organizationId },
+    data: { role: params.role },
+    include: { user: true },
+  });
+
+  await prisma.user.update({
+    where: { id: member.userId },
+    data: {
+      role: params.platformRole,
+      firstName: params.firstName,
+      lastName: params.lastName,
+    },
+  });
+
+  return findMemberById(id, organizationId);
+}
+
 export async function listMembers(
   organizationId: string,
   params: {

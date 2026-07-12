@@ -1,11 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMembers } from "./members-provider";
 import type { Row } from "@tanstack/react-table";
-import { UserSearch } from "lucide-react";
+import { Pencil, UserSearch } from "lucide-react";
 import type { Member } from "@/services/api/types/member";
 import { RowActionsDropdown } from "@/components/connected-data-table/row-actions-dropdown";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 type DataTableRowActionsProps = {
   row: Row<Member>;
@@ -13,6 +14,7 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useMembers();
+  const router = useRouter();
 
   return (
     <RowActionsDropdown>
@@ -24,6 +26,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       >
         View details
         <UserSearch size={16} className="ml-auto" />
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={() => router.push(`/admin/members/${row.original.id}/edit`)}>
+        Edit
+        <Pencil size={16} className="ml-auto" />
       </DropdownMenuItem>
     </RowActionsDropdown>
   );

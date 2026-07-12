@@ -1,22 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { accountApi } from "@/services/api/admin/accountApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateProfile } from "@/app/(web)/admin/account/actions";
-
-const formSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  image: z.string().url("Enter a valid URL").or(z.literal("")).optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { type UpdateAccountBody, updateAccountSchema } from "@/app/api/admin/account/schema";
 
 export function ProfileForm({
   defaultFirstName,
@@ -27,11 +19,8 @@ export function ProfileForm({
   defaultLastName: string;
   defaultImage: string;
 }) {
-  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UpdateAccountBody>({
+    resolver: zodResolver(updateAccountSchema),
     defaultValues: {
       firstName: defaultFirstName,
       lastName: defaultLastName,
@@ -39,19 +28,9 @@ export function ProfileForm({
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    setStatus(null);
-
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.append("firstName", values.firstName);
-      formData.append("lastName", values.lastName);
-      formData.append("image", values.image ?? "");
-
-      const result = await updateProfile(formData);
-      setStatus({ ok: result.ok, message: result.message });
-    });
-  };
+  const { mutate, isPending, isSuccess, isError } = useMutation({
+    mutationFn: (values: UpdateAccountBody) => accountApi.updateAccount(values),
+  });
 
   return (
     <Card className="max-w-xl">
@@ -60,7 +39,7 @@ export function ProfileForm({
         <CardDescription>Update your name and avatar.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="firstName">First name</Label>
@@ -95,10 +74,9 @@ export function ProfileForm({
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <div
-              className={`text-sm ${status && !status.ok ? "text-destructive" : "text-muted-foreground"}`}
-            >
-              {status ? status.message : null}
+            <div className={`text-sm ${isError ? "text-destructive" : "text-muted-foreground"}`}>
+              {isSuccess ? "Profile updated." : null}
+              {isError ? "Failed to update profile. Please try again." : null}
             </div>
             <Button disabled={isPending} type="submit">
               {isPending ? "Saving..." : "Save changes"}

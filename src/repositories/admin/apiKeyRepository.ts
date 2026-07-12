@@ -29,6 +29,30 @@ export async function listApiKeys(params: {
   return { data, total };
 }
 
+export async function listApiKeysForUser(params: {
+  userId: string;
+  sort?: string;
+  order?: SortOrder;
+  page: number;
+  perPage: number;
+}) {
+  const { userId, page, perPage } = params;
+  const where = { referenceId: userId };
+
+  const [data, total] = await prisma.$transaction([
+    prisma.apikey.findMany({
+      where,
+      include: { user: true },
+      orderBy: { [params.sort ?? "createdAt"]: params.order ?? "desc" },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.apikey.count({ where }),
+  ]);
+
+  return { data, total };
+}
+
 export async function findApiKeyById(id: string) {
   return prisma.apikey.findUnique({ where: { id } });
 }

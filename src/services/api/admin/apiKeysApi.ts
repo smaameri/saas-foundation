@@ -9,8 +9,12 @@ export const apiKeysApi = {
     return apiClient.getPaginated<ApiKey>("/admin/api-keys", params);
   },
 
+  listAccountApiKeys(params?: ListParams): Promise<{ data: ApiKey[]; pagination: PaginationData }> {
+    return apiClient.getPaginated<ApiKey>("/admin/account/api-keys", params);
+  },
+
   createApiKey(params: CreateApiKeyBody): Promise<CreatedApiKey> {
-    return apiClient.post<CreatedApiKey>("/admin/api-keys", params);
+    return apiClient.post<CreatedApiKey>("/admin/account/api-keys", params);
   },
 
   deleteApiKey(id: string): Promise<void> {

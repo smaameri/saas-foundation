@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { fetchSession } from "@/lib/session";
-import { AccountTabs } from "@/components/account/account-tabs";
 import { ContentLayout } from "@/components/platform/content-layout";
+import { AccountTabs } from "@/app/(web)/admin/account/_components/account-tabs";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -19,7 +19,7 @@ export default async function AccountPage() {
     : null;
 
   return (
-    <ContentLayout title="Account" description="Manage your profile and security settings.">
+    <ContentLayout title="Account" description="Manage your profile and settings.">
       <AccountTabs
         defaultFirstName={user?.firstName ?? ""}
         defaultLastName={user?.lastName ?? ""}
