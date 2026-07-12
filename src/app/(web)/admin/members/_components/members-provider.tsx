@@ -1,0 +1,31 @@
+"use client";
+
+import React, { useState } from "react";
+import type { Member } from "@/services/api/types/member";
+import useDialogState from "@/hooks/use-dialog-state";
+
+type MembersDialogType = "view";
+
+type MembersContextType = {
+  open: MembersDialogType | null;
+  setOpen: (str: MembersDialogType | null) => void;
+  currentRow: Member | null;
+  setCurrentRow: React.Dispatch<React.SetStateAction<Member | null>>;
+};
+
+const MembersContext = React.createContext<MembersContextType | null>(null);
+
+export function MembersProvider({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useDialogState<MembersDialogType>(null);
+  const [currentRow, setCurrentRow] = useState<Member | null>(null);
+
+  return (
+    <MembersContext value={{ open, setOpen, currentRow, setCurrentRow }}>{children}</MembersContext>
+  );
+}
+
+export function useMembers() {
+  const context = React.useContext(MembersContext);
+  if (!context) throw new Error("useMembers has to be used within <MembersProvider>");
+  return context;
+}
