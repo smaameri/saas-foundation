@@ -16,7 +16,10 @@ export function NavTabs({ tabs }: NavTabsProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const activeTab = tabs.find((tab) => pathname.startsWith(tab.href))?.href ?? tabs[0].href;
+  const activeTab =
+    tabs.find((tab) => pathname === tab.href)?.href ??
+    tabs.find((tab) => pathname.startsWith(tab.href))?.href ??
+    tabs[0].href;
 
   return (
     <Tabs value={activeTab} onValueChange={(href) => router.push(href)}>

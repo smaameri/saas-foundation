@@ -1,17 +1,17 @@
 "use client";
 
 import { columns } from "./columns";
-import { usersApi } from "@/services/api/admin/usersApi";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { DataTable } from "@/components/connected-data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import type { ListUsersParams } from "@/app/api/admin/users/schema";
+import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
 
-export default function TeamUsersPage() {
+export default function MembersInvitationsPage() {
   const { table } = useConnectedTable({
-    queryKey: ["admin", "users"],
+    queryKey: ["admin", "invitations"],
     queryFn: ({ sort, order, page, perPage }) =>
-      usersApi.listUsers({
-        sort: sort as ListUsersParams["sort"],
+      invitationsApi.listInvitations({
+        sort: sort as ListInvitationsParams["sort"],
         order,
         page,
         perPage,

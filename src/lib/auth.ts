@@ -22,6 +22,21 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          const invitation = await prisma.invitation.findFirst({
+            where: { email: user.email, status: "pending" },
+          });
+          if (invitation?.platformRole) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { role: invitation.platformRole },
+            });
+          }
+        },
+      },
+    },
     session: {
       create: {
         before: async (session) => {

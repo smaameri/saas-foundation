@@ -22,10 +22,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const roleOptions = [
+const orgRoleOptions = [
   { value: "member", label: "Member" },
   { value: "admin", label: "Admin" },
   { value: "owner", label: "Owner" },
+] as const;
+
+const platformRoleOptions = [
+  { value: "user", label: "User" },
+  { value: "admin", label: "Admin" },
 ] as const;
 
 export function InviteTeamMemberModal({ organizationId }: { organizationId: string }) {
@@ -39,7 +44,7 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
     <>
       <Button onClick={() => setOpen(true)}>
         <UserPlus className="h-4 w-4" />
-        Invite team member
+        Invite team members
       </Button>
 
       <Dialog
@@ -51,7 +56,7 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite a team member</DialogTitle>
-            <DialogDescription>Send an invitation to join your internal team.</DialogDescription>
+            <DialogDescription>Send an invitation to join your organization.</DialogDescription>
           </DialogHeader>
 
           <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
@@ -69,7 +74,35 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="invite-role">Role</Label>
+              <Label htmlFor="invite-platform-role">Admin portal role</Label>
+              <p className="text-sm text-muted-foreground">
+                The role the user will have when accessing the admin portal.
+              </p>
+              <Controller
+                control={form.control}
+                name="platformRole"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="invite-platform-role">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {platformRoleOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-role">Customer portal role</Label>
+              <p className="text-sm text-muted-foreground">
+                The role the user will have when accessing the customer portal.
+              </p>
               <Controller
                 control={form.control}
                 name="role"
@@ -79,7 +112,7 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {roleOptions.map((option) => (
+                      {orgRoleOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -92,10 +125,7 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
 
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-            <div className="flex items-center justify-between gap-4">
-              <p className="flex-1 text-sm text-muted-foreground">
-                The recipient will receive an email invitation to join your team.
-              </p>
+            <div className="flex justify-end">
               <Button disabled={isPending} type="submit">
                 {isPending ? "Sending..." : "Send invite"}
               </Button>

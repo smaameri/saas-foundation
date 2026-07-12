@@ -63,7 +63,7 @@ export function InviteUserModal({ organizationId }: { organizationId: string }) 
 
     startTransition(async () => {
       try {
-        await invitationsApi.sendInvitation(organizationId, values);
+        await invitationsApi.sendInvitation(organizationId, { ...values, platformRole: "user" });
         handleClose(false);
         router.refresh();
       } catch (err) {

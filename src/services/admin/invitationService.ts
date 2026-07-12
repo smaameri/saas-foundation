@@ -6,6 +6,7 @@ const INVITATION_EXPIRES_IN_DAYS = 2;
 type SendInvitationParams = {
   email: string;
   role: string;
+  platformRole: string;
   organizationId: string;
   organizationName: string;
   inviterId: string;
@@ -15,6 +16,7 @@ type SendInvitationParams = {
 export async function sendInvitation({
   email,
   role,
+  platformRole,
   organizationId,
   organizationName,
   inviterId,
@@ -28,6 +30,7 @@ export async function sendInvitation({
       id: crypto.randomUUID(),
       email,
       role,
+      platformRole,
       status: "pending",
       organizationId,
       inviterId,

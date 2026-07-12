@@ -6,6 +6,7 @@ import type { PaginationData } from "@/app/api/response";
 type SendInvitationParams = {
   email: string;
   role: string;
+  platformRole: string;
 };
 
 export const invitationsApi = {

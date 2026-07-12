@@ -19,12 +19,12 @@ export const GET = withAdmin(
   { apiKey: ["read:any"] },
 );
 
-export const POST = withAdmin(async (request, _context, { session }) => {
+export const POST = withAdmin(async (request, _context, { user }) => {
   const body = await request.json();
   const { name } = createApiKeySchema.parse(body);
 
   const created = await auth.api.createApiKey({
-    body: { name, userId: session.user.id },
+    body: { name, userId: user.id },
   });
 
   return createdResponse(serializeCreatedApiKey(created));

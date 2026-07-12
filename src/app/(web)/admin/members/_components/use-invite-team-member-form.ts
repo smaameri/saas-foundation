@@ -11,6 +11,7 @@ import { ApiError } from "@/services/api/client";
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
   role: z.enum(["owner", "admin", "member"]),
+  platformRole: z.enum(["admin", "user"]),
 });
 
 export type InviteTeamMemberFormValues = z.infer<typeof formSchema>;
@@ -22,7 +23,7 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
 
   const form = useForm<InviteTeamMemberFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", role: "member" },
+    defaultValues: { email: "", role: "member", platformRole: "user" },
   });
 
   const onSubmit = (values: InviteTeamMemberFormValues) => {

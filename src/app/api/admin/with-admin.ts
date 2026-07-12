@@ -1,14 +1,14 @@
 import type { Session, User } from "better-auth";
 import { type Permissions } from "@/lib/permissions";
-import { prisma } from "@/lib/prisma";
 import { fetchSession } from "@/lib/session";
 import { forbiddenResponse, unauthorizedResponse } from "@/app/api/response";
 import { withErrorHandler } from "@/app/api/with-error-handler";
 import { withPermission } from "@/app/api/with-permission";
-import { Portal } from "@/config/portals";
 
 export type AdminContext = {
-  session: { user: User; session: Session };
+  user: User;
+  session: Session;
+  organizationId: string;
 };
 
 type RouteContext = { params: Promise<Record<string, string>> };
@@ -21,30 +21,33 @@ type AdminHandler = (
 
 export function withAdmin(handler: AdminHandler, permissions?: Permissions) {
   return withErrorHandler(async (request, context) => {
-    const session = await fetchSession();
+    const result = await fetchSession();
 
-    if (!session?.user) {
+    if (!result?.user) {
       return unauthorizedResponse();
     }
 
-    const adminMember = await prisma.member.findFirst({
-      where: {
-        userId: session.user.id,
-        organization: { portals: { has: Portal.admin } },
-      },
-    });
+    const { user, session } = result;
 
-    if (!adminMember) {
+    if (!user.role) {
       return forbiddenResponse();
     }
 
+    const organizationId = session.activeOrganizationId;
+
+    if (!organizationId) {
+      return forbiddenResponse();
+    }
+
+    const adminContext: AdminContext = { user, session, organizationId };
+
     if (permissions) {
-      return withPermission(permissions)((req, ctx) => handler(req, ctx, { session }))(
+      return withPermission(permissions)((req, ctx) => handler(req, ctx, adminContext))(
         request,
         context,
       );
     }
 
-    return handler(request, context, { session });
+    return handler(request, context, adminContext);
   });
 }

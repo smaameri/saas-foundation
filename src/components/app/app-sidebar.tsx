@@ -20,7 +20,7 @@ const navSections = [
   {
     label: "Administration",
     items: [
-      { label: "Team", href: "/admin/team", icon: UsersRound },
+      { label: "Members", href: "/admin/members", icon: UsersRound },
       { label: "API Keys", href: "/admin/api-keys", icon: KeyRound },
     ],
   },

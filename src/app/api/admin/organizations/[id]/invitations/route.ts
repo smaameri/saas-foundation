@@ -3,7 +3,7 @@ import { sendInvitation } from "@/services/admin/invitationService";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { createdResponse, validationErrorResponse } from "@/app/api/response";
 
-export const POST = withAdmin(async (request, { params }, { session }) => {
+export const POST = withAdmin(async (request, { params }, { user }) => {
   const { id: organizationId } = await params;
   const body = await request.json();
 
@@ -11,15 +11,16 @@ export const POST = withAdmin(async (request, { params }, { session }) => {
   const isValid = await validator.validate();
   if (!isValid) return validationErrorResponse(validator.errors);
 
-  const { email, role, organizationName } = validator.data;
+  const { email, role, platformRole, organizationName } = validator.data;
 
   await sendInvitation({
     email,
     role,
+    platformRole,
     organizationId,
     organizationName,
-    inviterId: session.user.id,
-    inviterName: session.user.name,
+    inviterId: user.id,
+    inviterName: user.name,
   });
 
   return createdResponse({ message: `Invitation sent to ${email}.` });
