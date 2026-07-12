@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { ApiError } from "@/services/api/client";
@@ -20,6 +21,7 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<InviteTeamMemberFormValues>({
     resolver: zodResolver(formSchema),
@@ -31,6 +33,7 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
     startTransition(async () => {
       try {
         await invitationsApi.sendInvitation(organizationId, values);
+        queryClient.invalidateQueries({ queryKey: ["admin", "invitations"] });
         form.reset();
         onSuccess();
         router.refresh();
