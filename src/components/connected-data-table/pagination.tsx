@@ -23,6 +23,8 @@ type DataTablePaginationProps<TData> = {
 export function DataTablePagination<TData>({ table, className }: DataTablePaginationProps<TData>) {
   const currentPage = table.getState().pagination.pageIndex + 1;
   const totalPages = table.getPageCount();
+
+  if (totalPages <= 1) return null;
   const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (

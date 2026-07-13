@@ -98,7 +98,7 @@ export function DataTable<TData>({
                   colSpan={table.getVisibleLeafColumns().length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No results
                 </TableCell>
               </TableRow>
             )}
