@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { fetchSession } from "@/lib/session";
-import { ContentLayout } from "@/components/platform/content-layout";
-import { AccountTabs } from "@/app/(web)/admin/account/_components/account-tabs";
+import { ProfileForm } from "@/app/(web)/admin/account/_components/profile-form";
 
-export const metadata: Metadata = {
-  title: "Account",
-};
+export const metadata: Metadata = { title: "Account" };
 
 export default async function AccountPage() {
   const session = await fetchSession();
@@ -19,12 +16,12 @@ export default async function AccountPage() {
     : null;
 
   return (
-    <ContentLayout title="Account" description="Manage your profile and settings.">
-      <AccountTabs
+    <div className="mt-6">
+      <ProfileForm
         defaultFirstName={user?.firstName ?? ""}
         defaultLastName={user?.lastName ?? ""}
         defaultImage={user?.image ?? ""}
       />
-    </ContentLayout>
+    </div>
   );
 }

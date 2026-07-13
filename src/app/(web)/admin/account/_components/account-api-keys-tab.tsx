@@ -77,8 +77,7 @@ const columns: ColumnDef<ApiKey>[] = [
 export function AccountApiKeysTab() {
   const { table } = useConnectedTable({
     queryKey: ["admin", "account", "api-keys"],
-    queryFn: ({ sort, order, page, perPage }) =>
-      apiKeysApi.listAccountApiKeys({ sort, order, page, perPage }),
+    queryFn: (params) => apiKeysApi.listAccountApiKeys(params),
     columns,
   });
 
@@ -87,7 +86,21 @@ export function AccountApiKeysTab() {
       <div className="flex justify-end">
         <CreateApiKeyButton />
       </div>
-      <DataTable table={table} />
+      <DataTable
+        table={table}
+        showSearch
+        searchPlaceholder="Search by name or key..."
+        filters={[
+          {
+            columnId: "enabled",
+            title: "Status",
+            options: [
+              { label: "Active", value: "true" },
+              { label: "Disabled", value: "false" },
+            ],
+          },
+        ]}
+      />
     </div>
   );
 }
