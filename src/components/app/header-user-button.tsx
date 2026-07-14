@@ -1,22 +1,18 @@
 import { fetchSession } from "@/lib/auth/session";
-import { prisma } from "@/lib/prisma";
 import { UserButton } from "@/components/app/user-button";
 
 export async function HeaderUserButton() {
   const session = await fetchSession();
   if (!session?.user) return null;
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { name: true, email: true, image: true, role: true },
-  });
+  const { user } = session;
 
   return (
     <UserButton
-      name={user?.name ?? session.user.name ?? ""}
-      email={user?.email ?? session.user.email ?? ""}
-      role={user?.role}
-      image={user?.image}
+      name={user.name ?? ""}
+      email={user.email ?? ""}
+      role={user.role}
+      image={user.image}
       compact
     />
   );

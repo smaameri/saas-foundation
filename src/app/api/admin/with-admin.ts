@@ -1,4 +1,4 @@
-import type { Session, User } from "better-auth";
+import type { Session, User } from "@generated/prisma/client";
 import { type Permissions } from "@/lib/auth/permissions";
 import { fetchSession } from "@/lib/auth/session";
 import { forbiddenResponse, unauthorizedResponse } from "@/app/api/response";

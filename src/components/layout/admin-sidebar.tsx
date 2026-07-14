@@ -15,13 +15,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useLayout } from "@/context/layout-provider";
+import type { User } from "@/types/user";
 
 type AppSidebarProps = {
-  user: {
-    name: string;
-    email: string;
-    image: string;
-  };
+  user: User;
 };
 
 export function AppSidebar({ user }: AppSidebarProps) {

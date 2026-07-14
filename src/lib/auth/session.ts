@@ -1,20 +1,24 @@
 import { headers } from "next/headers";
+import type { Session, User } from "@generated/prisma/client";
 import { auth } from "@/lib/auth/auth";
 
-type SessionResult = Awaited<ReturnType<typeof auth.api.getSession>>;
+export type SessionResult = {
+  user: User;
+  session: Session;
+} | null;
 
-export async function fetchSession(): Promise<SessionResult | null> {
+export async function fetchSession(): Promise<SessionResult> {
   try {
-    const headerList = await headers();
-    const result = await auth.api.getSession({
-      headers: headerList,
-    });
+    const result = await auth.api.getSession({ headers: await headers() });
 
     if (!result || ("error" in result && result.error)) {
       return null;
     }
 
-    return result;
+    return {
+      user: result.user as User,
+      session: result.session as Session,
+    };
   } catch {
     return null;
   }

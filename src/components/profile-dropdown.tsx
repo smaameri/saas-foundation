@@ -16,14 +16,13 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { User } from "@/types/user";
 
 type ProfileDropdownProps = {
-  name: string;
-  email: string;
-  image?: string;
+  user: User;
 };
 
-export function ProfileDropdown({ name, email, image }: ProfileDropdownProps) {
+export function ProfileDropdown({ user: { name, email, image } }: ProfileDropdownProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -39,7 +38,7 @@ export function ProfileDropdown({ name, email, image }: ProfileDropdownProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={image} alt={name} />
+            <AvatarImage src={image ?? undefined} alt={name} />
             <AvatarFallback>
               {name
                 .split(" ")

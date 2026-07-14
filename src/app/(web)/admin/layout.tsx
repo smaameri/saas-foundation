@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { fetchSession } from "@/lib/auth/session";
+import { serializeUser } from "@/serializers/userSerializer";
 import { AdminLayout } from "@/components/layout/admin-layout";
 
 function hasAdminPortalAccess(role?: string | null): boolean {
@@ -18,11 +19,5 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     redirect("/unauthorized");
   }
 
-  const user = session.user;
-
-  return (
-    <AdminLayout user={{ name: user.name ?? "", email: user.email, image: user.image ?? "" }}>
-      {children}
-    </AdminLayout>
-  );
+  return <AdminLayout user={serializeUser(session.user)}>{children}</AdminLayout>;
 }

@@ -4,15 +4,10 @@ import { AppSidebar } from "@/components/layout/admin-sidebar";
 import { BaseAuthenticatedLayout } from "@/components/layout/authenticated-layout";
 import { Header } from "@/components/layout/header";
 import { ProfileDropdown } from "@/components/profile-dropdown";
-
-type NavUser = {
-  name: string;
-  email: string;
-  image: string;
-};
+import type { User } from "@/types/user";
 
 type AdminLayoutProps = {
-  user: NavUser;
+  user: User;
   children?: React.ReactNode;
 };
 
@@ -23,7 +18,7 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
       header={
         <Header fixed>
           <div className="ml-auto">
-            <ProfileDropdown name={user.name} email={user.email} image={user.image} />
+            <ProfileDropdown user={user} />
           </div>
         </Header>
       }
