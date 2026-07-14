@@ -9,7 +9,7 @@ interface CancelButtonProps {
 
 export function CancelButton({ onClick, disabled }: CancelButtonProps) {
   return (
-    <Button variant="outline" onClick={onClick} disabled={disabled}>
+    <Button type="button" variant="outline" onClick={onClick} disabled={disabled}>
       Cancel
     </Button>
   );
