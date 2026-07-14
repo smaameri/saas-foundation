@@ -11,6 +11,7 @@ export function AccountApiKeysTab() {
     queryKey: ["admin", "account", "api-keys"],
     queryFn: (params) => apiKeysApi.listAccountApiKeys(params),
     columns,
+    initialFilters: [{ id: "enabled", value: ["true"] }],
   });
 
   return (

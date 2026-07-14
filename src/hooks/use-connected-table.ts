@@ -22,6 +22,7 @@ interface UseConnectedTableOptions<TData> {
   queryFn: (params: ListParams) => Promise<{ data: TData[]; pagination: PaginationData }>;
   columns: ColumnDef<TData>[];
   pageSize?: number;
+  initialFilters?: ColumnFiltersState;
 }
 
 function toListParams(
@@ -49,10 +50,11 @@ export function useConnectedTable<TData>({
   queryFn,
   columns,
   pageSize = 10,
+  initialFilters = [],
 }: UseConnectedTableOptions<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize });
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(initialFilters);
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
   const params = toListParams(sorting, pagination, columnFilters, globalFilter);
