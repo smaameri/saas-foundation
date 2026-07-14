@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { accountApi } from "@/services/api/admin/accountApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
@@ -29,8 +30,9 @@ export function ProfileForm({ user }: { user: User }) {
     },
   });
 
-  const { mutate, isPending, isSuccess, isError, error } = useMutation({
+  const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: UpdateAccountBody) => accountApi.updateAccount(values),
+    onSuccess: () => toast.success("Profile updated."),
   });
 
   return (
@@ -91,12 +93,7 @@ export function ProfileForm({ user }: { user: User }) {
               fallback="Failed to update profile. Please try again."
             />
 
-            <div className="flex items-center justify-between">
-              {isSuccess ? (
-                <p className="text-sm text-muted-foreground">Profile updated.</p>
-              ) : (
-                <span />
-              )}
+            <div className="flex justify-end">
               <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
                 Save changes
               </PrimaryButton>
