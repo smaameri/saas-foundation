@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { fetchSession } from "@/lib/auth/session";
+import { requireSession } from "@/lib/auth/session";
 import { serializeUser } from "@/serializers/userSerializer";
 import { AdminLayout } from "@/components/layout/admin-layout";
 
@@ -9,11 +9,7 @@ function hasAdminPortalAccess(role?: string | null): boolean {
 }
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const session = await fetchSession();
-
-  if (!session?.session) {
-    redirect("/login");
-  }
+  const session = await requireSession();
 
   if (!hasAdminPortalAccess(session.user.role)) {
     redirect("/unauthorized");
