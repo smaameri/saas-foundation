@@ -2,14 +2,24 @@
 
 import { useRouter } from "next/navigation";
 import { use } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { membersApi } from "@/services/api/admin/membersApi";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -52,10 +62,11 @@ export default function EditMemberPage({ params }: { params: Promise<{ id: strin
       : undefined,
   });
 
-  const { mutate, isPending, isError } = useMutation({
+  const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: UpdateMemberBody) => membersApi.updateMember(id, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "members"] });
+      toast.success("Member updated.");
       router.push("/admin/members");
     },
   });
@@ -68,80 +79,105 @@ export default function EditMemberPage({ params }: { params: Promise<{ id: strin
 
   return (
     <ContentLayout title={`Edit ${fullName}`} description="Update this member's name and roles.">
-      <form
-        className="mt-6 max-w-md space-y-6"
-        onSubmit={form.handleSubmit((values) => mutate(values))}
-      >
-        <div className="space-y-1.5">
-          <Label htmlFor="firstName">First name</Label>
-          <Input id="firstName" {...form.register("firstName")} />
-          {form.formState.errors.firstName && (
-            <p className="text-sm text-destructive">{form.formState.errors.firstName.message}</p>
-          )}
-        </div>
+      <Form {...form}>
+        <form
+          className="mt-6 max-w-md space-y-6"
+          onSubmit={form.handleSubmit((values) => mutate(values))}
+        >
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div className="space-y-1.5">
-          <Label htmlFor="lastName">Last name</Label>
-          <Input id="lastName" {...form.register("lastName")} />
-        </div>
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div className="space-y-1.5">
-          <Label htmlFor="platformRole">Admin portal role</Label>
-          <Controller
+          <FormField
             control={form.control}
             name="platformRole"
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="platformRole">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {platformRoleOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormItem>
+                <FormLabel>Admin portal role</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {platformRoleOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
             )}
           />
-        </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="role">Customer portal role</Label>
-          <Controller
+          <FormField
             control={form.control}
             name="role"
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="role">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {orgRoleOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormItem>
+                <FormLabel>Customer portal role</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {orgRoleOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
             )}
           />
-        </div>
 
-        {isError && (
-          <p className="text-sm text-destructive">Failed to update member. Please try again.</p>
-        )}
+          <MutationError
+            isError={isError}
+            error={error}
+            fallback="Failed to update member. Please try again."
+          />
 
-        <div className="flex items-center gap-3">
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Saving..." : "Save changes"}
-          </Button>
-          <Button type="button" variant="outline" onClick={() => router.push("/admin/members")}>
-            Cancel
-          </Button>
-        </div>
-      </form>
+          <div className="flex items-center gap-3">
+            <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
+              Save changes
+            </PrimaryButton>
+            <Button type="button" variant="outline" onClick={() => router.push("/admin/members")}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </Form>
     </ContentLayout>
   );
 }

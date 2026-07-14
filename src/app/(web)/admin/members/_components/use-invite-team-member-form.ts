@@ -1,13 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
-import { ApiError } from "@/services/api/client";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -18,9 +16,6 @@ const formSchema = z.object({
 export type InviteTeamMemberFormValues = z.infer<typeof formSchema>;
 
 export function useInviteTeamMemberForm(organizationId: string, onSuccess: () => void) {
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const form = useForm<InviteTeamMemberFormValues>({
@@ -28,22 +23,16 @@ export function useInviteTeamMemberForm(organizationId: string, onSuccess: () =>
     defaultValues: { email: "", role: "member", platformRole: "user" },
   });
 
-  const onSubmit = (values: InviteTeamMemberFormValues) => {
-    setError(null);
-    startTransition(async () => {
-      try {
-        await invitationsApi.sendInvitation(organizationId, values);
-        queryClient.invalidateQueries({ queryKey: ["admin", "invitations"] });
-        form.reset();
-        onSuccess();
-        router.refresh();
-      } catch (err) {
-        setError(
-          err instanceof ApiError ? err.message : "Failed to send invite. Please try again.",
-        );
-      }
-    });
-  };
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (values: InviteTeamMemberFormValues) =>
+      invitationsApi.sendInvitation(organizationId, values),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "invitations"] });
+      toast.success("Invitation sent.");
+      form.reset();
+      onSuccess();
+    },
+  });
 
-  return { form, error, isPending, onSubmit };
+  return { form, mutate, isPending, isError, error };
 }

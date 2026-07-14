@@ -1,11 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { toast } from "sonner";
 import { z } from "zod";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +17,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createOrganization } from "@/app/(web)/admin/(customers)/organizations/actions";
 
 const formSchema = z.object({
@@ -39,14 +49,27 @@ function toSlug(value: string) {
 
 export function AddOrganizationModal() {
   const [open, setOpen] = useState(false);
-  const [status, setStatus] = useState<string | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", slug: "" },
+  });
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: async (values: FormValues) => {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("slug", values.slug);
+      const result = await createOrganization(formData);
+      if (!result.ok) throw new Error(result.message ?? "Something went wrong.");
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "organizations"] });
+      toast.success("Organization created.");
+      handleClose(false);
+    },
   });
 
   const handleClose = (val: boolean) => {
@@ -54,34 +77,7 @@ export function AddOrganizationModal() {
     if (!val) {
       form.reset();
       setSlugManuallyEdited(false);
-      setStatus(null);
     }
-  };
-
-  const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    form.setValue("name", e.target.value);
-    if (!slugManuallyEdited) {
-      form.setValue("slug", toSlug(e.target.value), { shouldValidate: true });
-    }
-  };
-
-  const onSubmit = (values: FormValues) => {
-    setStatus(null);
-
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("slug", values.slug);
-
-      const result = await createOrganization(formData);
-
-      if (result.ok) {
-        handleClose(false);
-        router.refresh();
-      } else {
-        setStatus(result.message ?? "Something went wrong.");
-      }
-    });
   };
 
   return (
@@ -100,44 +96,65 @@ export function AddOrganizationModal() {
             </DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-1.5">
-              <Label htmlFor="org-name">Name</Label>
-              <Input
-                id="org-name"
-                placeholder="Acme Inc."
-                {...form.register("name")}
-                onChange={onNameChange}
+          <Form {...form}>
+            <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Acme Inc."
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (!slugManuallyEdited) {
+                            form.setValue("slug", toSlug(e.target.value), { shouldValidate: true });
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {form.formState.errors.name ? (
-                <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-              ) : null}
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="org-slug">Slug</Label>
-              <Input
-                id="org-slug"
-                placeholder="acme-inc"
-                {...form.register("slug")}
-                onChange={(e) => {
-                  setSlugManuallyEdited(true);
-                  form.setValue("slug", e.target.value, { shouldValidate: true });
-                }}
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="acme-inc"
+                        {...field}
+                        onChange={(e) => {
+                          setSlugManuallyEdited(true);
+                          field.onChange(e);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {form.formState.errors.slug ? (
-                <p className="text-sm text-destructive">{form.formState.errors.slug.message}</p>
-              ) : null}
-            </div>
 
-            {status ? <p className="text-sm text-destructive">{status}</p> : null}
+              <MutationError
+                isError={isError}
+                error={error}
+                fallback="Failed to create organization. Please try again."
+              />
 
-            <div className="flex justify-end">
-              <Button disabled={isPending} type="submit">
-                {isPending ? "Creating..." : "Create organization"}
-              </Button>
-            </div>
-          </form>
+              <div className="flex justify-end">
+                <PrimaryButton type="submit" isPending={isPending} pendingLabel="Creating...">
+                  Create organization
+                </PrimaryButton>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>

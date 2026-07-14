@@ -5,12 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { z } from "zod";
 import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
 import { DestructiveButton } from "@/components/buttons/destructive-button";
+import { PrimaryButton } from "@/components/buttons/primary-button";
 import { RowActionsDropdown } from "@/components/connected-data-table/row-actions-dropdown";
-import { Button } from "@/components/ui/button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import {
   Dialog,
   DialogContent,
@@ -19,8 +21,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const editSchema = z.object({ name: z.string().trim().min(1, "Name is required") });
 type EditFormValues = z.infer<typeof editSchema>;
@@ -40,6 +49,7 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
     mutationFn: (values: EditFormValues) => apiKeysApi.updateAccountApiKey(id, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      toast.success("API key updated.");
       setDialog(null);
     },
   });
@@ -48,6 +58,7 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
     mutationFn: () => apiKeysApi.deleteApiKey(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      toast.success("API key deleted.");
       setDialog(null);
     },
   });
@@ -75,29 +86,43 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
             <DialogTitle>Edit API key name</DialogTitle>
             <DialogDescription>Update the name for this API key.</DialogDescription>
           </DialogHeader>
-          <form
-            className="space-y-4"
-            onSubmit={form.handleSubmit((values) => editMutation.mutate(values))}
-          >
-            <div className="space-y-1.5">
-              <Label htmlFor="api-key-name">Name</Label>
-              <Input id="api-key-name" {...form.register("name")} />
-              {form.formState.errors.name && (
-                <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-              )}
-            </div>
-            {editMutation.isError && (
-              <p className="text-sm text-destructive">Failed to update. Please try again.</p>
-            )}
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setDialog(null)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={editMutation.isPending}>
-                {editMutation.isPending ? "Saving..." : "Save"}
-              </Button>
-            </div>
-          </form>
+          <Form {...form}>
+            <form
+              className="space-y-4"
+              onSubmit={form.handleSubmit((values) => editMutation.mutate(values))}
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <MutationError
+                isError={editMutation.isError}
+                error={editMutation.error}
+                fallback="Failed to update. Please try again."
+              />
+
+              <div className="flex justify-end gap-2">
+                <CancelButton onClick={() => setDialog(null)} disabled={editMutation.isPending} />
+                <PrimaryButton
+                  type="submit"
+                  isPending={editMutation.isPending}
+                  pendingLabel="Saving..."
+                >
+                  Save
+                </PrimaryButton>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
 

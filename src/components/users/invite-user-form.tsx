@@ -1,12 +1,28 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { inviteOrganizationUser } from "@/app/(web)/admin/(customers)/users/actions";
 
 const roleOptions = [
@@ -31,9 +47,6 @@ export function InviteUserForm({
   organizations: Organization[];
   onSuccess?: () => void;
 }) {
-  const [status, setStatus] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,84 +56,104 @@ export function InviteUserForm({
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    setStatus(null);
-
-    startTransition(async () => {
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: async (values: FormValues) => {
       const formData = new FormData();
       formData.append("email", values.email);
       formData.append("role", values.role);
       formData.append("organizationId", values.organizationId);
-
       const result = await inviteOrganizationUser(formData);
-
-      if (result.ok) {
-        form.reset();
-        onSuccess?.();
-      } else {
-        setStatus(result.message);
-      }
-    });
-  };
+      if (!result.ok) throw new Error(result.message);
+    },
+    onSuccess: () => {
+      toast.success("Invitation sent.");
+      form.reset();
+      onSuccess?.();
+    },
+  });
 
   return (
-    <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="space-y-1.5">
-        <Label htmlFor="invite-email">Email</Label>
-        <Input
-          id="invite-email"
-          type="email"
-          placeholder="jane@example.com"
-          {...form.register("email")}
+    <Form {...form}>
+      <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="jane@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {form.formState.errors.email ? (
-          <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
-        ) : null}
-      </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="invite-organization">Organization</Label>
-        <select
-          id="invite-organization"
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          {...form.register("organizationId")}
-        >
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
-        {form.formState.errors.organizationId ? (
-          <p className="text-sm text-destructive">{form.formState.errors.organizationId.message}</p>
-        ) : null}
-      </div>
+        <FormField
+          control={form.control}
+          name="organizationId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Organization</FormLabel>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {organizations.map((org) => (
+                    <SelectItem key={org.id} value={org.id}>
+                      {org.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div className="space-y-1.5">
-        <Label htmlFor="invite-role">Role</Label>
-        <select
-          id="invite-role"
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          {...form.register("role")}
-        >
-          {roleOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {roleOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {status ? <p className="text-sm text-destructive">{status}</p> : null}
+        <MutationError
+          isError={isError}
+          error={error}
+          fallback="Failed to send invitation. Please try again."
+        />
 
-      <div className="flex items-center justify-between gap-4">
-        <p className="flex-1 text-sm text-muted-foreground">
-          The recipient will receive an email invitation to join.
-        </p>
-        <Button disabled={isPending} type="submit">
-          {isPending ? "Sending..." : "Send invite"}
-        </Button>
-      </div>
-    </form>
+        <div className="flex items-center justify-between gap-4">
+          <p className="flex-1 text-sm text-muted-foreground">
+            The recipient will receive an email invitation to join.
+          </p>
+          <PrimaryButton type="submit" isPending={isPending} pendingLabel="Sending...">
+            Send invite
+          </PrimaryButton>
+        </div>
+      </form>
+    </Form>
   );
 }

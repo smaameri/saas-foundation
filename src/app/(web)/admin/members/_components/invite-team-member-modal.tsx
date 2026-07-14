@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Controller } from "react-hook-form";
 import { useInviteTeamMemberForm } from "./use-invite-team-member-form";
 import { UserPlus } from "lucide-react";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +13,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -38,7 +46,10 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
 
   const handleClose = () => setOpen(false);
 
-  const { form, error, isPending, onSubmit } = useInviteTeamMemberForm(organizationId, handleClose);
+  const { form, mutate, isPending, isError, error } = useInviteTeamMemberForm(
+    organizationId,
+    handleClose,
+  );
 
   return (
     <>
@@ -59,78 +70,91 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
             <DialogDescription>Send an invitation to join your organization.</DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-email">Email</Label>
-              <Input
-                id="invite-email"
-                type="email"
-                placeholder="jane@example.com"
-                {...form.register("email")}
+          <Form {...form}>
+            <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="jane@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {form.formState.errors.email ? (
-                <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
-              ) : null}
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-platform-role">Admin portal role</Label>
-              <p className="text-sm text-muted-foreground">
-                The role the user will have when accessing the admin portal.
-              </p>
-              <Controller
+              <FormField
                 control={form.control}
                 name="platformRole"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="invite-platform-role">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {platformRoleOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <FormLabel>Admin portal role</FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      The role the user will have when accessing the admin portal.
+                    </p>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {platformRoleOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-role">Customer portal role</Label>
-              <p className="text-sm text-muted-foreground">
-                The role the user will have when accessing the customer portal.
-              </p>
-              <Controller
+              <FormField
                 control={form.control}
                 name="role"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="invite-role">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {orgRoleOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <FormLabel>Customer portal role</FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      The role the user will have when accessing the customer portal.
+                    </p>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {orgRoleOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
-            </div>
 
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
+              <MutationError
+                isError={isError}
+                error={error}
+                fallback="Failed to send invite. Please try again."
+              />
 
-            <div className="flex justify-end">
-              <Button disabled={isPending} type="submit">
-                {isPending ? "Sending..." : "Send invite"}
-              </Button>
-            </div>
-          </form>
+              <div className="flex justify-end">
+                <PrimaryButton type="submit" isPending={isPending} pendingLabel="Sending...">
+                  Send invite
+                </PrimaryButton>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>

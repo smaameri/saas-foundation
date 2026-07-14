@@ -1,13 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UserPlus } from "lucide-react";
+import { toast } from "sonner";
 import { z } from "zod";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
-import { ApiError } from "@/services/api/client";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,8 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -41,37 +50,26 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function InviteUserModal({ organizationId }: { organizationId: string }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", role: "member" },
   });
 
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (values: FormValues) =>
+      invitationsApi.sendInvitation(organizationId, { ...values, platformRole: "user" }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "invitations"] });
+      toast.success("Invitation sent.");
+      handleClose(false);
+    },
+  });
+
   const handleClose = (val: boolean) => {
     setOpen(val);
-    if (!val) {
-      form.reset();
-      setError(null);
-    }
-  };
-
-  const onSubmit = (values: FormValues) => {
-    setError(null);
-
-    startTransition(async () => {
-      try {
-        await invitationsApi.sendInvitation(organizationId, { ...values, platformRole: "user" });
-        handleClose(false);
-        router.refresh();
-      } catch (err) {
-        setError(
-          err instanceof ApiError ? err.message : "Failed to send invite. Please try again.",
-        );
-      }
-    });
+    if (!val) form.reset();
   };
 
   return (
@@ -88,53 +86,63 @@ export function InviteUserModal({ organizationId }: { organizationId: string }) 
             <DialogDescription>Send an invitation to join this organization.</DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-email">Email</Label>
-              <Input
-                id="invite-email"
-                type="email"
-                placeholder="jane@example.com"
-                {...form.register("email")}
+          <Form {...form}>
+            <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="jane@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {form.formState.errors.email ? (
-                <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
-              ) : null}
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-role">Role</Label>
-              <Controller
+              <FormField
                 control={form.control}
                 name="role"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="invite-role">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roleOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {roleOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
-            </div>
 
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
+              <MutationError
+                isError={isError}
+                error={error}
+                fallback="Failed to send invite. Please try again."
+              />
 
-            <div className="flex items-center justify-between gap-4">
-              <p className="flex-1 text-sm text-muted-foreground">
-                The recipient will receive an email invitation to join.
-              </p>
-              <Button disabled={isPending} type="submit">
-                {isPending ? "Sending..." : "Send invite"}
-              </Button>
-            </div>
-          </form>
+              <div className="flex items-center justify-between gap-4">
+                <p className="flex-1 text-sm text-muted-foreground">
+                  The recipient will receive an email invitation to join.
+                </p>
+                <PrimaryButton type="submit" isPending={isPending} pendingLabel="Sending...">
+                  Send invite
+                </PrimaryButton>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>
