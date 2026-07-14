@@ -12,8 +12,8 @@ type BaseAuthenticatedLayoutProps = {
 };
 
 export function BaseAuthenticatedLayout({
-  sidebar,
   header,
+  sidebar,
   children,
 }: BaseAuthenticatedLayoutProps) {
   const defaultOpen = getCookie("sidebar_state") !== "false";

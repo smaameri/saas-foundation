@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { AppSidebar } from "@/components/layout/admin-sidebar";
 import { BaseAuthenticatedLayout } from "@/components/layout/authenticated-layout";
 import { Header } from "@/components/layout/header";
@@ -14,7 +15,6 @@ type AdminLayoutProps = {
 export function AdminLayout({ user, children }: AdminLayoutProps) {
   return (
     <BaseAuthenticatedLayout
-      sidebar={<AppSidebar user={user} />}
       header={
         <Header fixed>
           <div className="ml-auto">
@@ -22,6 +22,7 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
           </div>
         </Header>
       }
+      sidebar={<AppSidebar user={user} />}
     >
       {children}
     </BaseAuthenticatedLayout>
