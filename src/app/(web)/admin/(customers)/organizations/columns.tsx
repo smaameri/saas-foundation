@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Organization } from "@/services/api/types/organization";
-import { DataTableColumnHeader } from "@/components/connected-data-table/column-header";
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
 
 export const columns: ColumnDef<Organization>[] = [
   {

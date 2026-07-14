@@ -9,6 +9,10 @@ export const apiKeysApi = {
     return apiClient.getPaginated<ApiKey>("/admin/api-keys", params);
   },
 
+  deleteApiKey(id: string): Promise<void> {
+    return apiClient.delete(`/admin/api-keys/${id}`);
+  },
+
   listAccountApiKeys(params?: ListParams): Promise<{ data: ApiKey[]; pagination: PaginationData }> {
     return apiClient.getPaginated<ApiKey>("/admin/account/api-keys", params);
   },
@@ -19,9 +23,5 @@ export const apiKeysApi = {
 
   updateAccountApiKey(id: string, body: { name: string }): Promise<ApiKey> {
     return apiClient.patch<ApiKey>(`/admin/account/api-keys/${id}`, body);
-  },
-
-  deleteApiKey(id: string): Promise<void> {
-    return apiClient.delete(`/admin/api-keys/${id}`);
   },
 };

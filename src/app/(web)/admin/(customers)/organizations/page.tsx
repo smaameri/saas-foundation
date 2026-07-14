@@ -1,7 +1,7 @@
 "use client";
 
 import { organizationsApi } from "@/services/api/admin/organizationsApi";
-import { DataTable } from "@/components/connected-data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { useConnectedTable } from "@/hooks/use-connected-table";
 import { columns } from "@/app/(web)/admin/(customers)/organizations/columns";

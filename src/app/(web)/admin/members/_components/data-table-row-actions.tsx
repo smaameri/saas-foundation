@@ -5,7 +5,7 @@ import { useMembers } from "./members-provider";
 import type { Row } from "@tanstack/react-table";
 import { Pencil, UserSearch } from "lucide-react";
 import type { Member } from "@/services/api/types/member";
-import { RowActionsDropdown } from "@/components/connected-data-table/row-actions-dropdown";
+import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 type DataTableRowActionsProps = {

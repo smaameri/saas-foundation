@@ -1,7 +1,7 @@
 "use client";
 
 import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
-import { DataTable } from "@/components/connected-data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
 import { columns } from "@/app/(web)/admin/api-keys/columns";
 

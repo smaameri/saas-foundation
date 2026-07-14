@@ -2,7 +2,7 @@
 
 import { columns } from "./columns";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
-import { DataTable } from "@/components/connected-data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
 import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
 

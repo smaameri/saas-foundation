@@ -4,7 +4,7 @@ import { MemberDetailsSheet } from "./_components/member-details-sheet";
 import { MembersProvider } from "./_components/members-provider";
 import { columns } from "./columns";
 import { membersApi } from "@/services/api/admin/membersApi";
-import { DataTable } from "@/components/connected-data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
 import type { ListMembersParams } from "@/app/api/admin/members/schema";
 

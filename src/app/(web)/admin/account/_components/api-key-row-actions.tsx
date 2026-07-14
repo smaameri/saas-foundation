@@ -11,7 +11,7 @@ import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
 import { DestructiveButton } from "@/components/buttons/destructive-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
-import { RowActionsDropdown } from "@/components/connected-data-table/row-actions-dropdown";
+import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { MutationError } from "@/components/feedback/mutation-error";
 import {
   Dialog,

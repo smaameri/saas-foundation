@@ -3,7 +3,7 @@
 import { DataTableRowActions } from "./_components/data-table-row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Member } from "@/services/api/types/member";
-import { DataTableColumnHeader } from "@/components/connected-data-table/column-header";
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
 
 export const columns: ColumnDef<Member>[] = [
   {
