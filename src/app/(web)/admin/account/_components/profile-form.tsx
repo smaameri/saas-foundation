@@ -9,22 +9,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type UpdateAccountBody, updateAccountSchema } from "@/app/api/admin/account/schema";
+import type { User } from "@/types/user";
 
-export function ProfileForm({
-  defaultFirstName,
-  defaultLastName,
-  defaultImage,
-}: {
-  defaultFirstName: string;
-  defaultLastName: string;
-  defaultImage: string;
-}) {
+export function ProfileForm({ user }: { user: User }) {
   const form = useForm<UpdateAccountBody>({
     resolver: zodResolver(updateAccountSchema),
     defaultValues: {
-      firstName: defaultFirstName,
-      lastName: defaultLastName,
-      image: defaultImage,
+      firstName: user.firstName ?? "",
+      lastName: user.lastName ?? "",
+      image: user.image ?? "",
     },
   });
 

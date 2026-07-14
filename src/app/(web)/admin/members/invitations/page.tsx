@@ -19,9 +19,5 @@ export default function MembersInvitationsPage() {
     columns,
   });
 
-  return (
-    <div className="mt-6">
-      <DataTable table={table} />
-    </div>
-  );
+  return <DataTable table={table} />;
 }

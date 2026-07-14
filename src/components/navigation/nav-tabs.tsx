@@ -23,7 +23,7 @@ export function NavTabs({ tabs }: NavTabsProps) {
 
   return (
     <Tabs value={activeTab} onValueChange={(href) => router.push(href)}>
-      <TabsList variant="line">
+      <TabsList variant="line" className="mb-6">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.href} value={tab.href}>
             {tab.label}

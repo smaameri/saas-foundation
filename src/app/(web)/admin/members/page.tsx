@@ -26,11 +26,9 @@ function MembersTable() {
 
 export default function MembersPage() {
   return (
-    <div className="mt-6">
-      <MembersProvider>
-        <MembersTable />
-        <MemberDetailsSheet />
-      </MembersProvider>
-    </div>
+    <MembersProvider>
+      <MembersTable />
+      <MemberDetailsSheet />
+    </MembersProvider>
   );
 }
