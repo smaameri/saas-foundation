@@ -1,5 +1,5 @@
 import { validateQuery } from "@/lib/api";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { listApiKeysForUser } from "@/repositories/admin/apiKeyRepository";
 import { serializeApiKey, serializeCreatedApiKey } from "@/serializers/apiKeySerializer";
 import { createApiKeySchema, listApiKeysSchema } from "@/app/api/admin/api-keys/schema";

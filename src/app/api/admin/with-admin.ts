@@ -1,6 +1,6 @@
 import type { Session, User } from "better-auth";
-import { type Permissions } from "@/lib/permissions";
-import { fetchSession } from "@/lib/session";
+import { type Permissions } from "@/lib/auth/permissions";
+import { fetchSession } from "@/lib/auth/session";
 import { forbiddenResponse, unauthorizedResponse } from "@/app/api/response";
 import { withErrorHandler } from "@/app/api/with-error-handler";
 import { withPermission } from "@/app/api/with-permission";

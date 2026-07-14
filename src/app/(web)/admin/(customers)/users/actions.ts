@@ -1,9 +1,9 @@
 "use server";
 
 import { z } from "zod";
+import { fetchSession } from "@/lib/auth/session";
 import { sendOrganizationInvitationEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
 
 const inviteSchema = z.object({
   email: z.string().trim().email("Enter a valid email"),

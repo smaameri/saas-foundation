@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { fetchSession } from "@/lib/session";
+import { fetchSession } from "@/lib/auth/session";
 import { ContentLayout } from "@/components/platform/content-layout";
 
 export const metadata: Metadata = {

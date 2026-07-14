@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 
 const SEED_ORGS = 5;

@@ -1,5 +1,5 @@
+import { fetchSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
 import { UserButton } from "@/components/app/user-button";
 
 export async function HeaderUserButton() {

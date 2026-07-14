@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { type Permissions } from "@/lib/permissions";
+import { auth } from "@/lib/auth/auth";
+import { type Permissions } from "@/lib/auth/permissions";
 import { forbiddenResponse } from "@/app/api/response";
 
 type RouteHandler = (

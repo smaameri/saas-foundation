@@ -2,7 +2,7 @@ import { cancel, intro, isCancel, outro, password, text } from "@clack/prompts";
 import { APIError, isAPIError } from "better-auth/api";
 import "dotenv/config";
 import process from "node:process";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 
 async function promptOrExit() {

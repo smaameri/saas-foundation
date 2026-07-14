@@ -1,8 +1,8 @@
 "use server";
 
 import { z } from "zod";
+import { fetchSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
 
 const createOrgSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import { fetchSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
-import { fetchSession } from "@/lib/session";
 import { ProfileForm } from "@/app/(web)/admin/account/_components/profile-form";
 
 export const metadata: Metadata = { title: "Account" };

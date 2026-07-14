@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { type Permissions } from "@/lib/permissions";
+import { auth } from "@/lib/auth/auth";
+import { type Permissions } from "@/lib/auth/permissions";
 
 export async function requirePermission(permissions: Permissions): Promise<void> {
   const session = await auth.api.getSession({ headers: await headers() });

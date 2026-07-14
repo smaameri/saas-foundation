@@ -1,4 +1,4 @@
-import { type Permissions } from "@/lib/permissions";
+import { type Permissions } from "@/lib/auth/permissions";
 
 type BaseNavItem = {
   title: string;

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { fetchSession } from "@/lib/session";
+import { fetchSession } from "@/lib/auth/session";
 import { AdminLayout } from "@/components/layout/admin-layout";
 
 function hasAdminPortalAccess(role?: string | null): boolean {
