@@ -1,15 +1,11 @@
 "use client";
 
+import { ApiKeyRowActions } from "./row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
-import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 import type { ApiKey } from "@/services/api/types/apiKey";
-import { CreateApiKeyButton } from "@/components/admin/create-api-key-button";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
-import { DataTable } from "@/components/data-table/data-table";
-import { useConnectedTable } from "@/hooks/use-connected-table";
-import { ApiKeyRowActions } from "@/app/(web)/admin/account/_components/api-key-row-actions";
 
-const columns: ColumnDef<ApiKey>[] = [
+export const columns: ColumnDef<ApiKey>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
@@ -73,34 +69,3 @@ const columns: ColumnDef<ApiKey>[] = [
     cell: ({ row }) => <ApiKeyRowActions id={row.original.id} name={row.original.name} />,
   },
 ];
-
-export function AccountApiKeysTab() {
-  const { table } = useConnectedTable({
-    queryKey: ["admin", "account", "api-keys"],
-    queryFn: (params) => apiKeysApi.listAccountApiKeys(params),
-    columns,
-  });
-
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <CreateApiKeyButton />
-      </div>
-      <DataTable
-        table={table}
-        showSearch
-        searchPlaceholder="Search by name or key..."
-        filters={[
-          {
-            columnId: "enabled",
-            title: "Status",
-            options: [
-              { label: "Active", value: "true" },
-              { label: "Disabled", value: "false" },
-            ],
-          },
-        ]}
-      />
-    </div>
-  );
-}

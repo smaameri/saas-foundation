@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { requireSession } from "@/lib/auth/session";
 import { serializeUser } from "@/serializers/userSerializer";
-import { ProfileForm } from "@/app/(web)/admin/account/_components/profile-form";
+import { ProfileForm } from "@/app/(web)/admin/account/profile-form";
 
 export const metadata: Metadata = { title: "Account" };
 
