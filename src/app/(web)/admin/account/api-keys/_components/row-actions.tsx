@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
-import { DestructiveButton } from "@/components/buttons/destructive-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
+import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 import { MutationError } from "@/components/feedback/mutation-error";
 import {
   Dialog,
@@ -126,23 +126,14 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
         </DialogContent>
       </Dialog>
 
-      <Dialog open={dialog === "delete"} onOpenChange={(val) => !val && setDialog(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete API key?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. Any integrations using this key will stop working.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-2">
-            <CancelButton onClick={() => setDialog(null)} disabled={deleteMutation.isPending} />
-            <DestructiveButton
-              onClick={() => deleteMutation.mutate()}
-              isPending={deleteMutation.isPending}
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeleteDialog
+        open={dialog === "delete"}
+        onOpenChange={(val) => !val && setDialog(null)}
+        title="Delete API key?"
+        description="This action cannot be undone. Any integrations using this key will stop working."
+        onDelete={() => deleteMutation.mutate()}
+        isPending={deleteMutation.isPending}
+      />
     </>
   );
 }

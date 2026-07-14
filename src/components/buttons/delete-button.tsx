@@ -2,16 +2,8 @@
 
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { CancelButton } from "@/components/buttons/cancel-button";
-import { DestructiveButton } from "@/components/buttons/destructive-button";
+import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface DeleteButtonProps {
   title: string;
@@ -39,18 +31,14 @@ export function DeleteButton({
         <Trash2 className="h-4 w-4" />
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-2">
-            <CancelButton onClick={() => setOpen(false)} disabled={isPending} />
-            <DestructiveButton onClick={onDelete} isPending={isPending} />
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeleteDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={title}
+        description={description}
+        onDelete={onDelete}
+        isPending={isPending}
+      />
     </>
   );
 }
