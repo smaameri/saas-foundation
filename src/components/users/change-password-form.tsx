@@ -1,14 +1,22 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { authClient } from "@/lib/auth/auth-client";
-import { Button } from "@/components/ui/button";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const formSchema = z
   .object({
@@ -24,36 +32,22 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 export function ChangePasswordForm() {
-  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
-  const [isPending, startTransition] = useTransition();
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
+    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
   });
 
-  const onSubmit = (values: FormValues) => {
-    setStatus(null);
-
-    startTransition(async () => {
+  const { mutate, isPending, isSuccess, isError, error } = useMutation({
+    mutationFn: async (values: FormValues) => {
       const { error } = await authClient.changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
         revokeOtherSessions: false,
       });
-
-      if (error) {
-        setStatus({ ok: false, message: error.message ?? "Failed to change password." });
-      } else {
-        setStatus({ ok: true, message: "Password changed successfully." });
-        form.reset();
-      }
-    });
-  };
+      if (error) throw new Error(error.message ?? "Failed to change password.");
+    },
+    onSuccess: () => form.reset(),
+  });
 
   return (
     <Card className="max-w-xl">
@@ -62,48 +56,68 @@ export function ChangePasswordForm() {
         <CardDescription>Update your account password.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-1.5">
-            <Label htmlFor="currentPassword">Current password</Label>
-            <Input id="currentPassword" type="password" {...form.register("currentPassword")} />
-            {form.formState.errors.currentPassword ? (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.currentPassword.message}
-              </p>
-            ) : null}
-          </div>
+        <Form {...form}>
+          <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+            <FormField
+              control={form.control}
+              name="currentPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Current password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1.5">
-            <Label htmlFor="newPassword">New password</Label>
-            <Input id="newPassword" type="password" {...form.register("newPassword")} />
-            {form.formState.errors.newPassword ? (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.newPassword.message}
-              </p>
-            ) : null}
-          </div>
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1.5">
-            <Label htmlFor="confirmPassword">Confirm new password</Label>
-            <Input id="confirmPassword" type="password" {...form.register("confirmPassword")} />
-            {form.formState.errors.confirmPassword ? (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.confirmPassword.message}
-              </p>
-            ) : null}
-          </div>
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm new password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="flex items-center justify-between gap-4">
-            <div
-              className={`text-sm ${status && !status.ok ? "text-destructive" : "text-muted-foreground"}`}
-            >
-              {status ? status.message : null}
+            <MutationError
+              isError={isError}
+              error={error}
+              fallback="Failed to change password. Please try again."
+            />
+
+            <div className="flex items-center justify-between">
+              {isSuccess ? (
+                <p className="text-sm text-muted-foreground">Password changed successfully.</p>
+              ) : (
+                <span />
+              )}
+              <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
+                Change password
+              </PrimaryButton>
             </div>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Saving..." : "Change password"}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

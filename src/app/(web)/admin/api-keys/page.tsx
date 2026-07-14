@@ -1,7 +1,7 @@
 import { requirePermission } from "@/lib/adminAuthorization";
+import { CreateApiKeyButton } from "@/components/admin/create-api-key-button";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { ApiKeysTable } from "@/app/(web)/admin/api-keys/_components/api-keys-table";
-import { CreateApiKeyButton } from "@/app/(web)/admin/api-keys/_components/create-api-key-button";
 
 export default async function ApiKeysPage() {
   await requirePermission({ apiKey: ["read:any"] });

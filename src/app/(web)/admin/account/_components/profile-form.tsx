@@ -4,10 +4,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { accountApi } from "@/services/api/admin/accountApi";
-import { Button } from "@/components/ui/button";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { type UpdateAccountBody, updateAccountSchema } from "@/app/api/admin/account/schema";
 import type { User } from "@/types/user";
 
@@ -21,7 +29,7 @@ export function ProfileForm({ user }: { user: User }) {
     },
   });
 
-  const { mutate, isPending, isSuccess, isError } = useMutation({
+  const { mutate, isPending, isSuccess, isError, error } = useMutation({
     mutationFn: (values: UpdateAccountBody) => accountApi.updateAccount(values),
   });
 
@@ -32,50 +40,69 @@ export function ProfileForm({ user }: { user: User }) {
         <CardDescription>Update your name and avatar.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="firstName">First name</Label>
-              <Input id="firstName" placeholder="Jane" {...form.register("firstName")} />
-              {form.formState.errors.firstName ? (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.firstName.message}
-                </p>
-              ) : null}
+        <Form {...form}>
+          <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Jane" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Smith" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="lastName">Last name</Label>
-              <Input id="lastName" placeholder="Smith" {...form.register("lastName")} />
-              {form.formState.errors.lastName ? (
-                <p className="text-sm text-destructive">{form.formState.errors.lastName.message}</p>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="image">Avatar URL</Label>
-            <Input
-              id="image"
-              type="url"
-              placeholder="https://example.com/avatar.jpg"
-              {...form.register("image")}
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Avatar URL</FormLabel>
+                  <FormControl>
+                    <Input type="url" placeholder="https://example.com/avatar.jpg" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {form.formState.errors.image ? (
-              <p className="text-sm text-destructive">{form.formState.errors.image.message}</p>
-            ) : null}
-          </div>
 
-          <div className="flex items-center justify-between gap-4">
-            <div className={`text-sm ${isError ? "text-destructive" : "text-muted-foreground"}`}>
-              {isSuccess ? "Profile updated." : null}
-              {isError ? "Failed to update profile. Please try again." : null}
+            <MutationError
+              isError={isError}
+              error={error}
+              fallback="Failed to update profile. Please try again."
+            />
+
+            <div className="flex items-center justify-between">
+              {isSuccess ? (
+                <p className="text-sm text-muted-foreground">Profile updated.</p>
+              ) : (
+                <span />
+              )}
+              <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
+                Save changes
+              </PrimaryButton>
             </div>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Saving..." : "Save changes"}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

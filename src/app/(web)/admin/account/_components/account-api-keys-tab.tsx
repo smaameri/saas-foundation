@@ -3,11 +3,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 import type { ApiKey } from "@/services/api/types/apiKey";
+import { CreateApiKeyButton } from "@/components/admin/create-api-key-button";
 import { DataTableColumnHeader } from "@/components/connected-data-table/column-header";
 import { DataTable } from "@/components/connected-data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
 import { ApiKeyRowActions } from "@/app/(web)/admin/account/_components/api-key-row-actions";
-import { CreateApiKeyButton } from "@/app/(web)/admin/api-keys/_components/create-api-key-button";
 
 const columns: ColumnDef<ApiKey>[] = [
   {

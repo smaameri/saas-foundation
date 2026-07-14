@@ -53,6 +53,49 @@ Component → *Api.ts (apiClient) → route.ts (withAdmin → withErrorHandler)
   → parseQuery/body.parse → Validator (if needed) → Repository → Serializer → Response
 ```
 
+## Forms
+
+All forms use React Hook Form with Zod validation and ShadCN form primitives. This is the standard pattern — do not use raw `<label>`/`<input>` pairs or manual error rendering.
+
+```tsx
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { MutationError } from "@/components/feedback/mutation-error";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+
+const form = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { ... } });
+
+const { mutate, isPending, isSuccess, isError, error } = useMutation({ mutationFn: ... });
+
+<Form {...form}>
+  <form onSubmit={form.handleSubmit((values) => mutate(values))}>
+    <FormField
+      control={form.control}
+      name="fieldName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Label</FormLabel>
+          <FormControl><Input {...field} /></FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+    <MutationError isError={isError} error={error} fallback="Something went wrong." />
+    <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
+      Submit
+    </PrimaryButton>
+  </form>
+</Form>
+```
+
+- `<Form>` is RHF's `FormProvider` — it provides context to `FormField`, renders no DOM element
+- `<FormMessage />` handles field-level validation errors automatically
+- `<MutationError>` handles API-level errors; it surfaces `ApiError` detail messages or falls back to the `fallback` string
+- `<PrimaryButton isPending>` handles loading state on the submit button
+- For success feedback, render a message conditionally on `isSuccess` next to the button
+
 ## Skills
 
 Custom skills for this project live in `.agents/skills/`. Always check this directory for relevant skills before implementing auth, organization, or security features. Available skills:
