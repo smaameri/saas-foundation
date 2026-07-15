@@ -5,6 +5,7 @@ import { useInviteTeamMemberForm } from "./use-invite-team-member-form";
 import { UserPlus } from "lucide-react";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
+import { RoleSelectField } from "@/components/forms/role-select-field";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,24 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-const orgRoleOptions = [
-  { value: "member", label: "Member" },
-  { value: "admin", label: "Admin" },
-  { value: "owner", label: "Owner" },
-] as const;
-
-const platformRoleOptions = [
-  { value: "user", label: "User" },
-  { value: "admin", label: "Admin" },
-] as const;
+import { orgRoleOptions, platformRoleOptions } from "@/constants/roles";
 
 export function InviteTeamMemberModal({ organizationId }: { organizationId: string }) {
   const [open, setOpen] = useState(false);
@@ -86,60 +70,20 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
                 )}
               />
 
-              <FormField
+              <RoleSelectField
                 control={form.control}
                 name="platformRole"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Admin portal role</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      The role the user will have when accessing the admin portal.
-                    </p>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {platformRoleOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Admin portal role"
+                description="The role the user will have when accessing the admin portal."
+                options={platformRoleOptions}
               />
 
-              <FormField
+              <RoleSelectField
                 control={form.control}
                 name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Customer portal role</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      The role the user will have when accessing the customer portal.
-                    </p>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {orgRoleOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Customer portal role"
+                description="The role the user will have when accessing the customer portal."
+                options={orgRoleOptions}
               />
 
               <MutationError
