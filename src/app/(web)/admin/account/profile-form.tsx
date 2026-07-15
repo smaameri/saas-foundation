@@ -38,11 +38,16 @@ export function ProfileForm({ user }: { user: User }) {
     <Card className="max-w-xl">
       <CardHeader>
         <CardTitle>Profile</CardTitle>
-        <CardDescription>Update your name and avatar.</CardDescription>
+        <CardDescription>Update your name and profile details</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+            <div className="space-y-1">
+              <label className="text-sm font-medium leading-none">Email</label>
+              <Input value={user.email} disabled />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
