@@ -22,7 +22,7 @@ export const sidebarData: SidebarData = {
           icon: Building2,
         },
         {
-          title: "Users",
+          title: "People",
           url: "/admin/users",
           icon: Users,
         },
@@ -32,7 +32,7 @@ export const sidebarData: SidebarData = {
       title: "Administration",
       items: [
         {
-          title: "Members",
+          title: "Team",
           url: "/admin/members",
           icon: UserCog,
         },
