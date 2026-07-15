@@ -11,14 +11,14 @@ export default async function MembersLayout({ children }: { children: ReactNode 
 
   return (
     <ContentLayout
-      title="Members"
-      description="Manage your organization's members and invitations."
+      title="Team"
+      description="Manage your team and invitations."
       actions={<InviteTeamMemberModal organizationId={adminOrganization.id} />}
     >
       <NavTabs
         tabs={[
-          { label: "Members", href: "/admin/members" },
-          { label: "Invitations", href: "/admin/members/invitations" },
+          { label: "Team", href: "/admin/team" },
+          { label: "Invitations", href: "/admin/team/invitations" },
         ]}
       />
       {children}

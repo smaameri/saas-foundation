@@ -33,7 +33,7 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: "Team",
-          url: "/admin/members",
+          url: "/admin/team",
           icon: UserCog,
         },
         {
