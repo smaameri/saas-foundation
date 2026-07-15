@@ -24,9 +24,8 @@ export function ProfileForm({ user }: { user: User }) {
   const form = useForm<UpdateAccountBody>({
     resolver: zodResolver(updateAccountSchema),
     defaultValues: {
-      firstName: user.firstName ?? "",
-      lastName: user.lastName ?? "",
-      image: user.image ?? "",
+      firstName: user.firstName,
+      lastName: user.lastName,
     },
   });
 
@@ -72,20 +71,6 @@ export function ProfileForm({ user }: { user: User }) {
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="image"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Avatar URL</FormLabel>
-                  <FormControl>
-                    <Input type="url" placeholder="https://example.com/avatar.jpg" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <MutationError
               isError={isError}

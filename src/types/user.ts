@@ -1,8 +1,8 @@
 export type User = {
   id: string;
   name: string;
-  firstName: string | null;
-  lastName: string | null;
+  firstName: string;
+  lastName: string;
   email: string;
   emailVerified: boolean;
   image: string | null;
