@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { membersApi } from "@/services/api/admin/membersApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
+import { RoleSelectField } from "@/components/forms/role-select-field";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,25 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { type UpdateMemberBody, updateMemberSchema } from "@/app/api/admin/members/[id]/schema";
-
-const platformRoleOptions = [
-  { value: "user", label: "User" },
-  { value: "admin", label: "Admin" },
-] as const;
-
-const orgRoleOptions = [
-  { value: "member", label: "Member" },
-  { value: "admin", label: "Admin" },
-  { value: "owner", label: "Owner" },
-] as const;
+import { orgRoleOptions, platformRoleOptions } from "@/constants/roles";
 
 export default function EditMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -112,54 +96,18 @@ export default function EditMemberPage({ params }: { params: Promise<{ id: strin
             )}
           />
 
-          <FormField
+          <RoleSelectField
             control={form.control}
             name="platformRole"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Admin portal role</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {platformRoleOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Admin portal role"
+            options={platformRoleOptions}
           />
 
-          <FormField
+          <RoleSelectField
             control={form.control}
             name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customer portal role</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {orgRoleOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Customer portal role"
+            options={orgRoleOptions}
           />
 
           <MutationError
