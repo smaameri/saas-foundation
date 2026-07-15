@@ -17,7 +17,7 @@ export function AccountApiKeysTab() {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <CreateApiKeyButton />
+        <CreateApiKeyButton queryKey={["admin", "account", "api-keys"]} />
       </div>
       <DataTable
         table={table}

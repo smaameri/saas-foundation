@@ -27,7 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { type CreateApiKeyBody, createApiKeySchema } from "@/app/api/admin/api-keys/schema";
 
-export function CreateApiKeyButton() {
+export function CreateApiKeyButton({ queryKey }: { queryKey: string[] }) {
   const [open, setOpen] = useState(false);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -40,7 +40,7 @@ export function CreateApiKeyButton() {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: CreateApiKeyBody) => apiKeysApi.createApiKey(values),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
+      queryClient.invalidateQueries({ queryKey });
       setCreatedKey(result.key);
     },
   });
