@@ -31,13 +31,19 @@ export async function listApiKeys(params: {
 
 export async function listApiKeysForUser(params: {
   userId: string;
+  enabled?: string[];
+  search?: string;
   sort?: string;
   order?: SortOrder;
   page: number;
   perPage: number;
 }) {
   const { userId, page, perPage } = params;
-  const where = { referenceId: userId };
+  const where = {
+    referenceId: userId,
+    ...enabledFilter(params.enabled),
+    ...searchFilter(params.search),
+  };
 
   const [data, total] = await prisma.$transaction([
     prisma.apikey.findMany({

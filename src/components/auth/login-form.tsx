@@ -4,8 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { z } from "zod";
-import { authClient } from "@/lib/auth/auth-client";
+import { loginApi } from "@/services/api/auth/loginApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import {
@@ -17,32 +16,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginValues = z.infer<typeof loginSchema>;
+import { type LoginBody, loginSchema } from "@/app/api/auth/login/schema";
 
 export function LoginForm() {
   const router = useRouter();
 
-  const form = useForm<LoginValues>({
+  const form = useForm<LoginBody>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: async (values: LoginValues) => {
-      const result = await authClient.signIn.email({
-        email: values.email,
-        password: values.password,
-      });
-      if (result.error)
-        throw new Error(result.error.message ?? "Unable to sign in. Please try again.");
-      return result;
-    },
+    mutationFn: (values: LoginBody) => loginApi.signIn(values),
     onSuccess: () => router.push("/admin/dashboard"),
   });
 
