@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
-import { authClient } from "@/lib/auth/auth-client";
+import { changePasswordApi } from "@/services/api/auth/changePasswordApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,13 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { changePasswordSchema } from "@/app/api/auth/change-password/schema";
 
-const formSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your new password"),
-  })
+const formSchema = changePasswordSchema
+  .extend({ confirmPassword: z.string().min(1, "Please confirm your new password") })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
@@ -38,14 +35,11 @@ export function ChangePasswordForm() {
   });
 
   const { mutate, isPending, isSuccess, isError, error } = useMutation({
-    mutationFn: async (values: FormValues) => {
-      const { error } = await authClient.changePassword({
+    mutationFn: (values: FormValues) =>
+      changePasswordApi.changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
-        revokeOtherSessions: false,
-      });
-      if (error) throw new Error(error.message ?? "Failed to change password.");
-    },
+      }),
     onSuccess: () => form.reset(),
   });
 
