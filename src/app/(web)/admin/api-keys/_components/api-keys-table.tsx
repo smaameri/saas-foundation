@@ -23,6 +23,7 @@ export function ApiKeysTable() {
       </div>
       <DataTable
         table={table}
+
         showSearch
         searchPlaceholder="Search by name or key..."
         filters={[

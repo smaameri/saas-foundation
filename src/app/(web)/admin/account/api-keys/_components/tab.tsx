@@ -21,6 +21,7 @@ export function AccountApiKeysTab() {
       </div>
       <DataTable
         table={table}
+
         showSearch
         searchPlaceholder="Search by name or key..."
         filters={[

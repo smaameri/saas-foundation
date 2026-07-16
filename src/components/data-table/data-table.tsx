@@ -5,6 +5,7 @@ import { flexRender } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 import { DataTablePagination } from "@/components/data-table/pagination";
 import { DataTableToolbar } from "@/components/data-table/toolbar";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -26,8 +27,13 @@ type Filter = {
   options: FilterOption[];
 };
 
+interface ConnectedTable<TData> {
+  instance: TanstackTable<TData>;
+  isPending: boolean;
+}
+
 interface DataTableProps<TData> {
-  table: TanstackTable<TData>;
+  table: ConnectedTable<TData>;
   searchPlaceholder?: string;
   showSearch?: boolean;
   showViewOptions?: boolean;
@@ -35,7 +41,7 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({
-  table,
+  table: { instance: table, isPending: isLoading },
   searchPlaceholder,
   showSearch,
   showViewOptions,
@@ -76,7 +82,20 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  {table.getVisibleLeafColumns().map((col) => (
+                    <TableCell
+                      key={col.id}
+                      className={cn(col.columnDef.meta?.className, col.columnDef.meta?.tdClassName)}
+                    >
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (

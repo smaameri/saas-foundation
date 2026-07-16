@@ -64,6 +64,8 @@ export function useConnectedTable<TData>({
     queryFn: () => queryFn(params),
   });
 
+  const isPending = queryResult.isPending;
+
   const table = useReactTable({
     data: queryResult.data?.data ?? [],
     columns,
@@ -90,5 +92,5 @@ export function useConnectedTable<TData>({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  return { table };
+  return { table: { instance: table, isPending } };
 }
