@@ -24,16 +24,9 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "user.role",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Platform Role" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
     cell: ({ row }) => (
       <span className="capitalize text-muted-foreground">{row.original.user.role ?? "—"}</span>
-    ),
-  },
-  {
-    accessorKey: "role",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Organization Role" />,
-    cell: ({ row }) => (
-      <span className="capitalize text-muted-foreground">{row.original.role}</span>
     ),
   },
   {
