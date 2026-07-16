@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { loginApi } from "@/services/api/auth/loginApi";
+import { authApi } from "@/services/api/auth/authApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import {
@@ -27,7 +27,7 @@ export function LoginForm() {
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: LoginBody) => loginApi.signIn(values),
+    mutationFn: (values: LoginBody) => authApi.signIn(values),
     onSuccess: () => router.push("/admin/dashboard"),
   });
 

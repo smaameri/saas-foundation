@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { logoutApi } from "@/services/api/auth/logoutApi";
+import { authApi } from "@/services/api/auth/authApi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +28,7 @@ export function ProfileDropdown({ user: { name, email, image } }: ProfileDropdow
 
   const handleSignOut = () => {
     startTransition(async () => {
-      await logoutApi.signOut();
+      await authApi.signOut();
       router.push("/login");
     });
   };

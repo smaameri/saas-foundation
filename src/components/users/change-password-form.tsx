@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
-import { changePasswordApi } from "@/services/api/auth/changePasswordApi";
+import { authApi } from "@/services/api/auth/authApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +36,7 @@ export function ChangePasswordForm() {
 
   const { mutate, isPending, isSuccess, isError, error } = useMutation({
     mutationFn: (values: FormValues) =>
-      changePasswordApi.changePassword({
+      authApi.changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       }),

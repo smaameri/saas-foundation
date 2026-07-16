@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
-import { logoutApi } from "@/services/api/auth/logoutApi";
+import { authApi } from "@/services/api/auth/authApi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -34,7 +34,7 @@ export function NavUser({ user }: NavUserProps) {
 
   const handleSignOut = () => {
     startTransition(async () => {
-      await logoutApi.signOut();
+      await authApi.signOut();
       router.push("/login");
     });
   };
