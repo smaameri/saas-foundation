@@ -15,8 +15,10 @@ interface DeleteDialogProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   description: string;
-  onDelete: () => void;
+  onDelete: () => void | Promise<void>;
   isPending?: boolean;
+  confirmLabel?: string;
+  confirmPendingLabel?: string;
 }
 
 export function DeleteDialog({
@@ -26,6 +28,8 @@ export function DeleteDialog({
   description,
   onDelete,
   isPending = false,
+  confirmLabel,
+  confirmPendingLabel,
 }: DeleteDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -36,7 +40,15 @@ export function DeleteDialog({
         </DialogHeader>
         <div className="flex justify-end gap-2">
           <CancelButton onClick={() => onOpenChange(false)} disabled={isPending} />
-          <DestructiveButton onClick={onDelete} isPending={isPending} />
+          <DestructiveButton
+            onClick={async () => {
+              await onDelete();
+              onOpenChange(false);
+            }}
+            isPending={isPending}
+            label={confirmLabel}
+            pendingLabel={confirmPendingLabel}
+          />
         </div>
       </DialogContent>
     </Dialog>

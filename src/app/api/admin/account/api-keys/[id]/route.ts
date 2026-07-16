@@ -1,8 +1,9 @@
+import { Apikey } from "@generated/prisma/client";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth/auth";
 import { serializeApiKey } from "@/serializers/apiKeySerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { detailResponse, notFoundResponse } from "@/app/api/response";
+import { detailResponse, noContentResponse } from "@/app/api/response";
 
 const updateApiKeySchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
@@ -12,9 +13,19 @@ export const PATCH = withAdmin(async (request, { params }, { user }) => {
   const { id } = await params;
   const { name } = updateApiKeySchema.parse(await request.json());
 
-  const apiKey = await prisma.apikey.findFirst({ where: { id, referenceId: user.id } });
-  if (!apiKey) return notFoundResponse();
+  const updated = await auth.api.updateApiKey({
+    body: { keyId: id, userId: user.id, name },
+    headers: request.headers,
+  });
 
-  const updated = await prisma.apikey.update({ where: { id }, data: { name } });
-  return detailResponse(serializeApiKey(updated));
+  return detailResponse(serializeApiKey(updated as Apikey));
+});
+
+export const DELETE = withAdmin(async (request, { params }, { user }) => {
+  const { id } = await params;
+  await auth.api.updateApiKey({
+    body: { keyId: id, userId: user.id, enabled: false },
+    headers: request.headers,
+  });
+  return noContentResponse();
 });

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { KeyRound } from "lucide-react";
-import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
+import { accountApiKeysApi } from "@/services/api/admin/account/apiKeysApi";
 import { CopyButton } from "@/components/buttons/copy-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
@@ -38,7 +38,7 @@ export function CreateApiKeyButton({ queryKey }: { queryKey: string[] }) {
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: CreateApiKeyBody) => apiKeysApi.createApiKey(values),
+    mutationFn: (values: CreateApiKeyBody) => accountApiKeysApi.createApiKey(values),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey });
       setCreatedKey(result.key);

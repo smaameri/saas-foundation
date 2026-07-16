@@ -1,7 +1,7 @@
 "use client";
 
 import { columns } from "./columns";
-import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
+import { accountApiKeysApi } from "@/services/api/admin/account/apiKeysApi";
 import { CreateApiKeyButton } from "@/components/admin/create-api-key-button";
 import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
@@ -9,7 +9,7 @@ import { useConnectedTable } from "@/hooks/use-connected-table";
 export function AccountApiKeysTab() {
   const { table } = useConnectedTable({
     queryKey: ["admin", "account", "api-keys"],
-    queryFn: (params) => apiKeysApi.listAccountApiKeys(params),
+    queryFn: (params) => accountApiKeysApi.listApiKeys(params),
     columns,
     initialFilters: [{ id: "enabled", value: ["true"] }],
   });

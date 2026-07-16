@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 interface DeleteButtonProps {
   title: string;
   description: string;
-  onDelete: () => void;
+  onDelete: () => void | Promise<void>;
   isPending?: boolean;
+  confirmLabel?: string;
+  confirmPendingLabel?: string;
 }
 
 export function DeleteButton({
@@ -17,6 +19,8 @@ export function DeleteButton({
   description,
   onDelete,
   isPending = false,
+  confirmLabel,
+  confirmPendingLabel,
 }: DeleteButtonProps) {
   const [open, setOpen] = useState(false);
 
@@ -38,6 +42,8 @@ export function DeleteButton({
         description={description}
         onDelete={onDelete}
         isPending={isPending}
+        confirmLabel={confirmLabel}
+        confirmPendingLabel={confirmPendingLabel}
       />
     </>
   );

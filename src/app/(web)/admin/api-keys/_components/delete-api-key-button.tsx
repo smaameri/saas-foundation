@@ -11,7 +11,7 @@ interface DeleteApiKeyButtonProps {
 export function DeleteApiKeyButton({ id }: DeleteApiKeyButtonProps) {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: () => apiKeysApi.deleteApiKey(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
@@ -20,10 +20,12 @@ export function DeleteApiKeyButton({ id }: DeleteApiKeyButtonProps) {
 
   return (
     <DeleteButton
-      title="Delete API key?"
-      description="This action cannot be undone. Any integrations using this key will stop working."
-      onDelete={() => mutate()}
+      title="Revoke API key"
+      description="This API key will immediately be disabled. API requests made using this key will be rejected, which could cause any systems still depending on it to break. Once revoked, you'll no longer be able to view or modify this API key."
+      onDelete={mutateAsync}
       isPending={isPending}
+      confirmLabel="Revoke"
+      confirmPendingLabel="Revoking..."
     />
   );
 }

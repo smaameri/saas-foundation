@@ -1,16 +1,14 @@
-import { deleteApiKeyById, findApiKeyById } from "@/repositories/admin/apiKeyRepository";
+import { auth } from "@/lib/auth/auth";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { noContentResponse, notFoundResponse } from "@/app/api/response";
+import { noContentResponse } from "@/app/api/response";
 
 export const DELETE = withAdmin(
-  async (_request, { params }) => {
+  async (request, { params }) => {
     const { id } = await params;
-
-    const apiKey = await findApiKeyById(id);
-    if (!apiKey) return notFoundResponse("API key not found.");
-
-    await deleteApiKeyById(id);
-
+    await auth.api.updateApiKey({
+      body: { keyId: id, enabled: false },
+      headers: request.headers,
+    });
     return noContentResponse();
   },
   { apiKey: ["delete:any"] },

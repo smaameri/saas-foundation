@@ -13,6 +13,7 @@ export function ApiKeysTable() {
     queryKey: QUERY_KEY,
     queryFn: (params) => apiKeysApi.listApiKeys(params),
     columns,
+    initialFilters: [{ id: "enabled", value: ["true"] }],
   });
 
   return (

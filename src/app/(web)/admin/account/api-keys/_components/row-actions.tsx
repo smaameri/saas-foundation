@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
+import { accountApiKeysApi } from "@/services/api/admin/account/apiKeysApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
@@ -46,7 +46,7 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
   });
 
   const editMutation = useMutation({
-    mutationFn: (values: EditFormValues) => apiKeysApi.updateAccountApiKey(id, values),
+    mutationFn: (values: EditFormValues) => accountApiKeysApi.updateApiKey(id, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       toast.success("API key updated.");
@@ -55,10 +55,10 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => apiKeysApi.deleteApiKey(id),
+    mutationFn: () => accountApiKeysApi.deleteApiKey(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      toast.success("API key deleted.");
+      toast.success("API key revoked.");
       setDialog(null);
     },
   });
@@ -75,7 +75,7 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
           className="text-destructive focus:text-destructive"
           onClick={() => setDialog("delete")}
         >
-          Delete
+          Revoke
           <Trash2 size={16} className="ml-auto" />
         </DropdownMenuItem>
       </RowActionsDropdown>
@@ -129,10 +129,12 @@ export function ApiKeyRowActions({ id, name }: { id: string; name: string | null
       <DeleteDialog
         open={dialog === "delete"}
         onOpenChange={(val) => !val && setDialog(null)}
-        title="Delete API key?"
-        description="This action cannot be undone. Any integrations using this key will stop working."
+        title="Revoke API key"
+        description="This API key will immediately be disabled. API requests made using this key will be rejected, which could cause any systems still depending on it to break. Once revoked, you'll no longer be able to view or modify this API key."
         onDelete={() => deleteMutation.mutate()}
         isPending={deleteMutation.isPending}
+        confirmLabel="Revoke"
+        confirmPendingLabel="Revoking..."
       />
     </>
   );
