@@ -1,14 +1,14 @@
-import { listMembersSchema } from "./schema";
+import { listTeamMembersSchema } from "./schema";
 import { validateQuery } from "@/lib/api";
-import { listMembers } from "@/repositories/admin/memberRepository";
-import { serializeMember } from "@/serializers/memberSerializer";
+import { listTeamMembers } from "@/repositories/admin/teamRepository";
+import { serializeUser } from "@/serializers/userSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 
-export const GET = withAdmin(async (request, _context, { organizationId }) => {
-  const validated = validateQuery(request, listMembersSchema);
-  const { data, total } = await listMembers(organizationId, validated);
-  return paginatedResponse(data.map(serializeMember), {
+export const GET = withAdmin(async (request) => {
+  const validated = validateQuery(request, listTeamMembersSchema);
+  const { data, total } = await listTeamMembers(validated);
+  return paginatedResponse(data.map(serializeUser), {
     page: validated.page,
     perPage: validated.perPage,
     total,

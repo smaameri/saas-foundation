@@ -2,31 +2,40 @@
 
 import { DataTableRowActions } from "./_components/data-table-row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Member } from "@/services/api/types/member";
+import type { User } from "@/services/api/types/user";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import { Badge } from "@/components/ui/badge";
 
-export const columns: ColumnDef<Member>[] = [
+export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: "user.firstName",
+    accessorKey: "firstName",
     header: ({ column }) => <DataTableColumnHeader column={column} title="First Name" />,
-    cell: ({ row }) => row.original.user.firstName ?? row.original.user.name,
+    cell: ({ row }) => row.original.firstName ?? row.original.name,
   },
   {
-    accessorKey: "user.lastName",
+    accessorKey: "lastName",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last Name" />,
-    cell: ({ row }) =>
-      row.original.user.lastName ?? <span className="text-muted-foreground">—</span>,
+    cell: ({ row }) => row.original.lastName ?? <span className="text-muted-foreground">—</span>,
   },
   {
-    accessorKey: "user.email",
+    accessorKey: "email",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    cell: ({ row }) => row.original.user.email,
+    cell: ({ row }) => row.original.email,
   },
   {
-    accessorKey: "user.role",
+    accessorKey: "role",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
     cell: ({ row }) => (
-      <span className="capitalize text-muted-foreground">{row.original.user.role ?? "—"}</span>
+      <span className="capitalize text-muted-foreground">{row.original.role ?? "—"}</span>
+    ),
+  },
+  {
+    accessorKey: "emailVerified",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email Verified" />,
+    cell: ({ row }) => (
+      <Badge variant={row.original.emailVerified ? "secondary" : "outline"}>
+        {row.original.emailVerified ? "Yes" : "No"}
+      </Badge>
     ),
   },
   {
