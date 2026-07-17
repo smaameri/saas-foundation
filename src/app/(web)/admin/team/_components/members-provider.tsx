@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import type { Member } from "@/services/api/types/member";
 import useDialogState from "@/hooks/use-dialog-state";
 
-type MembersDialogType = "view";
+type MembersDialogType = "view" | "change-role";
 
 type MembersContextType = {
   open: MembersDialogType | null;

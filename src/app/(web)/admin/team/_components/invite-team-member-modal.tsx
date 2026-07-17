@@ -23,17 +23,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { orgRoleOptions, platformRoleOptions } from "@/constants/roles";
+import { platformRoleOptions } from "@/constants/roles";
 
-export function InviteTeamMemberModal({ organizationId }: { organizationId: string }) {
+export function InviteTeamMemberModal() {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
 
-  const { form, mutate, isPending, isError, error } = useInviteTeamMemberForm(
-    organizationId,
-    handleClose,
-  );
+  const { form, mutate, isPending, isError, error } = useInviteTeamMemberForm(handleClose);
 
   return (
     <>
@@ -73,17 +70,9 @@ export function InviteTeamMemberModal({ organizationId }: { organizationId: stri
               <RoleSelectField
                 control={form.control}
                 name="platformRole"
-                label="Admin portal role"
+                label="Role"
                 description="The role the user will have when accessing the admin portal."
                 options={platformRoleOptions}
-              />
-
-              <RoleSelectField
-                control={form.control}
-                name="role"
-                label="Customer portal role"
-                description="The role the user will have when accessing the customer portal."
-                options={orgRoleOptions}
               />
 
               <MutationError

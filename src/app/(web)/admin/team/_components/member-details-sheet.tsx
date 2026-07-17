@@ -70,36 +70,24 @@ export function MemberDetailsSheet() {
             />
           </section>
 
-          <section className="flex flex-col gap-4">
-            <h3 className="text-sm font-semibold">Roles</h3>
-            <DetailRow
-              label="Admin portal role"
-              value={user.role ? <span className="capitalize">{user.role}</span> : null}
-            />
-            <DetailRow
-              label="Customer portal role"
-              value={<span className="capitalize">{role}</span>}
-            />
+          <section className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold">Role</h3>
+            <span className="text-sm capitalize">
+              {user.role ?? <span className="text-muted-foreground">—</span>}
+            </span>
           </section>
 
-          <section className="flex flex-col gap-4">
-            <h3 className="text-sm font-semibold">Ban</h3>
-            <DetailRow
-              label="Status"
-              value={
-                user.banned ? (
-                  <Badge variant="destructive">Banned</Badge>
-                ) : (
-                  <Badge variant="secondary">Active</Badge>
-                )
-              }
-            />
-            <DetailRow label="Reason" value={user.banReason} />
-            <DetailRow
-              label="Expires"
-              value={user.banExpires ? new Date(user.banExpires).toLocaleDateString() : null}
-            />
-          </section>
+          {user.banned && (
+            <section className="flex flex-col gap-4">
+              <h3 className="text-sm font-semibold">Ban</h3>
+              <DetailRow label="Status" value={<Badge variant="destructive">Banned</Badge>} />
+              <DetailRow label="Reason" value={user.banReason} />
+              <DetailRow
+                label="Expires"
+                value={user.banExpires ? new Date(user.banExpires).toLocaleDateString() : null}
+              />
+            </section>
+          )}
 
           <section className="flex flex-col gap-4">
             <h3 className="text-sm font-semibold">Membership</h3>

@@ -42,6 +42,18 @@ export async function updateMember(
   return findMemberById(id, organizationId);
 }
 
+export async function updateMemberRole(id: string, organizationId: string, platformRole: string) {
+  const member = await prisma.member.findFirst({ where: { id, organizationId } });
+  if (!member) return null;
+
+  await prisma.user.update({
+    where: { id: member.userId },
+    data: { role: platformRole },
+  });
+
+  return findMemberById(id, organizationId);
+}
+
 export async function listMembers(
   organizationId: string,
   params: {

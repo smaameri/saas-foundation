@@ -1,5 +1,6 @@
 "use client";
 
+import { ChangeRoleDialog } from "./_components/change-role-dialog";
 import { MemberDetailsSheet } from "./_components/member-details-sheet";
 import { MembersProvider } from "./_components/members-provider";
 import { columns } from "./columns";
@@ -29,6 +30,7 @@ export default function MembersPage() {
     <MembersProvider>
       <MembersTable />
       <MemberDetailsSheet />
+      <ChangeRoleDialog />
     </MembersProvider>
   );
 }
