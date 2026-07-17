@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { updateMemberRole } from "@/repositories/admin/memberRepository";
+import { updateMemberRole } from "@/repositories/admin/organizationMemberRepository";
 import { serializeMember } from "@/serializers/memberSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { detailResponse, notFoundResponse } from "@/app/api/response";

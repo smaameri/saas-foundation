@@ -1,5 +1,5 @@
 import { updateMemberSchema } from "./schema";
-import { findMemberById, updateMember } from "@/repositories/admin/memberRepository";
+import { findMemberById, updateMember } from "@/repositories/admin/organizationMemberRepository";
 import { serializeMember } from "@/serializers/memberSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { detailResponse, notFoundResponse } from "@/app/api/response";

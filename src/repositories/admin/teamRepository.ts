@@ -6,6 +6,10 @@ function whereHasAdminPortalAccess(): Prisma.UserWhereInput {
   return { role: { not: null } };
 }
 
+export async function findUserByEmail(email: string) {
+  return prisma.user.findUnique({ where: { email } });
+}
+
 export async function listTeamMembers(params: {
   sort?: string;
   order?: SortOrder;

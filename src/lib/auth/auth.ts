@@ -4,9 +4,13 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin, magicLink, organization } from "better-auth/plugins";
 import { ac, adminRole, userRole } from "@/lib/auth/permissions";
-import { sendMagicLinkInviteEmail, sendOrganizationInvitationEmail } from "@/lib/email";
+import {
+  sendMagicLinkInviteEmail,
+  sendOrganizationInvitationEmail,
+  sendSetPasswordInviteEmail,
+} from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { findMemberByUserId } from "@/repositories/admin/memberRepository";
+import { findMemberByUserId } from "@/repositories/admin/organizationMemberRepository";
 import { belongsToAdminPortal } from "@/repositories/auth/memberRepository";
 
 const authSecret = process.env.BETTER_AUTH_SECRET;
@@ -65,6 +69,11 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    resetPasswordTokenExpiresIn: 60 * 60 * 24 * 7, // 7 days
+    sendResetPassword: async ({ user, token }) => {
+      const url = `${process.env.BETTER_AUTH_URL}/reset-password?token=${token}`;
+      void sendSetPasswordInviteEmail({ email: user.email, url });
+    },
   },
   plugins: [
     nextCookies(),
