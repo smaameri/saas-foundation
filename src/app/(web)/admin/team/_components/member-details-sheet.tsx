@@ -26,7 +26,7 @@ export function MemberDetailsSheet() {
 
   if (!currentRow) return null;
 
-  const { user, role, createdAt } = currentRow;
+  const user = currentRow;
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.name;
 
   return (
@@ -91,7 +91,7 @@ export function MemberDetailsSheet() {
 
           <section className="flex flex-col gap-4">
             <h3 className="text-sm font-semibold">Membership</h3>
-            <DetailRow label="Joined" value={new Date(createdAt).toLocaleDateString()} />
+            <DetailRow label="Joined" value={new Date(user.createdAt).toLocaleDateString()} />
           </section>
         </div>
       </SheetContent>

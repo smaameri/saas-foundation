@@ -3,12 +3,12 @@
 import { useMembers } from "./members-provider";
 import type { Row } from "@tanstack/react-table";
 import { ShieldCheck, UserSearch } from "lucide-react";
-import type { Member } from "@/services/api/types/member";
+import type { User } from "@/services/api/types/user";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 type DataTableRowActionsProps = {
-  row: Row<Member>;
+  row: Row<User>;
 };
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

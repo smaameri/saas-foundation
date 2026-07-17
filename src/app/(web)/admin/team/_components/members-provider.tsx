@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import type { Member } from "@/services/api/types/member";
+import type { User } from "@/services/api/types/user";
 import useDialogState from "@/hooks/use-dialog-state";
 
 type MembersDialogType = "view" | "change-role";
@@ -9,15 +9,15 @@ type MembersDialogType = "view" | "change-role";
 type MembersContextType = {
   open: MembersDialogType | null;
   setOpen: (str: MembersDialogType | null) => void;
-  currentRow: Member | null;
-  setCurrentRow: React.Dispatch<React.SetStateAction<Member | null>>;
+  currentRow: User | null;
+  setCurrentRow: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
 const MembersContext = React.createContext<MembersContextType | null>(null);
 
 export function MembersProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<MembersDialogType>(null);
-  const [currentRow, setCurrentRow] = useState<Member | null>(null);
+  const [currentRow, setCurrentRow] = useState<User | null>(null);
 
   return (
     <MembersContext value={{ open, setOpen, currentRow, setCurrentRow }}>{children}</MembersContext>

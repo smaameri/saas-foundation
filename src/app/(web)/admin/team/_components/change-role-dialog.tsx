@@ -37,7 +37,7 @@ export function ChangeRoleDialog() {
 
   const form = useForm<ChangeRoleValues>({
     resolver: zodResolver(changeRoleSchema),
-    values: { platformRole: (currentRow?.user.role as "admin" | "user") ?? "user" },
+    values: { platformRole: (currentRow?.role as "admin" | "user") ?? "user" },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
@@ -56,7 +56,7 @@ export function ChangeRoleDialog() {
         <DialogHeader>
           <DialogTitle>Change role</DialogTitle>
           <DialogDescription>
-            Update the admin portal role for {currentRow?.user.name}.
+            Update the admin portal role for {currentRow?.name}.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
