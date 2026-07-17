@@ -53,6 +53,36 @@ export function InviteTeamMemberModal() {
 
           <Form {...form}>
             <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Jane" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Smith" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="email"
@@ -69,7 +99,7 @@ export function InviteTeamMemberModal() {
 
               <RoleSelectField
                 control={form.control}
-                name="platformRole"
+                name="role"
                 label="Role"
                 description="The role the user will have when accessing the admin portal."
                 options={platformRoleOptions}

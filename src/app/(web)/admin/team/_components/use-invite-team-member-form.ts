@@ -4,28 +4,24 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { z } from "zod";
-import { membersApi } from "@/services/api/admin/membersApi";
+import type { z } from "zod";
+import { teamApi } from "@/services/api/admin/teamApi";
+import { inviteMemberSchema } from "@/app/api/admin/team/invite/schema";
 
-const formSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  platformRole: z.enum(["admin", "user"]),
-});
-
-export type InviteTeamMemberFormValues = z.infer<typeof formSchema>;
+export type InviteTeamMemberFormValues = z.infer<typeof inviteMemberSchema>;
 
 export function useInviteTeamMemberForm(onSuccess: () => void) {
   const queryClient = useQueryClient();
 
   const form = useForm<InviteTeamMemberFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { email: "", platformRole: "user" },
+    resolver: zodResolver(inviteMemberSchema),
+    defaultValues: { firstName: "", lastName: "", email: "", role: "user" },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: InviteTeamMemberFormValues) => membersApi.inviteMember(values),
+    mutationFn: (values: InviteTeamMemberFormValues) => teamApi.inviteMember(values),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["admin", "invitations"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
       toast.success("Invitation sent.");
       form.reset();
       onSuccess();
