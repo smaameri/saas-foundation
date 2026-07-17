@@ -7,15 +7,10 @@ export default function MembersLayout({ children }: { children: ReactNode }) {
   return (
     <ContentLayout
       title="Team"
-      description="Manage your team and invitations."
+      description="Manage your team members"
       actions={<InviteTeamMemberModal />}
     >
-      <NavTabs
-        tabs={[
-          { label: "Team", href: "/admin/team" },
-          { label: "Invitations", href: "/admin/team/invitations" },
-        ]}
-      />
+      <NavTabs tabs={[{ label: "Team", href: "/admin/team" }]} />
       {children}
     </ContentLayout>
   );
