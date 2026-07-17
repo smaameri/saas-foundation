@@ -16,8 +16,4 @@ export const membersApi = {
   updateMember(id: string, body: UpdateMemberBody): Promise<Member> {
     return apiClient.patch<Member>(`/admin/members/${id}`, body);
   },
-
-  changeRole(id: string, platformRole: "admin" | "user"): Promise<Member> {
-    return apiClient.patch<Member>(`/admin/members/${id}/role`, { platformRole });
-  },
 };

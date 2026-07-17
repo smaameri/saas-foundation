@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
-import { membersApi } from "@/services/api/admin/membersApi";
+import { teamApi } from "@/services/api/admin/teamApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
@@ -26,7 +26,7 @@ const PLATFORM_ROLES = [
 ] as const;
 
 const changeRoleSchema = z.object({
-  platformRole: z.enum(["admin", "user"]),
+  role: z.enum(["admin", "user"]),
 });
 
 type ChangeRoleValues = z.infer<typeof changeRoleSchema>;
@@ -37,14 +37,13 @@ export function ChangeRoleDialog() {
 
   const form = useForm<ChangeRoleValues>({
     resolver: zodResolver(changeRoleSchema),
-    values: { platformRole: (currentRow?.role as "admin" | "user") ?? "user" },
+    values: { role: (currentRow?.role as "admin" | "user") ?? "user" },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: ChangeRoleValues) =>
-      membersApi.changeRole(currentRow!.id, values.platformRole),
+    mutationFn: (values: ChangeRoleValues) => teamApi.changeRole(currentRow!.id, values.role),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "members"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
       toast.success("Role updated.");
       setOpen(null);
     },
@@ -63,7 +62,7 @@ export function ChangeRoleDialog() {
           <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
             <RoleSelectField
               control={form.control}
-              name="platformRole"
+              name="role"
               label="Role"
               options={PLATFORM_ROLES}
             />

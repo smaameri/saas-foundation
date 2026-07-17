@@ -10,6 +10,13 @@ export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
+export async function updateTeamMemberRole(id: string, role: string) {
+  return prisma.user.update({
+    where: { id },
+    data: { role },
+  });
+}
+
 export async function listTeamMembers(params: {
   sort?: string;
   order?: SortOrder;

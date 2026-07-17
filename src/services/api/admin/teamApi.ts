@@ -14,4 +14,12 @@ export const teamApi = {
   inviteMember(body: InviteMemberBody): Promise<User> {
     return apiClient.post<User>("/admin/team/invite", body);
   },
+
+  deleteUser(id: string): Promise<void> {
+    return apiClient.delete(`/admin/team/${id}`);
+  },
+
+  changeRole(id: string, role: "admin" | "user"): Promise<User> {
+    return apiClient.patch<User>(`/admin/team/${id}/role`, { role });
+  },
 };
