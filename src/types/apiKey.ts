@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { User } from "../services/api/types/user";
 
 export type ApiKey = {
   id: string;

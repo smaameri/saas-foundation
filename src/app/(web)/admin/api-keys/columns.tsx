@@ -1,9 +1,9 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import type { ApiKey } from "@/services/api/types/apiKey";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { DeleteApiKeyButton } from "@/app/(web)/admin/api-keys/_components/delete-api-key-button";
+import type { ApiKey } from "@/types/apiKey";
 
 export const columns: ColumnDef<ApiKey>[] = [
   {

@@ -1,6 +1,6 @@
 import type { Apikey as PrismaApikey, User as PrismaUser } from "@generated/prisma/client";
-import type { ApiKey, CreatedApiKey } from "@/services/api/types/apiKey";
 import { serializeUser } from "@/serializers/userSerializer";
+import type { ApiKey, CreatedApiKey } from "@/types/apiKey";
 
 type ApiKeyInput = PrismaApikey & { user?: PrismaUser | null };
 

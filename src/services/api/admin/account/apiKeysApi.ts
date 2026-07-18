@@ -1,8 +1,8 @@
 import { adminApiClient } from "@/services/api/client";
 import type { ListParams } from "@/services/api/listParams";
-import type { ApiKey, CreatedApiKey } from "@/services/api/types/apiKey";
 import type { CreateApiKeyBody } from "@/app/api/admin/api-keys/schema";
 import type { PaginationData } from "@/app/api/response";
+import type { ApiKey, CreatedApiKey } from "@/types/apiKey";
 
 export const accountApiKeysApi = {
   listApiKeys(params?: ListParams): Promise<{ data: ApiKey[]; pagination: PaginationData }> {

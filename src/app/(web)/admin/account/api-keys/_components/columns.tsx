@@ -2,8 +2,8 @@
 
 import { ApiKeyRowActions } from "./row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { ApiKey } from "@/services/api/types/apiKey";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import type { ApiKey } from "@/types/apiKey";
 
 export const columns: ColumnDef<ApiKey>[] = [
   {
