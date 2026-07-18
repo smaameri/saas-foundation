@@ -24,7 +24,7 @@ export async function listOrganizations(params?: {
   const page = params?.page ?? 1;
   const perPage = params?.perPage ?? 10;
 
-  const where = { portals: { has: "customer" } };
+  const where = {};
   const select = {
     id: true,
     name: true,
