@@ -12,8 +12,7 @@ export const GET = withAdmin(async (request) => {
   const perPage = parsed.perPage ?? 10;
   return paginatedResponse(data.map(serializeOrganization), {
     page,
-    per_page: perPage,
-    total_pages: Math.ceil(total / perPage),
-    total_results: total,
+    perPage: perPage,
+    total: total,
   });
 });
