@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { BadgeCheck, Building2, ChevronsUpDown, LogOut } from "lucide-react";
+import { accountOrganizationsApi } from "@/services/api/admin/account/organizationsApi";
 import { authApi } from "@/services/api/auth/authApi";
 import {
   DropdownMenu,
@@ -12,6 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -31,6 +36,12 @@ export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { data: organizations } = useQuery({
+    queryKey: ["admin-account-organizations"],
+    queryFn: () => accountOrganizationsApi.listOrganizationsForCurrentUser(),
+  });
+  const organizationOptions = organizations ?? [];
+  const hasOrganizations = organizationOptions.length > 0;
 
   const handleSignOut = () => {
     startTransition(async () => {
@@ -88,6 +99,31 @@ export function NavUser({ user }: NavUserProps) {
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
+            {hasOrganizations && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="gap-2">
+                      <Building2 className="size-4 text-muted-foreground" />
+                      Customer Portal
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      {organizationOptions.map((organization) => (
+                        <DropdownMenuItem
+                          key={organization.id}
+                          onSelect={(event) => {
+                            event.preventDefault();
+                          }}
+                        >
+                          {organization.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+              </>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={handleSignOut} disabled={isPending}>
               <LogOut />
