@@ -9,17 +9,35 @@ import type { ListAdminPortalInvitationsParams } from "@/app/api/admin/team/invi
 function InvitationsTable() {
   const { table } = useConnectedTable({
     queryKey: ["admin", "team", "invitations"],
-    queryFn: ({ sort, order, page, perPage }) =>
+    queryFn: ({ sort, order, page, perPage, filters }) =>
       invitationsApi.listAdminPortalInvitations({
         sort: sort as ListAdminPortalInvitationsParams["sort"],
         order,
         page,
         perPage,
+        status: (filters?.status as string[] | undefined) ?? undefined,
       }),
     columns,
+    initialFilters: [{ id: "status", value: ["pending"] }],
   });
 
-  return <DataTable table={table} />;
+  return (
+    <DataTable
+      table={table}
+      filters={[
+        {
+          columnId: "status",
+          title: "Status",
+          options: [
+            { label: "Pending", value: "pending" },
+            { label: "Accepted", value: "accepted" },
+            { label: "Rejected", value: "rejected" },
+            { label: "Canceled", value: "canceled" },
+          ],
+        },
+      ]}
+    />
+  );
 }
 
 export default function InvitationsPage() {

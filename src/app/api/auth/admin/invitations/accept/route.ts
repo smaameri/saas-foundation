@@ -10,9 +10,9 @@ import { conflictResponse, createdResponse, notFoundResponse } from "@/app/api/r
 import { withErrorHandler } from "@/app/api/with-error-handler";
 
 export const POST = withErrorHandler(async (request) => {
-  const body = acceptAdminInvitationSchema.parse(await request.json());
+  const validated = acceptAdminInvitationSchema.parse(await request.json());
 
-  const invitation = await findAdminInvitationById(body.invitationId);
+  const invitation = await findAdminInvitationById(validated.invitationId);
   if (!invitation) {
     return notFoundResponse("Invitation not found.");
   }
@@ -36,17 +36,16 @@ export const POST = withErrorHandler(async (request) => {
     return conflictResponse("An account already exists for this email.");
   }
 
-  const trimmedFirstName = body.firstName.trim();
-  const trimmedLastName = body.lastName.trim();
+  const trimmedFirstName = validated.firstName.trim();
+  const trimmedLastName = validated.lastName.trim();
   const fullName = `${trimmedFirstName} ${trimmedLastName}`.trim();
-  const canonicalName = fullName || invitation.email;
 
   try {
     await auth.api.signUpEmail({
       body: {
-        name: canonicalName,
+        name: fullName,
         email,
-        password: body.password,
+        password: validated.password,
         firstName: trimmedFirstName,
         lastName: trimmedLastName,
       },

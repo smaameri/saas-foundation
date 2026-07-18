@@ -15,7 +15,7 @@ export function useInviteTeamMemberForm(onSuccess: () => void) {
 
   const form = useForm<InviteTeamMemberFormValues>({
     resolver: zodResolver(inviteMemberSchema),
-    defaultValues: { firstName: "", lastName: "", email: "", role: "user" },
+    defaultValues: { email: "", role: "user" },
   });
 
   const { mutate, isPending, isError, error } = useMutation({

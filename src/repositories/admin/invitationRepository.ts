@@ -27,6 +27,7 @@ export async function listAdminPortalInvitations(params?: {
   order?: SortOrder;
   page?: number;
   perPage?: number;
+  status?: string[];
 }) {
   const page = params?.page ?? 1;
   const perPage = params?.perPage ?? 10;
@@ -34,6 +35,7 @@ export async function listAdminPortalInvitations(params?: {
   const where = {
     portal: Portal.admin,
     organizationId: params?.organizationId ?? null,
+    ...(params?.status?.length ? { status: { in: params.status } } : {}),
   };
 
   const [data, total] = await prisma.$transaction([

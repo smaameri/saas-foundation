@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { listSchema } from "@/app/api/schemas";
 
-export const listAdminPortalInvitationsSchema = z.object({
+export const listAdminPortalInvitationsSchema = listSchema.extend({
   sort: z.enum(["email", "role", "status", "createdAt", "expiresAt"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
-  page: z.coerce.number().int().positive().optional().default(1),
-  perPage: z.coerce.number().int().positive().optional().default(10),
+  status: z
+    .string()
+    .transform((value) => value.split(","))
+    .optional(),
 });
 
 export type ListAdminPortalInvitationsParams = z.infer<typeof listAdminPortalInvitationsSchema>;

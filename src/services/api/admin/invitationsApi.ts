@@ -20,7 +20,13 @@ export const invitationsApi = {
   listAdminPortalInvitations(
     params?: ListAdminPortalInvitationsParams,
   ): Promise<{ data: Invitation[]; pagination: PaginationData }> {
-    return apiClient.getPaginated<Invitation>("/admin/team/invitations", params);
+    return apiClient.getPaginated<Invitation>("/admin/team/invitations", {
+      sort: params?.sort,
+      order: params?.order,
+      page: params?.page ?? 1,
+      perPage: params?.perPage ?? 10,
+      filters: params?.status && params.status.length > 0 ? { status: params.status } : undefined,
+    });
   },
 
   sendInvitation(organizationId: string, params: SendInvitationParams) {
