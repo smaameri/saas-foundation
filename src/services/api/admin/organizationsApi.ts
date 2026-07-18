@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/api/client";
+import { adminApiClient } from "@/services/api/client";
 import type { ListParams } from "@/services/api/listParams";
 import type { Invitation } from "@/services/api/types/invitation";
 import type {
@@ -14,18 +14,18 @@ export const organizationsApi = {
   listOrganizations(
     params?: ListParams,
   ): Promise<{ data: Organization[]; pagination: PaginationData }> {
-    return apiClient.getPaginated<Organization>("/admin/organizations", params);
+    return adminApiClient.getPaginated<Organization>("/organizations", params);
   },
 
   getOrganization(id: string): Promise<OrganizationDetail> {
-    return apiClient.get<OrganizationDetail>(`/admin/organizations/${id}`);
+    return adminApiClient.get<OrganizationDetail>(`/organizations/${id}`);
   },
 
   listOrganizationMembers(
     id: string,
     params?: ListParams & Partial<ListOrganizationMembersParams>,
   ): Promise<{ data: OrganizationMember[]; pagination: PaginationData }> {
-    return apiClient.getPaginated<OrganizationMember>(`/admin/organizations/${id}/members`, {
+    return adminApiClient.getPaginated<OrganizationMember>(`/organizations/${id}/members`, {
       sort: params?.sort,
       order: params?.order,
       page: params?.page ?? 1,
@@ -37,7 +37,7 @@ export const organizationsApi = {
     id: string,
     params?: ListParams & Partial<ListOrganizationInvitationsParams>,
   ): Promise<{ data: Invitation[]; pagination: PaginationData }> {
-    return apiClient.getPaginated<Invitation>(`/admin/organizations/${id}/invitations`, {
+    return adminApiClient.getPaginated<Invitation>(`/organizations/${id}/invitations`, {
       sort: params?.sort,
       order: params?.order,
       page: params?.page ?? 1,
