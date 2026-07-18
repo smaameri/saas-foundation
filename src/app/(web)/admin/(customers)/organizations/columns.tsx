@@ -10,6 +10,11 @@ export const columns: ColumnDef<Organization>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
   },
   {
+    accessorKey: "slug",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Slug" />,
+    cell: ({ row }) => <span className="text-muted-foreground">{row.original.slug ?? "—"}</span>,
+  },
+  {
     accessorKey: "memberCount",
     header: "Members",
     enableSorting: false,

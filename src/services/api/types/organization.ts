@@ -1,6 +1,7 @@
 export type Organization = {
   id: string;
   name: string;
+  slug: string | null;
   memberCount: number;
   createdAt: string;
 };
@@ -19,6 +20,7 @@ export type OrganizationMember = {
 export type OrganizationDetail = {
   id: string;
   name: string;
+  slug: string | null;
   createdAt: string;
   members: OrganizationMember[];
 };

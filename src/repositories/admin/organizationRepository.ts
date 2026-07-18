@@ -28,6 +28,7 @@ export async function listOrganizations(params?: {
   const select = {
     id: true,
     name: true,
+    slug: true,
     createdAt: true,
     _count: { select: { members: true } },
   };

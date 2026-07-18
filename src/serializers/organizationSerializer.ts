@@ -8,6 +8,7 @@ export function serializeOrganization(org: PrismaOrganization): Organization {
   return {
     id: org.id,
     name: org.name,
+    slug: org.slug ?? null,
     memberCount: org._count.members,
     createdAt: org.createdAt.toISOString(),
   };
@@ -17,6 +18,7 @@ export function serializeOrganizationDetail(org: PrismaOrganizationDetail): Orga
   return {
     id: org.id,
     name: org.name,
+    slug: org.slug ?? null,
     createdAt: org.createdAt.toISOString(),
     members: org.members.map((member) => ({
       id: member.id,
