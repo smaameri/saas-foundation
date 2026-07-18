@@ -1,5 +1,7 @@
 "use client";
 
+import { OrganizationDetailSheet } from "./_components/organization-detail-sheet";
+import { OrganizationsProvider } from "./_components/organizations-provider";
 import { organizationsApi } from "@/services/api/admin/organizationsApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { AddOrganizationModal } from "@/components/organizations/add-organization-modal";
@@ -14,11 +16,14 @@ export default function OrganizationsPage() {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <AddOrganizationModal />
+    <OrganizationsProvider>
+      <div className="space-y-4">
+        <div className="flex justify-end">
+          <AddOrganizationModal />
+        </div>
+        <DataTable table={table} />
       </div>
-      <DataTable table={table} />
-    </div>
+      <OrganizationDetailSheet />
+    </OrganizationsProvider>
   );
 }
