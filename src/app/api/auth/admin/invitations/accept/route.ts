@@ -1,51 +1,25 @@
-import { acceptAdminInvitationSchema } from "./schema";
+import { AcceptAdminInvitationValidator } from "./validator";
 import { APIError } from "better-auth";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  findAdminInvitationById,
-  markInvitationAccepted,
-} from "@/repositories/auth/invitationRepository";
-import { conflictResponse, createdResponse, notFoundResponse } from "@/app/api/response";
+import { markInvitationAccepted } from "@/repositories/auth/invitationRepository";
+import { conflictResponse, createdResponse, validationErrorResponse } from "@/app/api/response";
 import { withErrorHandler } from "@/app/api/with-error-handler";
 
 export const POST = withErrorHandler(async (request) => {
-  const validated = acceptAdminInvitationSchema.parse(await request.json());
+  const validator = new AcceptAdminInvitationValidator(await request.json());
+  const isValid = await validator.validate();
+  if (!isValid) return validationErrorResponse(validator.errors);
 
-  const invitation = await findAdminInvitationById(validated.invitationId);
-  if (!invitation) {
-    return notFoundResponse("Invitation not found.");
-  }
-
-  if (invitation.status === "accepted") {
-    return conflictResponse("This invitation has already been accepted.");
-  }
-
-  if (invitation.status === "canceled") {
-    return conflictResponse("This invitation has been canceled.");
-  }
-
-  if (invitation.expiresAt < new Date()) {
-    return conflictResponse("This invitation has expired.");
-  }
-
-  const email = invitation.email.toLowerCase();
-
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    return conflictResponse("An account already exists for this email.");
-  }
-
-  const trimmedFirstName = validated.firstName.trim();
-  const trimmedLastName = validated.lastName.trim();
-  const fullName = `${trimmedFirstName} ${trimmedLastName}`.trim();
+  const { invitationId, trimmedFirstName, trimmedLastName, fullName, email, password, role } =
+    validator.data;
 
   try {
     await auth.api.signUpEmail({
       body: {
         name: fullName,
         email,
-        password: validated.password,
+        password,
         firstName: trimmedFirstName,
         lastName: trimmedLastName,
       },
@@ -61,14 +35,14 @@ export const POST = withErrorHandler(async (request) => {
     where: { email },
     data: {
       emailVerified: true,
-      name: canonicalName,
+      name: fullName,
       firstName: trimmedFirstName,
       lastName: trimmedLastName,
-      role: invitation.role,
+      role,
     },
   });
 
-  await markInvitationAccepted(invitation.id);
+  await markInvitationAccepted(invitationId);
 
   return createdResponse({ message: "Invitation accepted." });
 });
