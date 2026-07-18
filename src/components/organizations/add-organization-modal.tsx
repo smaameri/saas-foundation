@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createOrganization } from "@/app/(web)/admin/customers/organizations/actions";
+import { createOrganization } from "@/app/(web)/admin/customers/(tabs)/organizations/actions";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),

@@ -7,7 +7,7 @@ const tabs = [
   { label: "People", href: "/admin/customers/people" },
 ];
 
-export default function CustomersLayout({ children }: { children: ReactNode }) {
+export default function CustomersTabsLayout({ children }: { children: ReactNode }) {
   return (
     <ContentLayout title="Customers" description="Manage customer organizations and members.">
       <NavTabs tabs={tabs} />

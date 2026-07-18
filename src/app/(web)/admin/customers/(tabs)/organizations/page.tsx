@@ -1,12 +1,10 @@
 "use client";
 
-import { OrganizationDetailSheet } from "./_components/organization-detail-sheet";
-import { OrganizationsProvider } from "./_components/organizations-provider";
 import { organizationsApi } from "@/services/api/admin/organizationsApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { AddOrganizationModal } from "@/components/organizations/add-organization-modal";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import { columns } from "@/app/(web)/admin/customers/organizations/columns";
+import { columns } from "@/app/(web)/admin/customers/(tabs)/organizations/columns";
 
 export default function OrganizationsPage() {
   const { table } = useConnectedTable({
@@ -16,14 +14,11 @@ export default function OrganizationsPage() {
   });
 
   return (
-    <OrganizationsProvider>
-      <div className="space-y-4">
-        <div className="flex justify-end">
-          <AddOrganizationModal />
-        </div>
-        <DataTable table={table} />
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <AddOrganizationModal />
       </div>
-      <OrganizationDetailSheet />
-    </OrganizationsProvider>
+      <DataTable table={table} />
+    </div>
   );
 }
