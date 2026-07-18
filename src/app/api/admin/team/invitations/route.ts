@@ -1,6 +1,6 @@
 import { createAdminPortalInvitationSchema, listAdminPortalInvitationsSchema } from "./schema";
-import { Resend } from "resend";
 import { validateQuery } from "@/lib/api";
+import { sendAdminPortalInvitationEmail } from "@/lib/email/adminPortalInvitationEmail";
 import {
   createAdminPortalInvitation,
   listAdminPortalInvitations,
@@ -9,10 +9,6 @@ import { findUserByEmail } from "@/repositories/admin/teamRepository";
 import { serializeInvitation } from "@/serializers/invitationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { conflictResponse, createdResponse, paginatedResponse } from "@/app/api/response";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
 
 const INVITATION_EXPIRES_IN_DAYS = 2;
 
@@ -58,38 +54,3 @@ export const POST = withAdmin(async (request, _context, { user }) => {
     invitationId: invitation.id,
   });
 });
-
-type AdminPortalInvitationEmailPayload = {
-  email: string;
-  invitedBy?: string;
-  inviteLink: string;
-};
-
-async function sendAdminPortalInvitationEmail({
-  email,
-  invitedBy,
-  inviteLink,
-}: AdminPortalInvitationEmailPayload) {
-  if (!email || !inviteLink) {
-    throw new Error("Organization invitation email requires email and inviteLink.");
-  }
-
-  const inviterText = invitedBy ? `${invitedBy} has invited you` : "You've been invited";
-
-  const { error } = await resend.emails.send({
-    from: FROM,
-    to: email,
-    subject: `You've been invited to join the SaaS Foundation Admin Portal`,
-    html: `
-      <p>${inviterText} to join the SaaS Foundation Admin Portal.</p>
-      <p>Click the link below to accept your invitation.</p>
-      <p><a href="${inviteLink}">Accept invitation</a></p>
-      <p>If you weren't expecting this email, you can safely ignore it.</p>
-    `,
-  });
-
-  if (error) {
-    console.error("[Resend] Failed to send organization invitation email:", error);
-    throw new Error(error.message);
-  }
-}

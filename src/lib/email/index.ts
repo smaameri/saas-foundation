@@ -1,8 +1,4 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
+import { EMAIL_FROM, resend } from "./client";
 
 export type MagicLinkInvitePayload = {
   email: string;
@@ -25,7 +21,7 @@ export async function sendMagicLinkInviteEmail({
   const capitalizedRole = role.charAt(0).toUpperCase() + role.slice(1);
 
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: EMAIL_FROM,
     to: email,
     subject: "You've been invited to SaaS Foundation",
     html: `
@@ -53,7 +49,7 @@ export async function sendSetPasswordInviteEmail({ email, url }: SetPasswordInvi
   }
 
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: EMAIL_FROM,
     to: email,
     subject: "You've been invited to SaaS Foundation",
     html: `
@@ -90,7 +86,7 @@ export async function sendOrganizationInvitationEmail({
   const inviterText = invitedBy ? `${invitedBy} has invited you` : "You've been invited";
 
   const { error } = await resend.emails.send({
-    from: FROM,
+    from: EMAIL_FROM,
     to: email,
     subject: `You've been invited to join ${organizationName}`,
     html: `
