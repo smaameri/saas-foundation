@@ -14,7 +14,7 @@ type DataTableRowActionsProps = {
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow, currentUserId } = useMembers();
   const isBanned = row.original.banned ?? false;
-  const canModify = Boolean(currentUserId && row.original.id !== currentUserId);
+  const canModify = currentUserId ? row.original.id !== currentUserId : true;
 
   return (
     <RowActionsDropdown>

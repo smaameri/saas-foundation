@@ -1,10 +1,17 @@
 import { z } from "zod";
+import { listSchema } from "@/app/api/schemas";
 
-export const listTeamMembersSchema = z.object({
+export const listTeamMembersSchema = listSchema.extend({
   sort: z.enum(["createdAt", "role"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
-  page: z.coerce.number().int().positive().optional().default(1),
-  perPage: z.coerce.number().int().positive().optional().default(10),
+  status: z
+    .string()
+    .transform((value) =>
+      value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    )
+    .optional(),
 });
 
 export type ListTeamMembersParams = z.infer<typeof listTeamMembersSchema>;

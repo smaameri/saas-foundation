@@ -28,3 +28,10 @@ export type OrganizationDetail = {
   memberCount: number;
   members: OrganizationMember[];
 };
+
+export type UserOrganizationSummary = {
+  id: string;
+  name: string;
+  slug: string | null;
+  memberRole: string;
+};

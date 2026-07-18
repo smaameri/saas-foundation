@@ -18,10 +18,10 @@ const MembersContext = React.createContext<MembersContextType | null>(null);
 
 export function MembersProvider({
   children,
-  currentUserId,
+  currentUserId = null,
 }: {
   children: React.ReactNode;
-  currentUserId: string | null;
+  currentUserId?: string | null;
 }) {
   const [open, setOpen] = useDialogState<MembersDialogType>(null);
   const [currentRow, setCurrentRow] = useState<User | null>(null);

@@ -1,5 +1,5 @@
 import { type SidebarData } from "../types";
-import { Building2, KeyRound, LayoutDashboard, UserCog, Users } from "lucide-react";
+import { KeyRound, LayoutDashboard, UserCog, Users } from "lucide-react";
 
 export const sidebarData: SidebarData = {
   navGroups: [
@@ -14,16 +14,11 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "Customers",
+      title: "Platform",
       items: [
         {
-          title: "Organizations",
-          url: "/admin/organizations",
-          icon: Building2,
-        },
-        {
-          title: "People",
-          url: "/admin/people",
+          title: "Customers",
+          url: "/admin/customers",
           icon: Users,
         },
       ],

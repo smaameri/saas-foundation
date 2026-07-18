@@ -2,9 +2,9 @@
 
 import { organizationsApi } from "@/services/api/admin/organizationsApi";
 import { DataTable } from "@/components/data-table/data-table";
-import { ContentLayout } from "@/components/platform/content-layout";
+import { AddOrganizationModal } from "@/components/organizations/add-organization-modal";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import { columns } from "@/app/(web)/admin/(customers)/organizations/columns";
+import { columns } from "@/app/(web)/admin/customers/organizations/columns";
 
 export default function OrganizationsPage() {
   const { table } = useConnectedTable({
@@ -14,8 +14,11 @@ export default function OrganizationsPage() {
   });
 
   return (
-    <ContentLayout title="Organizations" description="Manage organizations on the platform.">
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <AddOrganizationModal />
+      </div>
       <DataTable table={table} />
-    </ContentLayout>
+    </div>
   );
 }

@@ -2,13 +2,18 @@ import type {
   Organization,
   OrganizationDetail,
   OrganizationMember,
+  UserOrganizationSummary,
 } from "@/services/api/types/organization";
 import type { OrganizationMemberUser } from "@/services/api/types/organizationMemberUser";
 import type {
   listAllOrganizationMembers,
   listMembers,
 } from "@/repositories/admin/organizationMemberRepository";
-import type { findById, listOrganizations } from "@/repositories/admin/organizationRepository";
+import type {
+  findById,
+  listOrganizations,
+  listOrganizationsForUser,
+} from "@/repositories/admin/organizationRepository";
 
 type PrismaOrganization = Awaited<ReturnType<typeof listOrganizations>>["data"][number];
 type PrismaOrganizationDetail = NonNullable<Awaited<ReturnType<typeof findById>>>;
@@ -16,6 +21,7 @@ type PrismaOrganizationMember = Awaited<ReturnType<typeof listMembers>>["data"][
 type PrismaOrganizationMemberUser = Awaited<
   ReturnType<typeof listAllOrganizationMembers>
 >["data"][number];
+type PrismaUserOrganizationSummary = Awaited<ReturnType<typeof listOrganizationsForUser>>[number];
 
 export function serializeOrganization(org: PrismaOrganization): Organization {
   return {
@@ -71,5 +77,16 @@ export function serializeOrganizationMemberUser(
         name: member.organization.name,
       }))
       .sort((a, b) => a.name.localeCompare(b.name)),
+  };
+}
+
+export function serializeUserOrganizationSummary(
+  membership: PrismaUserOrganizationSummary,
+): UserOrganizationSummary {
+  return {
+    id: membership.organization.id,
+    name: membership.organization.name,
+    slug: membership.organization.slug,
+    memberRole: membership.role,
   };
 }

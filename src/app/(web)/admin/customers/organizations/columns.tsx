@@ -37,7 +37,7 @@ export const columns: ColumnDef<Organization>[] = [
     header: () => null,
     cell: ({ row }) => (
       <Button variant="ghost" size="icon" asChild aria-label="View organization details">
-        <Link href={`/admin/organizations/${row.original.id}`}>
+        <Link href={`/admin/customers/organizations/${row.original.id}`}>
           <Eye className="h-4 w-4" />
         </Link>
       </Button>

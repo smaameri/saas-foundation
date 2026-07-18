@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { authApi } from "@/services/api/auth/authApi";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,13 +15,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserAvatar } from "@/components/users/user-avatar";
 import type { User } from "@/types/user";
 
 type ProfileDropdownProps = {
   user: User;
 };
 
-export function ProfileDropdown({ user: { name, email, image } }: ProfileDropdownProps) {
+export function ProfileDropdown({ user }: ProfileDropdownProps) {
+  const { name, email } = user;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -37,17 +38,7 @@ export function ProfileDropdown({ user: { name, email, image } }: ProfileDropdow
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={image ?? undefined} alt={name} />
-            <AvatarFallback>
-              {name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()
-                .slice(0, 2)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar user={user} className="h-8 w-8" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

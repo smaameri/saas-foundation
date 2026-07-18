@@ -6,7 +6,7 @@ import type { PaginationData } from "@/app/api/response";
 
 export const teamApi = {
   listTeamMembers(
-    params?: ListTeamMembersParams,
+    params?: ListTeamMembersParams & { filters?: Record<string, string[]> },
   ): Promise<{ data: User[]; pagination: PaginationData }> {
     return apiClient.getPaginated<User>("/admin/team", params);
   },

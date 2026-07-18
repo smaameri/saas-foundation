@@ -9,6 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { UserAvatar } from "@/components/users/user-avatar";
 
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -34,17 +35,12 @@ export function MemberDetailsSheet() {
       <SheetContent className="flex flex-col gap-0 p-0">
         <SheetHeader className="border-b p-6">
           <div className="flex items-center gap-4">
-            {user.image ? (
-              <img
-                src={user.image}
-                alt={fullName}
-                className="h-12 w-12 rounded-full object-cover"
-              />
-            ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-lg font-semibold uppercase text-muted-foreground">
-                {(user.firstName?.[0] ?? user.name?.[0] ?? "?").toUpperCase()}
-              </div>
-            )}
+            <UserAvatar
+              user={user}
+              alt={fullName}
+              className="h-12 w-12"
+              fallbackClassName="text-lg font-semibold text-muted-foreground"
+            />
             <div>
               <SheetTitle>{fullName}</SheetTitle>
               <SheetDescription>{user.email}</SheetDescription>

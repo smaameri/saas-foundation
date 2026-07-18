@@ -63,7 +63,7 @@ export function OrganizationDetailView({ organizationId }: { organizationId: str
       title={
         <span className="flex items-center gap-2">
           <Link
-            href="/admin/organizations"
+            href="/admin/customers/organizations"
             className="inline-flex items-center justify-center rounded-sm p-1 text-foreground transition-colors hover:text-foreground"
             aria-label="Back to organizations"
           >

@@ -39,7 +39,8 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: "banned",
+    id: "status",
+    accessorFn: (row) => row.banned,
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) =>
       row.original.banned ? (
@@ -47,6 +48,12 @@ export const columns: ColumnDef<User>[] = [
       ) : (
         <Badge variant="secondary">Active</Badge>
       ),
+    enableSorting: false,
+    filterFn: (row, id, value) => {
+      const status = row.getValue<boolean | null>(id) ? "banned" : "active";
+      if (!Array.isArray(value) || value.length === 0) return true;
+      return value.includes(status);
+    },
   },
   {
     accessorKey: "createdAt",

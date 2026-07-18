@@ -18,17 +18,33 @@ import { ListTeamMembersParams } from "@/app/api/admin/team/schema";
 function MembersTable() {
   const { table } = useConnectedTable({
     queryKey: ["admin", "team"],
-    queryFn: ({ sort, order, page, perPage }) =>
+    queryFn: ({ sort, order, page, perPage, filters }) =>
       teamApi.listTeamMembers({
         sort: sort as ListTeamMembersParams["sort"],
         order,
         page,
         perPage,
+        filters,
       }),
     columns,
+    initialFilters: [{ id: "status", value: ["active"] }],
   });
 
-  return <DataTable table={table} />;
+  return (
+    <DataTable
+      table={table}
+      filters={[
+        {
+          columnId: "status",
+          title: "Status",
+          options: [
+            { label: "Active", value: "active" },
+            { label: "Banned", value: "banned" },
+          ],
+        },
+      ]}
+    />
+  );
 }
 
 export default function MembersPage() {

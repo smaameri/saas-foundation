@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { inviteOrganizationUser } from "@/app/(web)/admin/(customers)/people/actions";
+import { inviteOrganizationUser } from "@/app/(web)/admin/customers/people/actions";
 
 const roleOptions = [
   { value: "member", label: "Member" },

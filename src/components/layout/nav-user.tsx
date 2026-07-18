@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 import { authApi } from "@/services/api/auth/authApi";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,14 +20,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { UserAvatar } from "@/components/users/user-avatar";
 import type { User } from "@/types/user";
-
-function getInitials(user: User): string {
-  const firstInitial = user.firstName.trim().charAt(0);
-  const lastInitial = user.lastName.trim().charAt(0);
-
-  return `${firstInitial}${lastInitial}`.toUpperCase();
-}
 
 type NavUserProps = {
   user: User;
@@ -38,7 +31,6 @@ export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const initials = getInitials(user);
 
   const handleSignOut = () => {
     startTransition(async () => {
@@ -56,10 +48,11 @@ export function NavUser({ user }: NavUserProps) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                user={user}
+                className="h-8 w-8 rounded-lg"
+                fallbackClassName="rounded-lg"
+              />
               <div className="grid flex-1 text-start text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
@@ -75,10 +68,11 @@ export function NavUser({ user }: NavUserProps) {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  user={user}
+                  className="h-8 w-8 rounded-lg"
+                  fallbackClassName="rounded-lg"
+                />
                 <div className="grid flex-1 text-start text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>

@@ -22,9 +22,30 @@ export async function listTeamMembers(params: {
   order?: SortOrder;
   page: number;
   perPage: number;
+  status?: string[];
 }) {
   const { page, perPage } = params;
-  const where = whereHasAdminPortalAccess();
+
+  const baseWhere = whereHasAdminPortalAccess();
+
+  const statuses = params.status?.map((value) => value.toLowerCase());
+
+  let where: Prisma.UserWhereInput = baseWhere;
+
+  if (statuses && statuses.length > 0 && statuses.length < 2) {
+    if (statuses.includes("banned")) {
+      where = { AND: [baseWhere, { banned: true }] };
+    } else if (statuses.includes("active")) {
+      where = {
+        AND: [
+          baseWhere,
+          {
+            OR: [{ banned: false }, { banned: null }],
+          },
+        ],
+      };
+    }
+  }
 
   const [data, total] = await prisma.$transaction([
     prisma.user.findMany({
