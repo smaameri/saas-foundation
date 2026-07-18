@@ -1,8 +1,9 @@
-import type { Apikey as PrismaApikey, User as PrismaUser } from "@generated/prisma/client";
+import type { Prisma, Apikey as PrismaApikey } from "@generated/prisma/client";
 import { serializeUser } from "@/serializers/userSerializer";
 import type { ApiKey, CreatedApiKey } from "@/types/apiKey";
 
-type ApiKeyInput = PrismaApikey & { user?: PrismaUser | null };
+type PrismaApiKeyWithUser = Prisma.ApikeyGetPayload<{ include: { user: true } }>;
+type ApiKeyInput = PrismaApikey | PrismaApiKeyWithUser;
 
 export function serializeApiKey(apiKey: ApiKeyInput): ApiKey {
   return {
@@ -14,7 +15,7 @@ export function serializeApiKey(apiKey: ApiKeyInput): ApiKey {
     expiresAt: apiKey.expiresAt?.toISOString() ?? null,
     lastRequest: apiKey.lastRequest?.toISOString() ?? null,
     createdAt: apiKey.createdAt.toISOString(),
-    user: apiKey.user ? serializeUser(apiKey.user) : null,
+    user: "user" in apiKey && apiKey.user ? serializeUser(apiKey.user) : null,
   };
 }
 
