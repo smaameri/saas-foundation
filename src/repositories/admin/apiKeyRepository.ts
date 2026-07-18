@@ -59,6 +59,17 @@ export async function listApiKeysForUser(params: {
   return { data, total };
 }
 
+export async function findApiKeyById(id: string) {
+  return prisma.apikey.findUnique({ where: { id } });
+}
+
+export async function disableApiKeyById(id: string) {
+  return prisma.apikey.update({
+    where: { id },
+    data: { enabled: false },
+  });
+}
+
 function enabledFilter(enabled?: string[]) {
   const hasTrue = enabled?.includes("true") ?? false;
   const hasFalse = enabled?.includes("false") ?? false;
