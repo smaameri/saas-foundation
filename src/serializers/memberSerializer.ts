@@ -3,8 +3,8 @@ import type {
   Organization as PrismaOrganization,
   User as PrismaUser,
 } from "@generated/prisma/client";
-import type { Member } from "@/services/api/types/member";
 import { serializeUser } from "@/serializers/userSerializer";
+import type { Member } from "@/types/member";
 
 type MemberWithUser = PrismaMember & {
   user: PrismaUser;

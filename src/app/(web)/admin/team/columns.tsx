@@ -2,9 +2,9 @@
 
 import { DataTableRowActions } from "./_components/data-table-row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { User } from "@/services/api/types/user";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Badge } from "@/components/ui/badge";
+import type { User } from "@/types/user";
 
 export const columns: ColumnDef<User>[] = [
   {

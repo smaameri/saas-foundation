@@ -1,8 +1,8 @@
 import { adminApiClient } from "@/services/api/client";
-import type { Invitation } from "@/services/api/types/invitation";
 import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
 import type { ListAdminPortalInvitationsParams } from "@/app/api/admin/team/invitations/schema";
 import type { PaginationData } from "@/app/api/response";
+import type { Invitation } from "@/types/invitation";
 
 type SendInvitationParams = {
   email: string;

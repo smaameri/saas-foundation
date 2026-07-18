@@ -1,8 +1,8 @@
 import { adminApiClient } from "@/services/api/client";
-import type { User } from "@/services/api/types/user";
 import type { CreateAdminPortalInvitationBody } from "@/app/api/admin/team/invitations/schema";
 import { ListTeamMembersParams } from "@/app/api/admin/team/schema";
 import type { PaginationData } from "@/app/api/response";
+import type { User } from "@/types/user";
 
 export const teamApi = {
   listTeamMembers(

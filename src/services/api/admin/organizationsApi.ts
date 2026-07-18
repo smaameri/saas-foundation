@@ -1,6 +1,5 @@
 import { adminApiClient } from "@/services/api/client";
 import type { ListParams } from "@/services/api/listParams";
-import type { Invitation } from "@/services/api/types/invitation";
 import type {
   OrganizationDetail,
   OrganizationLegacy,
@@ -9,6 +8,7 @@ import type {
 import type { ListOrganizationInvitationsParams } from "@/app/api/admin/organizations/[id]/invitations/schema";
 import type { ListOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
 import type { PaginationData } from "@/app/api/response";
+import type { Invitation } from "@/types/invitation";
 
 export const organizationsApi = {
   listOrganizations(

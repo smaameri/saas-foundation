@@ -6,10 +6,10 @@ import type { Row } from "@tanstack/react-table";
 import { XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
-import type { Invitation } from "@/services/api/types/invitation";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import type { Invitation } from "@/types/invitation";
 
 export function OrganizationInvitationRowActions({
   organizationId,

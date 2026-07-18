@@ -1,5 +1,5 @@
-import type { User } from "@/services/api/types/user";
 import type { listCustomerUsers } from "@/repositories/admin/customerRepository";
+import type { User } from "@/types/user";
 
 type PrismaUser = Awaited<ReturnType<typeof listCustomerUsers>>["data"][number];
 

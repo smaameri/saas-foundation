@@ -1,5 +1,5 @@
 import type { User as PrismaUser } from "@generated/prisma/client";
-import type { User } from "@/services/api/types/user";
+import type { User } from "@/types/user";
 
 export function serializeUser(user: PrismaUser): User {
   return {

@@ -1,5 +1,5 @@
 import type { Invitation as PrismaInvitation } from "@generated/prisma/client";
-import type { Invitation } from "@/services/api/types/invitation";
+import type { Invitation } from "@/types/invitation";
 
 export function serializeInvitation(invitation: PrismaInvitation): Invitation {
   return {

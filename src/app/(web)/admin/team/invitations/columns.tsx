@@ -1,10 +1,10 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Invitation } from "@/services/api/types/invitation";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Badge } from "@/components/ui/badge";
 import { InvitationsRowActions } from "@/app/(web)/admin/team/invitations/data-table-row-actions";
+import type { Invitation } from "@/types/invitation";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   pending: "default",

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import type { User } from "@/services/api/types/user";
 import useDialogState from "@/hooks/use-dialog-state";
+import type { User } from "@/types/user";
 
 type MembersDialogType = "view" | "change-role" | "ban" | "unban" | "delete";
 

@@ -3,9 +3,9 @@
 import { useMembers } from "./members-provider";
 import type { Row } from "@tanstack/react-table";
 import { Ban, RotateCcw, ShieldCheck, Trash2, UserSearch } from "lucide-react";
-import type { User } from "@/services/api/types/user";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import type { User } from "@/types/user";
 
 type DataTableRowActionsProps = {
   row: Row<User>;
