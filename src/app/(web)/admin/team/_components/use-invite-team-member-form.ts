@@ -6,15 +6,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { teamApi } from "@/services/api/admin/teamApi";
-import { inviteMemberSchema } from "@/app/api/admin/team/invite/schema";
+import { createAdminPortalInvitationSchema } from "@/app/api/admin/team/invitations/schema";
 
-export type InviteTeamMemberFormValues = z.infer<typeof inviteMemberSchema>;
+export type InviteTeamMemberFormValues = z.infer<typeof createAdminPortalInvitationSchema>;
 
 export function useInviteTeamMemberForm(onSuccess: () => void) {
   const queryClient = useQueryClient();
 
   const form = useForm<InviteTeamMemberFormValues>({
-    resolver: zodResolver(inviteMemberSchema),
+    resolver: zodResolver(createAdminPortalInvitationSchema),
     defaultValues: { email: "", role: "user" },
   });
 
