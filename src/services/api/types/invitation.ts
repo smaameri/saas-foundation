@@ -2,7 +2,7 @@ export type Invitation = {
   id: string;
   email: string;
   role: string;
-  platformRole: string | null;
+  portal: string;
   status: string;
   createdAt: string;
   expiresAt: string;

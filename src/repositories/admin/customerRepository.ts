@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import type { SortOrder } from "@/repositories/types";
-import { Portal } from "@/config/portals";
 
 export async function listCustomerUsers(params?: {
   sort?: string;
@@ -11,13 +10,7 @@ export async function listCustomerUsers(params?: {
   const page = params?.page ?? 1;
   const perPage = params?.perPage ?? 10;
 
-  const where = {
-    members: {
-      some: {
-        organization: { portals: { has: Portal.customer } },
-      },
-    },
-  };
+  const where = {};
 
   const [data, total] = await prisma.$transaction([
     prisma.user.findMany({
