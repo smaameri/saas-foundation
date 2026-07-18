@@ -23,6 +23,13 @@ import {
 } from "@/components/ui/sidebar";
 import type { User } from "@/types/user";
 
+function getInitials(user: User): string {
+  const firstInitial = user.firstName.trim().charAt(0);
+  const lastInitial = user.lastName.trim().charAt(0);
+
+  return `${firstInitial}${lastInitial}`.toUpperCase();
+}
+
 type NavUserProps = {
   user: User;
 };
@@ -31,6 +38,7 @@ export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const initials = getInitials(user);
 
   const handleSignOut = () => {
     startTransition(async () => {
@@ -50,7 +58,7 @@ export function NavUser({ user }: NavUserProps) {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                <AvatarFallback className="rounded-lg">SN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-start text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -69,7 +77,7 @@ export function NavUser({ user }: NavUserProps) {
               <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">SN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-start text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
