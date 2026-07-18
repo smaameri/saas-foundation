@@ -13,6 +13,15 @@ export const listAllOrganizationMembersSchema = listSchema.extend({
         .filter(Boolean),
     )
     .optional(),
+  status: z
+    .string()
+    .transform((value) =>
+      value
+        .split(",")
+        .map((item) => item.trim().toLowerCase())
+        .filter(Boolean),
+    )
+    .optional(),
 });
 
 export type ListAllOrganizationMembersParams = z.infer<typeof listAllOrganizationMembersSchema>;

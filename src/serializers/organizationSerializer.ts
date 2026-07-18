@@ -70,11 +70,17 @@ export function serializeOrganizationMemberUser(
     name: user.name,
     email: user.email,
     role: user.role,
+    banned: user.banned,
+    banReason: user.banReason,
+    banExpires: user.banExpires?.toISOString() ?? null,
     createdAt: user.createdAt.toISOString(),
     organizations: user.members
       .map((member) => ({
         id: member.organization.id,
         name: member.organization.name,
+        memberId: member.id,
+        memberRole: member.role,
+        joinedAt: member.createdAt.toISOString(),
       }))
       .sort((a, b) => a.name.localeCompare(b.name)),
   };

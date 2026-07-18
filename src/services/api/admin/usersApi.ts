@@ -7,4 +7,12 @@ export const usersApi = {
   listUsers(params?: ListUsersParams): Promise<{ data: User[]; pagination: PaginationData }> {
     return adminApiClient.getPaginated<User>("/users", params);
   },
+
+  banUser(id: string, body: { banReason?: string; banExpiresIn?: number }): Promise<User> {
+    return adminApiClient.post<User>(`/users/${id}/ban`, body);
+  },
+
+  unbanUser(id: string): Promise<User> {
+    return adminApiClient.post<User>(`/users/${id}/unban`, {});
+  },
 };

@@ -17,6 +17,7 @@ export const GET = withAdmin(async (request) => {
     page,
     perPage,
     organizationId: parsed.organizationId,
+    status: parsed.status,
   });
 
   return paginatedResponse(data.map(serializeOrganizationMemberUser), {

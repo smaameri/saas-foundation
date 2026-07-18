@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
+import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import {
@@ -23,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { inviteOrganizationUser } from "@/app/(web)/admin/customers/(tabs)/people/actions";
 
 const roleOptions = [
   { value: "member", label: "Member" },
@@ -58,12 +58,11 @@ export function InviteUserForm({
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (values: FormValues) => {
-      const formData = new FormData();
-      formData.append("email", values.email);
-      formData.append("role", values.role);
-      formData.append("organizationId", values.organizationId);
-      const result = await inviteOrganizationUser(formData);
-      if (!result.ok) throw new Error(result.message);
+      await invitationsApi.sendInvitation(values.organizationId, {
+        email: values.email,
+        role: values.role,
+        platformRole: "user",
+      });
     },
     onSuccess: () => {
       toast.success("Invitation sent.");

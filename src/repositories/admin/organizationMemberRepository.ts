@@ -9,6 +9,7 @@ type ListAllMembersParams = {
   order?: SortOrder;
   page?: number;
   perPage?: number;
+  status?: string[];
 };
 
 export async function findMemberByUserId(userId: string) {
@@ -21,6 +22,16 @@ export async function findMemberById(id: string, organizationId: string) {
   return prisma.member.findFirst({
     where: { id, organizationId },
     include: { user: true },
+  });
+}
+
+export async function findMemberByMemberId(id: string) {
+  return prisma.member.findUnique({
+    where: { id },
+    include: {
+      user: true,
+      organization: true,
+    },
   });
 }
 
@@ -50,6 +61,10 @@ export async function updateMember(
   });
 
   return findMemberById(id, organizationId);
+}
+
+export async function deleteMember(id: string) {
+  return prisma.member.delete({ where: { id } });
 }
 
 export async function updateMemberRole(id: string, organizationId: string, platformRole: string) {
@@ -112,6 +127,22 @@ export async function listAllOrganizationMembers(params?: ListAllMembersParams) 
     ? { organizationId: { in: params.organizationId } }
     : {};
 
+  const statusFilters = (() => {
+    if (!params?.status || params.status.length === 0) return undefined;
+    const normalized = params.status.map((status) => status.toLowerCase());
+    const includeActive = normalized.includes("active");
+    const includeBanned = normalized.includes("banned");
+
+    if (includeActive && includeBanned) return undefined;
+    if (includeBanned) {
+      return { banned: true };
+    }
+    if (includeActive) {
+      return { OR: [{ banned: false }, { banned: null }] } as Prisma.UserWhereInput;
+    }
+    return undefined;
+  })();
+
   const where: Prisma.UserWhereInput = {
     members: {
       some: membersFilter,
@@ -126,6 +157,7 @@ export async function listAllOrganizationMembers(params?: ListAllMembersParams) 
           ],
         }
       : {}),
+    ...(statusFilters ?? {}),
   } as const;
 
   const orderBy: Prisma.UserOrderByWithRelationInput = (() => {

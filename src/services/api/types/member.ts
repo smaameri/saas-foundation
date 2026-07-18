@@ -5,4 +5,8 @@ export type Member = {
   role: string;
   createdAt: string;
   user: User;
+  organization?: {
+    id: string;
+    name: string;
+  } | null;
 };

@@ -9,16 +9,21 @@ export const membersApi = {
   listMembers(
     params?: ListAllOrganizationMembersParams,
   ): Promise<{ data: OrganizationMemberUser[]; pagination: PaginationData }> {
+    const filters: Record<string, string[]> = {};
+    if (params?.organizationId && params.organizationId.length > 0) {
+      filters.organizationId = params.organizationId;
+    }
+    if (params?.status && params.status.length > 0) {
+      filters.status = params.status;
+    }
+
     return adminApiClient.getPaginated<OrganizationMemberUser>("/organizations/members", {
       search: params?.search,
       sort: params?.sort,
       order: params?.order,
       page: params?.page ?? 1,
       perPage: params?.perPage ?? 10,
-      filters:
-        params?.organizationId && params.organizationId.length > 0
-          ? { organizationId: params.organizationId }
-          : undefined,
+      filters: Object.keys(filters).length > 0 ? filters : undefined,
     });
   },
 
@@ -28,5 +33,9 @@ export const membersApi = {
 
   updateMember(id: string, body: UpdateMemberBody): Promise<Member> {
     return adminApiClient.patch<Member>(`/members/${id}`, body);
+  },
+
+  deleteMember(id: string): Promise<void> {
+    return adminApiClient.delete(`/members/${id}`);
   },
 };

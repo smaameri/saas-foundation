@@ -1,8 +1,10 @@
 "use client";
 
+import { DataTableRowActions } from "./_components/data-table-row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { OrganizationMemberUser } from "@/services/api/types/organizationMemberUser";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<OrganizationMemberUser>[] = [
   {
@@ -48,6 +50,23 @@ export const columns: ColumnDef<OrganizationMemberUser>[] = [
     ),
   },
   {
+    id: "status",
+    accessorFn: (row) => row.banned,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    cell: ({ row }) =>
+      row.original.banned ? (
+        <Badge variant="destructive">Banned</Badge>
+      ) : (
+        <Badge variant="secondary">Active</Badge>
+      ),
+    enableSorting: false,
+    filterFn: (row, id, value) => {
+      const status = row.getValue<boolean | null>(id) ? "banned" : "active";
+      if (!Array.isArray(value) || value.length === 0) return true;
+      return value.includes(status);
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Joined" />,
     cell: ({ row }) => (
@@ -55,5 +74,10 @@ export const columns: ColumnDef<OrganizationMemberUser>[] = [
         {new Date(row.original.createdAt).toLocaleDateString()}
       </span>
     ),
+  },
+  {
+    id: "actions",
+    enableSorting: false,
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];
