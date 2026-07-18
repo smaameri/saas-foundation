@@ -13,7 +13,7 @@ import { authApi } from "@/services/api/auth/authApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import { ListTeamMembersParams } from "@/app/api/admin/team/schema";
+import { ListTeamMembersParams } from "@/app/api/admin/team/members/schema";
 
 function MembersTable() {
   const { table } = useConnectedTable({

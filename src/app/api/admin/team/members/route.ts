@@ -7,8 +7,8 @@ import { paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
   const validated = validateQuery(request, listTeamMembersSchema);
-  const page = validated.page ?? 1;
-  const perPage = validated.perPage ?? 10;
+  const page = validated.page;
+  const perPage = validated.perPage;
 
   const { data, total } = await listTeamMembers({
     sort: validated.sort,
