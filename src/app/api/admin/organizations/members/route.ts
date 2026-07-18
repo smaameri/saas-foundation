@@ -1,7 +1,7 @@
 import { listAllOrganizationMembersSchema } from "./schema";
 import { validateQuery } from "@/lib/api";
 import { listAllOrganizationMembers } from "@/repositories/admin/organizationMemberRepository";
-import { serializeOrganizationMemberUser } from "@/serializers/organizationSerializer";
+import { serializeOrganizationMemberUser } from "@/serializers/organizationSerializerLegacy";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 

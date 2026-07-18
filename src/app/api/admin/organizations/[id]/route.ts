@@ -1,5 +1,5 @@
 import { findById } from "@/repositories/admin/organizationRepository";
-import { serializeOrganizationDetail } from "@/serializers/organizationSerializer";
+import { serializeOrganizationDetail } from "@/serializers/organizationSerializerLegacy";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { detailResponse, notFoundResponse } from "@/app/api/response";
 

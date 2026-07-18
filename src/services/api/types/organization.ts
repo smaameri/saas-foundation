@@ -2,6 +2,13 @@ export type Organization = {
   id: string;
   name: string;
   slug: string | null;
+  createdAt: string;
+};
+
+export type OrganizationLegacy = {
+  id: string;
+  name: string;
+  slug: string | null;
   memberCount: number;
   createdAt: string;
 };
@@ -33,5 +40,4 @@ export type UserOrganizationSummary = {
   id: string;
   name: string;
   slug: string | null;
-  memberRole: string;
 };

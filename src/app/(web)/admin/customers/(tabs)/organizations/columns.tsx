@@ -3,11 +3,11 @@
 import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
-import type { Organization } from "@/services/api/types/organization";
+import type { OrganizationLegacy } from "@/services/api/types/organization";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Button } from "@/components/ui/button";
 
-function OrganizationActionsCell({ organization }: { organization: Organization }) {
+function OrganizationActionsCell({ organization }: { organization: OrganizationLegacy }) {
   return (
     <Button variant="ghost" size="icon" asChild aria-label="View organization details">
       <Link href={`/admin/customers/organizations/${organization.id}`}>
@@ -17,7 +17,7 @@ function OrganizationActionsCell({ organization }: { organization: Organization 
   );
 }
 
-export const columns: ColumnDef<Organization>[] = [
+export const columns: ColumnDef<OrganizationLegacy>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,

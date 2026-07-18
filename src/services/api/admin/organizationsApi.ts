@@ -2,8 +2,8 @@ import { adminApiClient } from "@/services/api/client";
 import type { ListParams } from "@/services/api/listParams";
 import type { Invitation } from "@/services/api/types/invitation";
 import type {
-  Organization,
   OrganizationDetail,
+  OrganizationLegacy,
   OrganizationMember,
 } from "@/services/api/types/organization";
 import type { ListOrganizationInvitationsParams } from "@/app/api/admin/organizations/[id]/invitations/schema";
@@ -13,8 +13,8 @@ import type { PaginationData } from "@/app/api/response";
 export const organizationsApi = {
   listOrganizations(
     params?: ListParams,
-  ): Promise<{ data: Organization[]; pagination: PaginationData }> {
-    return adminApiClient.getPaginated<Organization>("/organizations", params);
+  ): Promise<{ data: OrganizationLegacy[]; pagination: PaginationData }> {
+    return adminApiClient.getPaginated<OrganizationLegacy>("/organizations", params);
   },
 
   getOrganization(id: string): Promise<OrganizationDetail> {
