@@ -64,11 +64,11 @@ export function OrganizationDetailView({ organizationId }: { organizationId: str
         <span className="flex items-center gap-2">
           <Link
             href="/admin/organizations"
-            className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center justify-center rounded-sm p-1 text-foreground transition-colors hover:text-foreground"
             aria-label="Back to organizations"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back
+            <ArrowLeft className="h-6 w-6" strokeWidth={2.5} />
+            <span className="sr-only">Back to organizations</span>
           </Link>
           <span className="text-lg font-semibold text-foreground">{organization.name}</span>
         </span>

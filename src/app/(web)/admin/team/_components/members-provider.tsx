@@ -4,23 +4,32 @@ import React, { useState } from "react";
 import type { User } from "@/services/api/types/user";
 import useDialogState from "@/hooks/use-dialog-state";
 
-type MembersDialogType = "view" | "change-role" | "delete";
+type MembersDialogType = "view" | "change-role" | "ban" | "unban" | "delete";
 
 type MembersContextType = {
   open: MembersDialogType | null;
   setOpen: (str: MembersDialogType | null) => void;
   currentRow: User | null;
   setCurrentRow: React.Dispatch<React.SetStateAction<User | null>>;
+  currentUserId: string | null;
 };
 
 const MembersContext = React.createContext<MembersContextType | null>(null);
 
-export function MembersProvider({ children }: { children: React.ReactNode }) {
+export function MembersProvider({
+  children,
+  currentUserId,
+}: {
+  children: React.ReactNode;
+  currentUserId: string | null;
+}) {
   const [open, setOpen] = useDialogState<MembersDialogType>(null);
   const [currentRow, setCurrentRow] = useState<User | null>(null);
 
   return (
-    <MembersContext value={{ open, setOpen, currentRow, setCurrentRow }}>{children}</MembersContext>
+    <MembersContext value={{ open, setOpen, currentRow, setCurrentRow, currentUserId }}>
+      {children}
+    </MembersContext>
   );
 }
 

@@ -19,16 +19,22 @@ export const GET = withAdmin(async (_request, { params }, { organizationId }) =>
   return detailResponse(serializeMember(member));
 });
 
-export const PATCH = withAdmin(async (request, { params }, { organizationId }) => {
+export const PATCH = withAdmin(async (request, { params }, { organizationId, user }) => {
   const { id } = await params;
+  if (id === user.id) {
+    return forbiddenResponse("You cannot update your own account from this endpoint.");
+  }
   const body = updateMemberSchema.parse(await request.json());
   const member = await updateMember(id, organizationId, body);
   if (!member) return notFoundResponse();
   return detailResponse(serializeMember(member));
 });
 
-export const DELETE = withAdmin(async (request, { params }) => {
+export const DELETE = withAdmin(async (request, { params }, { user }) => {
   const { id } = await params;
+  if (id === user.id) {
+    return forbiddenResponse("You cannot delete your own account.");
+  }
 
   try {
     await auth.api.removeUser({

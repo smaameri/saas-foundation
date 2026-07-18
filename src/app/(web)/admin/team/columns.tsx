@@ -39,6 +39,16 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
+    accessorKey: "banned",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    cell: ({ row }) =>
+      row.original.banned ? (
+        <Badge variant="destructive">Banned</Badge>
+      ) : (
+        <Badge variant="secondary">Active</Badge>
+      ),
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Joined" />,
     cell: ({ row }) => (

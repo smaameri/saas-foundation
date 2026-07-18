@@ -10,7 +10,7 @@ export const authApi = {
   signOut: () => apiClient.post<void>("/auth/logout", {}),
   changePassword: (body: ChangePasswordBody) => apiClient.post<void>("/auth/change-password", body),
   resetPassword: (body: ResetPasswordBody) => apiClient.post<void>("/auth/reset-password", body),
-  getSession: () => apiClient.get<{ role: string | null }>("/auth/session"),
+  getSession: () => apiClient.get<{ id: string | null; role: string | null }>("/auth/session"),
   checkPermissions: (body: CheckPermissionsBody) =>
     apiClient.post<{ allowed: boolean }>("/auth/permissions/check", body),
   acceptAdminInvitation: (body: AcceptAdminInvitationBody) =>

@@ -4,5 +4,8 @@ import { withErrorHandler } from "@/app/api/with-error-handler";
 
 export const GET = withErrorHandler(async (request) => {
   const session = await auth.api.getSession({ headers: request.headers });
-  return detailResponse({ role: (session?.user?.role as string) ?? null });
+  return detailResponse({
+    id: session?.user?.id ?? null,
+    role: (session?.user?.role as string) ?? null,
+  });
 });

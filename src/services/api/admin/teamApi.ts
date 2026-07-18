@@ -28,4 +28,12 @@ export const teamApi = {
   changeRole(id: string, role: "admin" | "user"): Promise<User> {
     return apiClient.patch<User>(`/admin/team/${id}/role`, { role });
   },
+
+  banUser(id: string, body: { banReason?: string; banExpiresIn?: number }): Promise<User> {
+    return apiClient.post<User>(`/admin/team/${id}/ban`, body);
+  },
+
+  unbanUser(id: string): Promise<User> {
+    return apiClient.post<User>(`/admin/team/${id}/unban`, {});
+  },
 };

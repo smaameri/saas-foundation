@@ -2,7 +2,7 @@
 
 import { useMembers } from "./members-provider";
 import type { Row } from "@tanstack/react-table";
-import { ShieldCheck, Trash2, UserSearch } from "lucide-react";
+import { Ban, RotateCcw, ShieldCheck, Trash2, UserSearch } from "lucide-react";
 import type { User } from "@/services/api/types/user";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -12,7 +12,9 @@ type DataTableRowActionsProps = {
 };
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useMembers();
+  const { setOpen, setCurrentRow, currentUserId } = useMembers();
+  const isBanned = row.original.banned ?? false;
+  const canModify = Boolean(currentUserId && row.original.id !== currentUserId);
 
   return (
     <RowActionsDropdown>
@@ -35,17 +37,46 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         Change role
         <ShieldCheck size={16} className="ml-auto" />
       </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem
-        className="text-destructive focus:text-destructive"
-        onClick={() => {
-          setCurrentRow(row.original);
-          setOpen("delete");
-        }}
-      >
-        Delete user
-        <Trash2 size={16} className="ml-auto" />
-      </DropdownMenuItem>
+      {canModify && <DropdownMenuSeparator />}
+      {canModify && (
+        <>
+          {isBanned ? (
+            <DropdownMenuItem
+              onClick={() => {
+                setCurrentRow(row.original);
+                setOpen("unban");
+              }}
+            >
+              Unban user
+              <RotateCcw size={16} className="ml-auto" />
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => {
+                setCurrentRow(row.original);
+                setOpen("ban");
+              }}
+            >
+              Ban user
+              <Ban size={16} className="ml-auto" />
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+        </>
+      )}
+      {canModify && (
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive"
+          onClick={() => {
+            setCurrentRow(row.original);
+            setOpen("delete");
+          }}
+        >
+          Delete user
+          <Trash2 size={16} className="ml-auto" />
+        </DropdownMenuItem>
+      )}
     </RowActionsDropdown>
   );
 }

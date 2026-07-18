@@ -6,15 +6,16 @@ import { toast } from "sonner";
 import { teamApi } from "@/services/api/admin/teamApi";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 
-export function DeleteUserDialog() {
+export function UnbanUserDialog() {
   const { open, setOpen, currentRow, currentUserId } = useMembers();
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () => teamApi.deleteUser(currentRow!.id),
+    mutationFn: () => teamApi.unbanUser(currentRow!.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
-      toast.success("User deleted.");
+      toast.success("User unbanned.");
+      setOpen(null);
     },
   });
 
@@ -22,14 +23,14 @@ export function DeleteUserDialog() {
 
   return (
     <DeleteDialog
-      open={open === "delete"}
+      open={open === "unban"}
       onOpenChange={(val) => !val && setOpen(null)}
-      title="Delete user"
-      description={`This will permanently delete ${currentRow.name} and revoke their access. This action cannot be undone.`}
+      title="Unban user"
+      description={`${currentRow.name} will regain access to the admin portal.`}
       onDelete={mutateAsync}
       isPending={isPending}
-      confirmLabel="Delete"
-      confirmPendingLabel="Deleting..."
+      confirmLabel="Unban"
+      confirmPendingLabel="Unbanning..."
     />
   );
 }
