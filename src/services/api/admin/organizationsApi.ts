@@ -6,8 +6,8 @@ import type {
   OrganizationDetail,
   OrganizationMember,
 } from "@/services/api/types/organization";
-import type { ListOrganizationInvitationsParams } from "@/app/api/admin/customers/organizations/[id]/invitations/schema";
-import type { ListOrganizationMembersParams } from "@/app/api/admin/customers/organizations/[id]/members/schema";
+import type { ListOrganizationInvitationsParams } from "@/app/api/admin/organizations/[id]/invitations/schema";
+import type { ListOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
 import type { PaginationData } from "@/app/api/response";
 
 export const organizationsApi = {
