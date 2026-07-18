@@ -51,6 +51,37 @@ export async function listAdminPortalInvitations(params?: {
   return { data, total };
 }
 
+export async function listOrganizationInvitations(
+  organizationId: string,
+  params?: {
+    sort?: string;
+    order?: SortOrder;
+    page?: number;
+    perPage?: number;
+    status?: string[];
+  },
+) {
+  const page = params?.page ?? 1;
+  const perPage = params?.perPage ?? 10;
+
+  const where = {
+    organizationId,
+    ...(params?.status?.length ? { status: { in: params.status } } : {}),
+  };
+
+  const [data, total] = await prisma.$transaction([
+    prisma.invitation.findMany({
+      where,
+      orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "desc" },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.invitation.count({ where }),
+  ]);
+
+  return { data, total };
+}
+
 export async function createAdminPortalInvitation(params: {
   email: string;
   role: string;

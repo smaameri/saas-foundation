@@ -1,10 +1,10 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import type { User } from "@/services/api/types/user";
+import type { OrganizationMemberUser } from "@/services/api/types/organizationMemberUser";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<OrganizationMemberUser>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => <DataTableColumnHeader column={column} title="First Name" />,
@@ -13,7 +13,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "lastName",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last Name" />,
-    cell: ({ row }) => row.original.lastName ?? "—",
+    cell: ({ row }) => row.original.lastName ?? <span className="text-muted-foreground">—</span>,
   },
   {
     accessorKey: "email",
@@ -25,7 +25,7 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
     cell: ({ row }) => {
       const organizations = row.original.organizations;
-      if (organizations.length === 0) return <span className="text-muted-foreground">—</span>;
+      if (!organizations.length) return <span className="text-muted-foreground">—</span>;
       return (
         <div className="flex flex-wrap gap-1">
           {organizations.map((org) => (

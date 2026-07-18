@@ -6,8 +6,8 @@ export function ContentLayout({
   actions,
   children,
 }: {
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   actions?: ReactNode;
   children: ReactNode;
 }) {

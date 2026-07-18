@@ -1,39 +1,30 @@
 "use client";
 
 import { columns } from "./columns";
-import { useQuery } from "@tanstack/react-query";
-import { customerUsersApi } from "@/services/api/admin/customerUsersApi";
+import { membersApi } from "@/services/api/admin/membersApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { ContentLayout } from "@/components/platform/content-layout";
-import { InviteUserModal } from "@/components/users/invite-user-modal";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import type { ListCustomerUsersParams } from "@/app/api/admin/customer-users/schema";
+import type { ListAllOrganizationMembersParams } from "@/app/api/admin/organizations/members/schema";
 
 export default function UsersPage() {
-  const { data: organizations = [] } = useQuery({
-    queryKey: ["admin", "organizations"],
-    queryFn: () => customerUsersApi.listOrganizations(),
-  });
-
   const { table } = useConnectedTable({
-    queryKey: ["admin", "customer-users"],
-    queryFn: ({ sort, order, page, perPage }) =>
-      customerUsersApi.listCustomerUsers({
-        sort: sort as ListCustomerUsersParams["sort"],
+    queryKey: ["admin", "organizations", "members"],
+    queryFn: ({ sort, order, page, perPage, search, filters }) =>
+      membersApi.listMembers({
+        sort: sort as ListAllOrganizationMembersParams["sort"],
         order,
         page,
         perPage,
+        search,
+        organizationId: (filters?.organizationId as string[] | undefined) ?? undefined,
       }),
     columns,
   });
 
   return (
-    <ContentLayout
-      title="Users"
-      description="Manage users on the platform."
-      actions={<InviteUserModal organizations={organizations} />}
-    >
-      <DataTable table={table} />
+    <ContentLayout title="People" description="Manage organization members">
+      <DataTable table={table} showSearch searchPlaceholder="Search by name or email..." />
     </ContentLayout>
   );
 }

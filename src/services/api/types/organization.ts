@@ -9,9 +9,12 @@ export type Organization = {
 export type OrganizationMember = {
   id: string;
   role: string;
+  platformRole: string | null;
   createdAt: string;
   user: {
     id: string;
+    firstName: string;
+    lastName: string;
     name: string;
     email: string;
   };
@@ -22,5 +25,6 @@ export type OrganizationDetail = {
   name: string;
   slug: string | null;
   createdAt: string;
+  memberCount: number;
   members: OrganizationMember[];
 };

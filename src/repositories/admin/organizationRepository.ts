@@ -8,9 +8,19 @@ export async function findById(id: string) {
       members: {
         orderBy: { createdAt: "asc" },
         include: {
-          user: { select: { id: true, name: true, email: true } },
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              role: true,
+            },
+          },
         },
       },
+      _count: { select: { members: true } },
     },
   });
 }
