@@ -39,6 +39,7 @@ export function OrganizationDetailView({ organizationId }: { organizationId: str
   } = useQuery({
     queryKey: ["admin", "organizations", organizationId, "detail"],
     queryFn: () => organizationsApi.getOrganization(organizationId),
+    enabled: Boolean(organizationId),
   });
 
   const inviteButton = useMemo(() => {

@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { adminApiClient } from "@/services/api/client";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createOrganization } from "@/app/(web)/admin/customers/(tabs)/organizations/actions";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -59,11 +59,7 @@ export function AddOrganizationModal() {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (values: FormValues) => {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("slug", values.slug);
-      const result = await createOrganization(formData);
-      if (!result.ok) throw new Error(result.message ?? "Something went wrong.");
+      await adminApiClient.post<{ message: string }>("/organizations/create", values);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "organizations"] });

@@ -5,6 +5,12 @@ export const metadata: Metadata = {
   title: "Organization",
 };
 
-export default function OrganizationDetailPage({ params }: { params: { id: string } }) {
-  return <OrganizationDetailView organizationId={params.id} />;
+export default async function OrganizationDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  return <OrganizationDetailView organizationId={id} />;
 }
