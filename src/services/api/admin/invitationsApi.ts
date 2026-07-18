@@ -36,4 +36,8 @@ export const invitationsApi = {
   cancelInvitation(invitationId: string) {
     return apiClient.delete(`/admin/invitations/${invitationId}`);
   },
+
+  cancelAdminTeamInvitation(invitationId: string) {
+    return apiClient.delete(`/admin/team/invitations/${invitationId}`);
+  },
 };

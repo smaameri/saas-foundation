@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { Invitation } from "@/services/api/types/invitation";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Badge } from "@/components/ui/badge";
+import { InvitationsRowActions } from "@/app/(web)/admin/team/invitations/data-table-row-actions";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   pending: "default",
@@ -51,5 +52,12 @@ export const columns: ColumnDef<Invitation>[] = [
         {new Date(row.original.expiresAt).toLocaleDateString()}
       </span>
     ),
+  },
+  {
+    id: "actions",
+    header: () => null,
+    cell: ({ row }) => <InvitationsRowActions row={row} />,
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
