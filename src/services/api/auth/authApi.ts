@@ -1,4 +1,5 @@
 import { apiClient } from "@/services/api/client";
+import type { AcceptAdminInvitationBody } from "@/app/api/auth/admin/invitations/accept/schema";
 import type { ChangePasswordBody } from "@/app/api/auth/change-password/schema";
 import type { LoginBody } from "@/app/api/auth/login/schema";
 import type { CheckPermissionsBody } from "@/app/api/auth/permissions/check/schema";
@@ -12,4 +13,6 @@ export const authApi = {
   getSession: () => apiClient.get<{ role: string | null }>("/auth/session"),
   checkPermissions: (body: CheckPermissionsBody) =>
     apiClient.post<{ allowed: boolean }>("/auth/permissions/check", body),
+  acceptAdminInvitation: (body: AcceptAdminInvitationBody) =>
+    apiClient.post<{ message: string }>("/auth/admin/invitations/accept", body),
 };

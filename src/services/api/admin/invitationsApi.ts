@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/api/client";
 import type { Invitation } from "@/services/api/types/invitation";
 import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
+import type { ListAdminPortalInvitationsParams } from "@/app/api/admin/team/invitations/schema";
 import type { PaginationData } from "@/app/api/response";
 
 type SendInvitationParams = {
@@ -14,6 +15,12 @@ export const invitationsApi = {
     params?: ListInvitationsParams,
   ): Promise<{ data: Invitation[]; pagination: PaginationData }> {
     return apiClient.getPaginated<Invitation>("/admin/invitations", params);
+  },
+
+  listAdminPortalInvitations(
+    params?: ListAdminPortalInvitationsParams,
+  ): Promise<{ data: Invitation[]; pagination: PaginationData }> {
+    return apiClient.getPaginated<Invitation>("/admin/team/invitations", params);
   },
 
   sendInvitation(organizationId: string, params: SendInvitationParams) {

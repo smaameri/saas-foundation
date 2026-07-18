@@ -1,35 +1,77 @@
 import { inviteMemberSchema } from "./schema";
-import type { User as PrismaUser } from "@generated/prisma/client";
-import { randomBytes } from "node:crypto";
-import { auth } from "@/lib/auth/auth";
+import { Resend } from "resend";
+import { createAdminPortalInvitation } from "@/repositories/admin/invitationRepository";
 import { findUserByEmail } from "@/repositories/admin/teamRepository";
-import { serializeUser } from "@/serializers/userSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { createdResponse } from "@/app/api/response";
+import { conflictResponse, createdResponse } from "@/app/api/response";
 
-export const POST = withAdmin(async (request) => {
-  const { email, firstName, lastName, role } = inviteMemberSchema.parse(await request.json());
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const FROM = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
+
+const INVITATION_EXPIRES_IN_DAYS = 2;
+
+export const POST = withAdmin(async (request, _context, { user }) => {
+  const { email, role } = inviteMemberSchema.parse(await request.json());
 
   const existingUser = await findUserByEmail(email);
   if (existingUser) {
-    return createdResponse(serializeUser(existingUser));
+    return conflictResponse("A user with this email already exists.");
   }
 
-  const { user } = await auth.api.createUser({
-    body: {
-      email,
-      password: randomBytes(24).toString("base64url"),
-      name: `${firstName} ${lastName}`,
-      role,
-      data: { firstName, lastName },
-    },
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + INVITATION_EXPIRES_IN_DAYS);
+
+  const invitation = await createAdminPortalInvitation({
+    email,
+    role,
+    inviterId: user.id,
+    expiresAt,
   });
 
-  await auth.api.requestPasswordReset({ body: { email } });
+  sendAdminPortalInvitationEmail({
+    email,
+    invitedBy: user.name,
+    inviteLink: `${process.env.BETTER_AUTH_URL}/accept-invitation/admin-portal/${invitation.id}`,
+  });
 
-  // TODO: create the invitation for the admin organization.
-
-  // `additionalFields` (firstName/lastName) aren't reflected in the admin plugin's
-  // generic return type, though they are persisted and present at runtime.
-  return createdResponse(serializeUser(user as unknown as PrismaUser));
+  return createdResponse({
+    message: `Invitation sent to ${email}.`,
+    invitationId: invitation.id,
+  });
 });
+
+export type AdminPortalInvitationPayload = {
+  email: string;
+  invitedBy?: string;
+  inviteLink: string;
+};
+
+export async function sendAdminPortalInvitationEmail({
+  email,
+  invitedBy,
+  inviteLink,
+}: AdminPortalInvitationPayload) {
+  if (!email || !inviteLink) {
+    throw new Error("Organization invitation email requires email and inviteLink.");
+  }
+
+  const inviterText = invitedBy ? `${invitedBy} has invited you` : "You've been invited";
+
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: email,
+    subject: `You've been invited to join the SaaS Foundation Admin Portal`,
+    html: `
+      <p>${inviterText} to join the SaaS Foundation Admin Portal.</p>
+      <p>Click the link below to accept your invitation.</p>
+      <p><a href="${inviteLink}">Accept invitation</a></p>
+      <p>If you weren't expecting this email, you can safely ignore it.</p>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Failed to send organization invitation email:", error);
+    throw new Error(error.message);
+  }
+}
