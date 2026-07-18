@@ -1,8 +1,8 @@
 import { apiClient } from "@/services/api/client";
 import type { Member } from "@/services/api/types/member";
 import type { OrganizationMemberUser } from "@/services/api/types/organizationMemberUser";
+import type { ListAllOrganizationMembersParams } from "@/app/api/admin/customers/organizations/members/schema";
 import type { UpdateMemberBody } from "@/app/api/admin/members/[id]/schema";
-import type { ListAllOrganizationMembersParams } from "@/app/api/admin/organizations/members/schema";
 import type { PaginationData } from "@/app/api/response";
 
 export const membersApi = {
