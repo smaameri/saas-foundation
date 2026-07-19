@@ -5,7 +5,7 @@ import type {
   OrganizationLegacy,
   OrganizationMember,
 } from "@/services/api/types/organization";
-import type { ListOrganizationInvitationsParams } from "@/app/api/admin/organizations/[id]/invitations/schema";
+import type { ListOrganizationInvitationsParams } from "@/app/api/admin/invitations/schema";
 import type { ListOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Invitation } from "@/types/invitation";
