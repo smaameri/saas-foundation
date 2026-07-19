@@ -29,7 +29,7 @@ import { Input } from "@/components/ui/input";
 import {
   type CreateOrganizationBody,
   createOrganizationSchema,
-} from "@/app/api/admin/organizations/schema";
+} from "@/app/api/admin/customer/organizations/schema";
 
 const formSchema = createOrganizationSchema;
 

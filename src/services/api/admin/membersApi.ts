@@ -1,7 +1,7 @@
 import { adminApiClient } from "@/services/api/client";
 import type { OrganizationMemberUser } from "@/services/api/types/organizationMemberUser";
-import type { UpdateMemberBody } from "@/app/api/admin/members/[id]/schema";
-import type { ListAllOrganizationMembersParams } from "@/app/api/admin/members/schema";
+import type { UpdateMemberBody } from "@/app/api/admin/customer/members/[id]/schema";
+import type { ListAllOrganizationMembersParams } from "@/app/api/admin/customer/members/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Member } from "@/types/member";
 

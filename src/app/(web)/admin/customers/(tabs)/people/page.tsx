@@ -10,7 +10,7 @@ import { columns } from "./columns";
 import { membersApi } from "@/services/api/admin/membersApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import type { ListAllOrganizationMembersParams } from "@/app/api/admin/members/schema";
+import type { ListAllOrganizationMembersParams } from "@/app/api/admin/customer/members/schema";
 
 export default function CustomersPeoplePage() {
   const { table } = useConnectedTable({
