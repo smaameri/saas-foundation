@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
 import { adminApiClient } from "@/services/api/client";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
@@ -27,17 +26,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  type CreateOrganizationBody,
+  createOrganizationSchema,
+} from "@/app/api/admin/organizations/schema";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  slug: z
-    .string()
-    .min(1, "Slug is required")
-    .max(100)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Lowercase letters, numbers, and hyphens only"),
-});
+const formSchema = createOrganizationSchema;
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = CreateOrganizationBody;
 
 function toSlug(value: string) {
   return value
@@ -59,7 +55,7 @@ export function AddOrganizationModal() {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (values: FormValues) => {
-      await adminApiClient.post<{ message: string }>("/organizations/create", values);
+      await adminApiClient.post<{ message: string }>("/organizations", values);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "organizations"] });
