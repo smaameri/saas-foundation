@@ -34,24 +34,13 @@ export async function listOrganizations(params?: {
   const page = params?.page ?? 1;
   const perPage = params?.perPage ?? 10;
 
-  const where = {};
-  const select = {
-    id: true,
-    name: true,
-    slug: true,
-    createdAt: true,
-    _count: { select: { members: true } },
-  };
-
   const [data, total] = await prisma.$transaction([
     prisma.organization.findMany({
-      where,
-      select,
       orderBy: { [params?.sort ?? "name"]: params?.order ?? "asc" },
       skip: (page - 1) * perPage,
       take: perPage,
     }),
-    prisma.organization.count({ where }),
+    prisma.organization.count(),
   ]);
 
   return { data, total };

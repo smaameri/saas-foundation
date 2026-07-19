@@ -2,15 +2,15 @@ import { createOrganizationSchema, listOrganizationsSchema } from "./schema";
 import { validateQuery } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 import { listOrganizations } from "@/repositories/admin/organizationRepository";
-import { serializeOrganization } from "@/serializers/organizationSerializerLegacy";
+import { serializeOrganization } from "@/serializers/organizationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { conflictResponse, createdResponse, paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
-  const parsed = validateQuery(request, listOrganizationsSchema);
-  const { data, total } = await listOrganizations(parsed);
-  const page = parsed.page ?? 1;
-  const perPage = parsed.perPage ?? 10;
+  const validated = validateQuery(request, listOrganizationsSchema);
+  const { data, total } = await listOrganizations(validated);
+  const page = validated.page;
+  const perPage = validated.perPage;
   return paginatedResponse(data.map(serializeOrganization), {
     page,
     perPage: perPage,
