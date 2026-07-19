@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import {
   type UpdateMemberBody,
   updateMemberSchema,
-} from "@/app/api/admin/customer/members/[id]/schema";
+} from "@/app/api/admin/organizations/members/[id]/schema";
 import { orgRoleOptions, platformRoleOptions } from "@/constants/roles";
 
 export default function EditMemberPage({ params }: { params: Promise<{ id: string }> }) {

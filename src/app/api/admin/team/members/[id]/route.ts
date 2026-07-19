@@ -2,7 +2,7 @@ import { APIError } from "better-auth";
 import { auth } from "@/lib/auth/auth";
 import { findMemberById, updateMember } from "@/repositories/admin/organizationMemberRepository";
 import { serializeMember } from "@/serializers/memberSerializer";
-import { updateMemberSchema } from "@/app/api/admin/customer/members/[id]/schema";
+import { updateMemberSchema } from "@/app/api/admin/organizations/members/[id]/schema";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import {
   conflictResponse,
