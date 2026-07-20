@@ -20,5 +20,4 @@ export const createOrganizationSchema = z.object({
     ),
 });
 
-export type ListOrganizationsParams = z.infer<typeof listOrganizationsSchema>;
 export type CreateOrganizationBody = z.infer<typeof createOrganizationSchema>;
