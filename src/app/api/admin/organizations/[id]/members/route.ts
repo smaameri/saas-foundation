@@ -1,17 +1,17 @@
-import { listAllOrganizationMembersSchema } from "./schema";
+import { listOrganizationMembersSchema } from "./schema";
 import { validateQuery } from "@/lib/api";
-import { listAllOrganizationMembers } from "@/repositories/admin/organizationMemberRepository";
-import { serializeOrganizationMemberUser } from "@/serializers/organizationSerializerLegacy";
+import { listMembers } from "@/repositories/admin/organizationMemberRepository";
+import { serializeMember } from "@/serializers/memberSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 
-export const GET = withAdmin(async (request) => {
-  const validated = validateQuery(request, listAllOrganizationMembersSchema);
+export const GET = withAdmin(async (request, { params }) => {
+  const { id: organizationId } = await params;
+  const validated = validateQuery(request, listOrganizationMembersSchema);
   const page = validated.page;
   const perPage = validated.perPage;
 
-  const { data, total } = await listAllOrganizationMembers({
-    organizationIds: validated.organizationIds,
+  const { data, total } = await listMembers(organizationId, {
     status: validated.status,
     search: validated.search,
     sort: validated.sort,
@@ -20,7 +20,7 @@ export const GET = withAdmin(async (request) => {
     perPage,
   });
 
-  return paginatedResponse(data.map(serializeOrganizationMemberUser), {
+  return paginatedResponse(data.map(serializeMember), {
     page,
     perPage,
     total,

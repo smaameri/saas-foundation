@@ -26,10 +26,14 @@ export const organizationsApi = {
     params?: ListParams & Partial<ListOrganizationMembersParams>,
   ): Promise<{ data: OrganizationMember[]; pagination: PaginationData }> {
     return adminApiClient.getPaginated<OrganizationMember>(`/organizations/${id}/members`, {
+      search: params?.search,
       sort: params?.sort,
       order: params?.order,
       page: params?.page ?? 1,
       perPage: params?.perPage ?? 10,
+      filters:
+        params?.filters ??
+        (params?.status && params.status.length > 0 ? { status: params.status } : undefined),
     });
   },
 

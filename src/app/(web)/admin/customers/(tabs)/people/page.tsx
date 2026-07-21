@@ -10,19 +10,19 @@ import { columns } from "./columns";
 import { membersApi } from "@/services/api/admin/membersApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
-import type { ListAllOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
+import type { ListOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
 
 export default function CustomersPeoplePage() {
   const { table } = useConnectedTable({
     queryKey: ["admin", "organizations", "members"],
     queryFn: ({ sort, order, page, perPage, search, filters }) =>
       membersApi.listMembers({
-        sort: sort as ListAllOrganizationMembersParams["sort"],
+        sort: sort as ListOrganizationMembersParams["sort"],
         order,
         page,
         perPage,
         search,
-        organizationIds: (filters?.organizationId as string[] | undefined) ?? undefined,
+        status: (filters?.status as string[] | undefined) ?? undefined,
       }),
     columns,
     initialFilters: [{ id: "status", value: ["active"] }],

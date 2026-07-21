@@ -25,9 +25,9 @@ export async function findMemberById(id: string, organizationId: string) {
   });
 }
 
-export async function findMemberByMemberId(id: string) {
-  return prisma.member.findUnique({
-    where: { id },
+export async function findMemberByMemberId(id: string, organizationId: string) {
+  return prisma.member.findFirst({
+    where: { id, organizationId },
     include: {
       user: true,
       organization: true,
@@ -40,31 +40,17 @@ export async function updateMember(
   organizationId: string,
   params: {
     role: string;
-    platformRole: string;
-    firstName?: string | null;
-    lastName?: string | null;
   },
 ) {
-  const member = await prisma.member.update({
+  return await prisma.member.update({
     where: { id, organizationId },
     data: { role: params.role },
     include: { user: true },
   });
-
-  await prisma.user.update({
-    where: { id: member.userId },
-    data: {
-      role: params.platformRole,
-      firstName: params.firstName,
-      lastName: params.lastName,
-    },
-  });
-
-  return findMemberById(id, organizationId);
 }
 
-export async function deleteMember(id: string) {
-  return prisma.member.delete({ where: { id } });
+export async function deleteMember(id: string, organizationId: string) {
+  return prisma.member.deleteMany({ where: { id, organizationId } });
 }
 
 export async function updateMemberRole(id: string, organizationId: string, platformRole: string) {
@@ -86,25 +72,54 @@ export async function listMembers(
     order?: SortOrder;
     page: number;
     perPage: number;
+    search?: string;
+    status?: string[];
   },
 ) {
   const { page, perPage } = params;
-  const where = { organizationId };
+  const userWhere: Prisma.UserWhereInput = {};
+
+  if (params.search) {
+    userWhere.OR = [
+      { firstName: { contains: params.search, mode: "insensitive" } },
+      { lastName: { contains: params.search, mode: "insensitive" } },
+      { name: { contains: params.search, mode: "insensitive" } },
+      { email: { contains: params.search, mode: "insensitive" } },
+    ];
+  }
+
+  if (params.status && params.status.length > 0) {
+    const normalized = params.status.map((status) => status.toLowerCase());
+    const includeActive = normalized.includes("active");
+    const includeBanned = normalized.includes("banned");
+
+    if (!(includeActive && includeBanned)) {
+      const statusCondition = includeBanned
+        ? { banned: true }
+        : includeActive
+          ? { OR: [{ banned: false }, { banned: null }] }
+          : undefined;
+
+      if (statusCondition) {
+        if (userWhere.OR) {
+          userWhere.AND = [...(userWhere.AND ?? []), statusCondition];
+        } else {
+          Object.assign(userWhere, statusCondition);
+        }
+      }
+    }
+  }
+
+  const where: Prisma.MemberWhereInput = {
+    organizationId,
+    ...(Object.keys(userWhere).length > 0 ? { user: userWhere } : {}),
+  };
 
   const [data, total] = await prisma.$transaction([
     prisma.member.findMany({
       where,
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            role: true,
-          },
-        },
+        user: true,
       },
       orderBy: { [params.sort ?? "createdAt"]: params.order ?? "asc" },
       skip: (page - 1) * perPage,

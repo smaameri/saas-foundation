@@ -1,18 +1,15 @@
 import { adminApiClient } from "@/services/api/client";
 import type { OrganizationMemberUser } from "@/services/api/types/organizationMemberUser";
-import type { UpdateMemberBody } from "@/app/api/admin/organizations/[id]/members/[id]/schema";
-import type { ListAllOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
+import type { UpdateMemberBody } from "@/app/api/admin/organizations/[id]/members/[memberId]/schema";
+import type { ListOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Member } from "@/types/member";
 
 export const membersApi = {
   listMembers(
-    params?: ListAllOrganizationMembersParams,
+    params?: ListOrganizationMembersParams,
   ): Promise<{ data: OrganizationMemberUser[]; pagination: PaginationData }> {
     const filters: Record<string, string[]> = {};
-    if (params?.organizationIds && params.organizationIds.length > 0) {
-      filters.organizationId = params.organizationIds;
-    }
     if (params?.status && params.status.length > 0) {
       filters.status = params.status;
     }

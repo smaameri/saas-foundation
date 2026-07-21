@@ -14,34 +14,34 @@ import {
 } from "@/app/api/response";
 
 export const GET = withAdmin(async (_request, { params }) => {
-  const { id } = await params;
-  const member = await findMemberByMemberId(id);
+  const { id: organizationId, memberId } = await params;
+  const member = await findMemberByMemberId(memberId, organizationId);
   if (!member) return notFoundResponse();
   return detailResponse(serializeMember(member));
 });
 
 export const PATCH = withAdmin(async (request, { params }, { user }) => {
-  const { id } = await params;
-  const existing = await findMemberByMemberId(id);
+  const { id: organizationId, memberId } = await params;
+  const existing = await findMemberByMemberId(memberId, organizationId);
   if (!existing) return notFoundResponse();
   if (existing.userId === user.id) {
     return forbiddenResponse("You cannot update your own membership.");
   }
 
   const body = updateMemberSchema.parse(await request.json());
-  const updated = await updateMember(id, existing.organizationId, body);
+  const updated = await updateMember(memberId, existing.organizationId, body);
   if (!updated) return notFoundResponse();
-  return detailResponse(serializeMember({ ...updated, organization: existing.organization }));
+  return detailResponse(serializeMember({ ...updated }));
 });
 
 export const DELETE = withAdmin(async (_request, { params }, { user }) => {
-  const { id } = await params;
-  const existing = await findMemberByMemberId(id);
+  const { id: organizationId, memberId } = await params;
+  const existing = await findMemberByMemberId(memberId, organizationId);
   if (!existing) return notFoundResponse();
   if (existing.userId === user.id) {
     return forbiddenResponse("You cannot remove your own membership.");
   }
 
-  await deleteMember(id);
+  await deleteMember(memberId, organizationId);
   return noContentResponse();
 });
