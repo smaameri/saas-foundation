@@ -1,12 +1,10 @@
 import { z } from "zod";
+import { parseCommaSeparatedList } from "@/lib/api";
 import { listSchema } from "@/app/api/schemas";
 
 export const listAdminPortalInvitationsSchema = listSchema.extend({
   sort: z.enum(["email", "role", "status", "createdAt", "expiresAt"]).optional(),
-  status: z
-    .string()
-    .transform((value) => value.split(","))
-    .optional(),
+  status: z.string().transform(parseCommaSeparatedList).optional(),
 });
 
 export const createAdminPortalInvitationSchema = z.object({
