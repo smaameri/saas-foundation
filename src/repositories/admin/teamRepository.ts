@@ -11,10 +11,24 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function updateTeamMemberRole(id: string, role: string) {
-  return prisma.user.update({
-    where: { id },
+  const { count } = await prisma.user.updateMany({
+    where: { id, ...whereHasAdminPortalAccess() },
     data: { role },
   });
+  if (count === 0) return null;
+
+  return prisma.user.findUnique({ where: { id } });
+}
+
+export async function findTeamMember(id: string) {
+  return prisma.user.findFirst({ where: { id, ...whereHasAdminPortalAccess() } });
+}
+
+export async function deleteTeamMember(id: string) {
+  const { count } = await prisma.user.deleteMany({
+    where: { id, ...whereHasAdminPortalAccess() },
+  });
+  return count > 0;
 }
 
 export async function listTeamMembers(params: {

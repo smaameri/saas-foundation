@@ -8,7 +8,6 @@ import { withPermission } from "@/app/api/with-permission";
 export type AdminContext = {
   user: User;
   session: Session;
-  organizationId: string;
 };
 
 type RouteContext = { params: Promise<Record<string, string>> };
@@ -33,13 +32,7 @@ export function withAdmin(handler: AdminHandler, permissions?: Permissions) {
       return forbiddenResponse();
     }
 
-    const organizationId = session.activeOrganizationId;
-
-    if (!organizationId) {
-      return forbiddenResponse();
-    }
-
-    const adminContext: AdminContext = { user, session, organizationId };
+    const adminContext: AdminContext = { user, session };
 
     if (permissions) {
       return withPermission(permissions)((req, ctx) => handler(req, ctx, adminContext))(

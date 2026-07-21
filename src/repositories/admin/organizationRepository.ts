@@ -44,7 +44,7 @@ export async function listOrganizations(params?: {
   return { data, total };
 }
 
-export async function listOrganizationsForUser(userId: string) {
+export async function listUserOrganizations(userId: string) {
   return prisma.organization.findMany({
     where: {
       members: {

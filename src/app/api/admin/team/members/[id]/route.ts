@@ -1,54 +1,31 @@
-import { APIError } from "better-auth";
-import { auth } from "@/lib/auth/auth";
-import { findMemberById, updateMember } from "@/repositories/admin/organizationMemberRepository";
-import { serializeMember } from "@/serializers/memberSerializer";
-import { updateMemberSchema } from "@/app/api/admin/organizations/[id]/members/[memberId]/schema";
+import { deleteTeamMember, findTeamMember } from "@/repositories/admin/teamRepository";
+import { serializeUser } from "@/serializers/userSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import {
-  conflictResponse,
   detailResponse,
   forbiddenResponse,
   noContentResponse,
   notFoundResponse,
 } from "@/app/api/response";
 
-export const GET = withAdmin(async (_request, { params }, { organizationId }) => {
+export const GET = withAdmin(async (_request, { params }) => {
   const { id } = await params;
-  const member = await findMemberById(id, organizationId);
-  if (!member) return notFoundResponse();
-  return detailResponse(serializeMember(member));
+  const user = await findTeamMember(id);
+  if (!user) return notFoundResponse();
+  return detailResponse(serializeUser(user));
 });
 
-export const PATCH = withAdmin(async (request, { params }, { organizationId, user }) => {
-  const { id } = await params;
-  if (id === user.id) {
-    return forbiddenResponse("You cannot update your own account from this endpoint.");
-  }
-  const body = updateMemberSchema.parse(await request.json());
-  const member = await updateMember(id, organizationId, body);
-  if (!member) return notFoundResponse();
-  return detailResponse(serializeMember(member));
-});
-
-export const DELETE = withAdmin(async (request, { params }, { user }) => {
-  const { id } = await params;
-  if (id === user.id) {
-    return forbiddenResponse("You cannot delete your own account.");
-  }
-
-  try {
-    await auth.api.removeUser({
-      body: { userId: id },
-      headers: request.headers,
-    });
-  } catch (error) {
-    if (error instanceof APIError) {
-      if (error.status === "NOT_FOUND") return notFoundResponse(error.body?.message);
-      if (error.status === "FORBIDDEN") return forbiddenResponse(error.body?.message);
-      return conflictResponse(error.body?.message ?? "Failed to delete user.");
+export const DELETE = withAdmin(
+  async (_request, { params }, { user }) => {
+    const { id } = await params;
+    if (id === user.id) {
+      return forbiddenResponse("You cannot delete your own account.");
     }
-    throw error;
-  }
 
-  return noContentResponse();
-});
+    const deleted = await deleteTeamMember(id);
+    if (!deleted) return notFoundResponse();
+
+    return noContentResponse();
+  },
+  { user: ["delete"] },
+);
