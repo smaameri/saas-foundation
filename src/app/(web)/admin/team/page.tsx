@@ -24,7 +24,7 @@ function MembersTable() {
         order,
         page,
         perPage,
-        filters,
+        filters: filters as Record<string, string[]> | undefined,
       }),
     columns,
     initialFilters: [{ id: "status", value: ["active"] }],

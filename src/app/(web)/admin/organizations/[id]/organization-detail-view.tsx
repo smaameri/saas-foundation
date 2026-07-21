@@ -13,7 +13,7 @@ import { OrganizationSummary } from "@/app/(web)/admin/organizations/[id]/_compo
 
 function LoadingState() {
   return (
-    <ContentLayout title="Organization" description="Loading organization details...">
+    <ContentLayout title="Organization" backHref="/admin/organizations">
       <div className="space-y-6">
         <Skeleton className="h-24 w-full" />
         <Skeleton className="h-64 w-full" />
@@ -24,7 +24,7 @@ function LoadingState() {
 
 function ErrorState({ message }: { message: string }) {
   return (
-    <ContentLayout title="Organization" description="Unable to load organization.">
+    <ContentLayout title="Organization" backHref="/admin/organizations">
       <div className="rounded-lg border border-dashed p-6 text-sm text-destructive">{message}</div>
     </ContentLayout>
   );
@@ -57,10 +57,8 @@ export function OrganizationDetailView({ organizationId }: { organizationId: str
     return <ErrorState message={message} />;
   }
 
-  const description = organization.slug ? `/${organization.slug}` : undefined;
-
   return (
-    <ContentLayout title={organization.name} description={description} actions={inviteButton}>
+    <ContentLayout title={organization.name} actions={inviteButton} backHref="/admin/organizations">
       <div className="space-y-8">
         <OrganizationSummary organization={organization} />
 
