@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 function OrganizationActionsCell({ organization }: { organization: OrganizationLegacy }) {
   return (
     <Button variant="ghost" size="icon" asChild aria-label="View organization details">
-      <Link href={`/admin/customers/organizations/${organization.id}`}>
+      <Link href={`/admin/organizations/${organization.id}`}>
         <Eye className="h-4 w-4" />
       </Link>
     </Button>
@@ -26,12 +26,6 @@ export const columns: ColumnDef<OrganizationLegacy>[] = [
     accessorKey: "slug",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Slug" />,
     cell: ({ row }) => <span className="text-muted-foreground">{row.original.slug ?? "—"}</span>,
-  },
-  {
-    accessorKey: "memberCount",
-    header: "Members",
-    enableSorting: false,
-    cell: ({ row }) => <span className="text-muted-foreground">{row.original.memberCount}</span>,
   },
   {
     accessorKey: "createdAt",

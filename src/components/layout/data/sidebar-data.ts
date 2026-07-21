@@ -17,8 +17,8 @@ export const sidebarData: SidebarData = {
       title: "Platform",
       items: [
         {
-          title: "Customers",
-          url: "/admin/customers",
+          title: "Organizations",
+          url: "/admin/organizations",
           icon: Users,
         },
       ],
