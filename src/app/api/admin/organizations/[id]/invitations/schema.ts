@@ -1,21 +1,11 @@
 import { z } from "zod";
+import { parseCommaSeparatedList } from "@/lib/api";
 import { listSchema } from "@/app/api/schemas";
 
 export const listCustomerInvitationsSchema = listSchema.extend({
   sort: z.enum(["createdAt", "expiresAt"]).optional(),
-  status: z
-    .string()
-    .transform((value) => value.split(","))
-    .optional(),
-  organizationIds: z
-    .string()
-    .transform((value) =>
-      value
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-    )
-    .optional(),
+  status: z.string().transform(parseCommaSeparatedList).optional(),
+  organizationIds: z.string().transform(parseCommaSeparatedList).optional(),
 });
 
 export type ListCustomerInvitationsParams = z.infer<typeof listCustomerInvitationsSchema>;
