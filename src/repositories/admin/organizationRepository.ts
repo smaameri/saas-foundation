@@ -1,27 +1,25 @@
+import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 import type { SortOrder } from "@/repositories/types";
+
+type CreateOrganizationInput = {
+  name: string;
+  slug: string;
+};
+
+export async function createOrganization({ name, slug }: CreateOrganizationInput) {
+  return prisma.organization.create({
+    data: {
+      id: randomUUID(),
+      name,
+      slug,
+    },
+  });
+}
 
 export async function findById(id: string) {
   return prisma.organization.findUnique({
     where: { id },
-    include: {
-      members: {
-        orderBy: { createdAt: "asc" },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              firstName: true,
-              lastName: true,
-              role: true,
-            },
-          },
-        },
-      },
-      _count: { select: { members: true } },
-    },
   });
 }
 

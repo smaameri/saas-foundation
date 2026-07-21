@@ -4,7 +4,7 @@ import { adminAc, defaultStatements, userAc } from "better-auth/plugins/admin/ac
 export const ac = createAccessControl({
   ...defaultStatements,
   apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"] as const,
-  organization: ["update", "delete"] as const,
+  organization: ["create", "update", "delete"] as const,
   member: ["create", "update", "delete"] as const,
   invitation: ["create", "cancel"] as const,
 });
@@ -12,7 +12,7 @@ export const ac = createAccessControl({
 export const adminRole = ac.newRole({
   ...adminAc.statements,
   apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"],
-  organization: ["update", "delete"],
+  organization: ["create", "update", "delete"],
   member: ["create", "update", "delete"],
   invitation: ["create", "cancel"],
 });

@@ -6,18 +6,18 @@ import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
-  const parsed = validateQuery(request, listAllOrganizationMembersSchema);
-  const page = parsed.page ?? 1;
-  const perPage = parsed.perPage ?? 10;
+  const validated = validateQuery(request, listAllOrganizationMembersSchema);
+  const page = validated.page;
+  const perPage = validated.perPage;
 
   const { data, total } = await listAllOrganizationMembers({
-    search: parsed.search,
-    sort: parsed.sort,
-    order: parsed.order,
+    organizationIds: validated.organizationIds,
+    status: validated.status,
+    search: validated.search,
+    sort: validated.sort,
+    order: validated.order,
     page,
     perPage,
-    organizationId: parsed.organizationId,
-    status: parsed.status,
   });
 
   return paginatedResponse(data.map(serializeOrganizationMemberUser), {

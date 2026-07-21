@@ -52,7 +52,7 @@ export function InviteUserForm({
     defaultValues: {
       email: "",
       role: "member",
-      organizationId: organizations[0]?.id ?? "",
+      organizationIds: organizations[0]?.id ?? "",
     },
   });
 

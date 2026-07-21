@@ -10,8 +10,8 @@ export const membersApi = {
     params?: ListAllOrganizationMembersParams,
   ): Promise<{ data: OrganizationMemberUser[]; pagination: PaginationData }> {
     const filters: Record<string, string[]> = {};
-    if (params?.organizationId && params.organizationId.length > 0) {
-      filters.organizationId = params.organizationId;
+    if (params?.organizationIds && params.organizationIds.length > 0) {
+      filters.organizationId = params.organizationIds;
     }
     if (params?.status && params.status.length > 0) {
       filters.status = params.status;

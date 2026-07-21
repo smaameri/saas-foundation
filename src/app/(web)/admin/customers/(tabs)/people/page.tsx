@@ -22,7 +22,7 @@ export default function CustomersPeoplePage() {
         page,
         perPage,
         search,
-        organizationId: (filters?.organizationId as string[] | undefined) ?? undefined,
+        organizationIds: (filters?.organizationId as string[] | undefined) ?? undefined,
       }),
     columns,
     initialFilters: [{ id: "status", value: ["active"] }],

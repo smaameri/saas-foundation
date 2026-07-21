@@ -4,7 +4,7 @@ import type { SortOrder } from "@/repositories/types";
 
 type ListAllMembersParams = {
   search?: string;
-  organizationId?: string[];
+  organizationIds?: string[];
   sort?: string;
   order?: SortOrder;
   page?: number;
@@ -123,8 +123,8 @@ export async function listAllOrganizationMembers(params?: ListAllMembersParams) 
   const sort = params?.sort ?? "createdAt";
   const order = params?.order ?? "desc";
 
-  const membersFilter: Prisma.MemberWhereInput = params?.organizationId?.length
-    ? { organizationId: { in: params.organizationId } }
+  const membersFilter: Prisma.MemberWhereInput = params?.organizationIds?.length
+    ? { organizationId: { in: params.organizationIds } }
     : {};
 
   const statusFilters = (() => {

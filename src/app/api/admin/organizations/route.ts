@@ -1,10 +1,9 @@
 import { createOrganizationSchema, listOrganizationsSchema } from "./schema";
 import { validateQuery } from "@/lib/api";
-import { prisma } from "@/lib/prisma";
-import { listOrganizations } from "@/repositories/admin/organizationRepository";
+import { createOrganization, listOrganizations } from "@/repositories/admin/organizationRepository";
 import { serializeOrganization } from "@/serializers/organizationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { conflictResponse, createdResponse, paginatedResponse } from "@/app/api/response";
+import { createdResponse, paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
   const validated = validateQuery(request, listOrganizationsSchema);
@@ -18,23 +17,11 @@ export const GET = withAdmin(async (request) => {
   });
 });
 
-export const POST = withAdmin(async (request) => {
-  const body = createOrganizationSchema.parse(await request.json());
-
-  try {
-    await prisma.organization.create({
-      data: {
-        id: crypto.randomUUID(),
-        name: body.name,
-        slug: body.slug,
-      },
-    });
-  } catch (error) {
-    console.error("Failed to create organization", error);
-    const message =
-      error instanceof Error ? error.message : "Failed to create organization. Please try again.";
-    return conflictResponse(message);
-  }
-
-  return createdResponse({ message: "Organization created." });
-});
+export const POST = withAdmin(
+  async (request) => {
+    const validated = createOrganizationSchema.parse(await request.json());
+    const organization = await createOrganization(validated);
+    return createdResponse(serializeOrganization(organization));
+  },
+  { organization: ["create"] },
+);

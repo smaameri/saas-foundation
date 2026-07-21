@@ -4,7 +4,7 @@ import { listSchema } from "@/app/api/schemas";
 export const listAllOrganizationMembersSchema = listSchema.extend({
   search: z.string().optional(),
   sort: z.enum(["createdAt", "firstName", "lastName", "email"]).optional(),
-  organizationId: z
+  organizationIds: z
     .string()
     .transform((value) =>
       value
