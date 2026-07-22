@@ -4,23 +4,12 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { organizationsApi } from "@/services/api/admin/organizationsApi";
 import { ContentLayout } from "@/components/platform/content-layout";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InviteOrganizationMemberModal } from "@/app/(web)/admin/organizations/[id]/_components/invitations/invite-organization-member-modal";
 import { OrganizationInvitationsTable } from "@/app/(web)/admin/organizations/[id]/_components/invitations/organization-invitations-table";
 import { OrganizationMembersTable } from "@/app/(web)/admin/organizations/[id]/_components/members/organization-members-table";
 import { OrganizationSummary } from "@/app/(web)/admin/organizations/[id]/_components/organization-summary";
-
-function LoadingState() {
-  return (
-    <ContentLayout title="Organization" backHref="/admin/organizations">
-      <div className="space-y-6">
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    </ContentLayout>
-  );
-}
+import type { Organization } from "@/types/organization";
 
 function ErrorState({ message }: { message: string }) {
   return (
@@ -30,28 +19,29 @@ function ErrorState({ message }: { message: string }) {
   );
 }
 
-export function OrganizationDetailView({ organizationId }: { organizationId: string }) {
+export function OrganizationDetailView({
+  organization: initialOrganization,
+}: {
+  organization: Organization;
+}) {
+  const organizationId = initialOrganization.id;
   const {
-    data: organization,
-    isPending,
+    data: organization = initialOrganization,
     isError,
     error,
-  } = useQuery({
+  } = useQuery<Organization>({
     queryKey: ["admin", "organizations", organizationId, "detail"],
     queryFn: () => organizationsApi.getOrganization(organizationId),
     enabled: Boolean(organizationId),
+    initialData: initialOrganization,
   });
 
-  const inviteButton = useMemo(() => {
-    if (!organization) return null;
-    return <InviteOrganizationMemberModal organizationId={organization.id} />;
-  }, [organization]);
+  const inviteButton = useMemo(
+    () => <InviteOrganizationMemberModal organizationId={organization.id} />,
+    [organization.id],
+  );
 
-  if (isPending) {
-    return <LoadingState />;
-  }
-
-  if (isError || !organization) {
+  if (isError) {
     const message =
       error instanceof Error ? error.message : "Something went wrong. Please try again later.";
     return <ErrorState message={message} />;

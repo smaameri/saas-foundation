@@ -33,7 +33,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           setOpen("edit");
         }}
       >
-        Update
+        Edit
         <Pencil size={16} className="ml-auto" />
       </DropdownMenuItem>
       <DropdownMenuSeparator />
