@@ -31,7 +31,7 @@ export async function sendInvitation({
     expiresAt,
   });
 
-  const inviteLink = `${process.env.BETTER_AUTH_URL}/accept-invitation/${invitation.id}`;
+  const inviteLink = `${process.env.BETTER_AUTH_URL}/accept-invitation/customer-portal/${invitation.id}`;
 
   await sendOrganizationInvitationEmail({
     email,

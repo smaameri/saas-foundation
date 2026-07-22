@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { auth } from "@/lib/auth/auth";
 import { requireSession } from "@/lib/auth/session";
-import { listUserOrganizations } from "@/repositories/admin/organizationRepository";
+import { listUserOrganizations } from "@/repositories/customers/organizationRepository";
 
 export default async function CustomerPortalLayout({ children }: { children: ReactNode }) {
   const session = await requireSession();
@@ -11,7 +11,7 @@ export default async function CustomerPortalLayout({ children }: { children: Rea
   const requestHeaders = await headers();
 
   if (organizations.length === 0) {
-    redirect("/admin?noCustomerAccess=1");
+    redirect("/workspace/no-organization");
   }
 
   const activeOrganizationId = session.session.activeOrganizationId;
@@ -31,7 +31,7 @@ export default async function CustomerPortalLayout({ children }: { children: Rea
       });
       session.session.activeOrganizationId = organization.id;
     } else {
-      redirect("/customer/select-organization");
+      redirect("/workspace/select-organization");
     }
   }
 

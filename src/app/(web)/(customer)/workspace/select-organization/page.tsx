@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { requireSession } from "@/lib/auth/session";
-import { listUserOrganizations } from "@/repositories/admin/organizationRepository";
+import { listUserOrganizations } from "@/repositories/customers/organizationRepository";
 import { serializeOrganization } from "@/serializers/organizationSerializer";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { ContentLayout } from "@/components/platform/content-layout";
@@ -24,7 +24,7 @@ async function setActiveOrganization(formData: FormData) {
     headers: await headers(),
   });
 
-  redirect("/customer");
+  redirect("/workspace");
 }
 
 export default async function SelectOrganizationPage() {
@@ -32,14 +32,14 @@ export default async function SelectOrganizationPage() {
   const organizations = await listUserOrganizations(session.user.id);
 
   if (organizations.length === 0) {
-    redirect("/admin?noCustomerAccess=1");
+    redirect("/workspace/no-organization");
   }
 
   if (
     session.session.activeOrganizationId &&
     organizations.some((organization) => organization.id === session.session.activeOrganizationId)
   ) {
-    redirect("/customer");
+    redirect("/workspace");
   }
 
   const serializedOrganizations = organizations.map(serializeOrganization);

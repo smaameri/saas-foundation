@@ -44,7 +44,6 @@ export const auth = betterAuth({
     admin({
       ac,
       roles: { admin: adminRole, user: userRole },
-      defaultRole: "user",
     }),
     organization({
       async sendInvitationEmail(data) {

@@ -1,0 +1,98 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { findCustomerInvitationById } from "@/repositories/customers/invitationRepository";
+import { AcceptCustomerInvitationForm } from "@/components/auth/accept-customer-invitation-form";
+
+export default async function AcceptCustomerInvitationPage({
+  params,
+}: {
+  params: Promise<{ invitationId: string }>;
+}) {
+  const { invitationId } = await params;
+  const invitation = await findCustomerInvitationById(invitationId);
+  const now = new Date();
+
+  let content: ReactNode;
+
+  if (!invitation) {
+    content = (
+      <>
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Invalid invitation</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation link is invalid. Ask the organization owner to send you a new invitation.
+        </p>
+      </>
+    );
+  } else if (!invitation.organization) {
+    content = (
+      <>
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Invalid invitation</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation is missing organization details. Ask the organization owner to send you a
+          new invitation.
+        </p>
+      </>
+    );
+  } else if (invitation.status === "accepted") {
+    content = (
+      <>
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Already joined</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation has already been accepted. You can{" "}
+          <Link className="font-medium text-primary" href="/login">
+            sign in here
+          </Link>
+          .
+        </p>
+      </>
+    );
+  } else if (invitation.status === "canceled") {
+    content = (
+      <>
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Invitation canceled</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation was canceled. Ask the organization owner for a new invitation if you still
+          need access.
+        </p>
+      </>
+    );
+  } else if (invitation.expiresAt < now) {
+    content = (
+      <>
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Invitation expired</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation has expired. Ask the organization owner to send you a new invitation.
+        </p>
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">
+          Join {invitation.organization.name}
+        </h1>
+        <p className="mb-8 text-sm text-muted-foreground">
+          Set your profile details and password to finish setting up your access.
+        </p>
+        <AcceptCustomerInvitationForm invitationId={invitationId} email={invitation.email} />
+      </>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      <div className="relative hidden w-1/2 flex-col bg-zinc-900 p-10 md:flex">
+        <div className="text-white">
+          <p className="mt-1 text-xl font-semibold">SaaS Foundation</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            {new Date().getFullYear()} Inc.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col items-start justify-start px-16 pt-[20vh] md:w-1/2">
+        <div className="w-full max-w-sm space-y-6">{content}</div>
+      </div>
+    </div>
+  );
+}

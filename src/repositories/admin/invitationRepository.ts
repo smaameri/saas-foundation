@@ -2,7 +2,7 @@ import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { BaseListParams, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
-import { Portal } from "@/config/portals";
+import { Portal, PortalValue } from "@/config/portals";
 
 export async function findPendingInvitation(email: string, organizationId: string) {
   return prisma.invitation.findFirst({
@@ -173,7 +173,7 @@ export async function createCustomerPortalInvitation(params: {
   });
 }
 
-function portalFilter(portal: Portal | undefined): Prisma.InvitationWhereInput | undefined {
+function portalFilter(portal: PortalValue | undefined): Prisma.InvitationWhereInput | undefined {
   if (!portal) return undefined;
   return { portal };
 }
