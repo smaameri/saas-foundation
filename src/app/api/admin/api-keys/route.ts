@@ -8,7 +8,12 @@ import { paginatedResponse } from "@/app/api/response";
 export const GET = withAdmin(
   async (request) => {
     const validated = validateQuery(request, listApiKeysSchema);
-    const { data, total } = await listApiKeys(validated);
+    const { page, perPage, order, sort, enabled, search } = validated;
+
+    const { data, total } = await listApiKeys({
+      params: { page, perPage, order, sort },
+      filters: { enabled, search },
+    });
     return paginatedResponse(data.map(serializeApiKey), {
       page: validated.page,
       perPage: validated.perPage,

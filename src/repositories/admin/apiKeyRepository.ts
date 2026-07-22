@@ -1,55 +1,33 @@
 import { prisma } from "@/lib/prisma";
-import type { SortOrder } from "@/repositories/types";
+import type { BaseListParams, SortOrder } from "@/repositories/types";
 
-export async function listApiKeys(params: {
+type SortField = "name" | "createdAt" | "expiresAt";
+
+type Filters = {
   enabled?: string[];
   search?: string;
-  sort?: string;
-  order?: SortOrder;
-  page: number;
-  perPage: number;
-}) {
-  const { page, perPage } = params;
+  users?: string[];
+};
+
+export type ListApiKeysParams = {
+  params: BaseListParams<SortField>;
+  filters?: Filters;
+};
+
+export async function listApiKeys({ params, filters }: ListApiKeysParams) {
+  const { page, perPage, sort, order } = params;
+  const { enabled, search, users } = filters ?? {};
   const where = {
-    ...enabledFilter(params.enabled),
-    ...searchFilter(params.search),
+    ...enabledFilter(enabled),
+    ...searchFilter(search),
+    ...usersFilter(users),
   };
 
   const [data, total] = await prisma.$transaction([
     prisma.apikey.findMany({
       where,
       include: { user: true },
-      orderBy: { [params.sort ?? "createdAt"]: params.order ?? "desc" },
-      skip: (page - 1) * perPage,
-      take: perPage,
-    }),
-    prisma.apikey.count({ where }),
-  ]);
-
-  return { data, total };
-}
-
-export async function listApiKeysForUser(params: {
-  userId: string;
-  enabled?: string[];
-  search?: string;
-  sort?: string;
-  order?: SortOrder;
-  page: number;
-  perPage: number;
-}) {
-  const { userId, page, perPage } = params;
-  const where = {
-    referenceId: userId,
-    ...enabledFilter(params.enabled),
-    ...searchFilter(params.search),
-  };
-
-  const [data, total] = await prisma.$transaction([
-    prisma.apikey.findMany({
-      where,
-      include: { user: true },
-      orderBy: { [params.sort ?? "createdAt"]: params.order ?? "desc" },
+      orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -87,4 +65,14 @@ function searchFilter(search?: string) {
       { start: { contains: search, mode: "insensitive" as const } },
     ],
   };
+}
+
+function usersFilter(users?: string[]) {
+  if (!users?.length) return undefined;
+  if (users.length === 1) return { referenceId: users[0] };
+  return { referenceId: { in: users } };
+}
+
+function buildOrderBy(sort: SortField | undefined, order: SortOrder | undefined) {
+  return { [sort ?? "createdAt"]: order ?? "desc" } as const;
 }

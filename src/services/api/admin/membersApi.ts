@@ -1,4 +1,5 @@
 import { adminApiClient } from "@/services/api/client";
+import type { ListParams } from "@/services/api/listParams";
 import type { UpdateMemberBody } from "@/app/api/admin/members/[id]/schema";
 import type { ListOrganizationMembersParams } from "@/app/api/admin/members/schema";
 import type { PaginationData } from "@/app/api/response";
@@ -25,7 +26,7 @@ export const membersApi = {
 
   listOrganizationMembers(
     organizationId: string,
-    params?: ListOrganizationMembersParams,
+    params?: ListParams,
   ): Promise<{ data: Member[]; pagination: PaginationData }> {
     const filters: Record<string, string[]> = {};
     if (params?.status && params.status.length > 0) {

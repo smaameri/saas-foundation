@@ -1,6 +1,6 @@
-import type { OrganizationDetail } from "@/services/api/types/organization";
+import type { Organization } from "@/types/organization";
 
-const DETAILS: Array<{ label: string; getValue: (org: OrganizationDetail) => string }> = [
+const DETAILS: Array<{ label: string; getValue: (org: Organization) => string }> = [
   {
     label: "Slug",
     getValue: (org) => org.slug ?? "—",
@@ -11,7 +11,7 @@ const DETAILS: Array<{ label: string; getValue: (org: OrganizationDetail) => str
   },
 ];
 
-export function OrganizationSummary({ organization }: { organization: OrganizationDetail }) {
+export function OrganizationSummary({ organization }: { organization: Organization }) {
   return (
     <div className="space-y-3 text-sm">
       <dl className="space-y-2">
