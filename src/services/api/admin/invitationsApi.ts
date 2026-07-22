@@ -7,7 +7,6 @@ import type { Invitation } from "@/types/invitation";
 type SendInvitationParams = {
   email: string;
   role: string;
-  platformRole: string;
 };
 
 export const invitationsApi = {

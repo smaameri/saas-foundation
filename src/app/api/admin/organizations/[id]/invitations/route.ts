@@ -31,12 +31,11 @@ export const POST = withAdmin(async (request, { params }, { user }) => {
   const isValid = await validator.validate();
   if (!isValid) return validationErrorResponse(validator.errors);
 
-  const { email, role, platformRole, organizationName } = validator.data;
+  const { email, role, organizationName } = validator.data;
 
   await sendInvitation({
     email,
     role,
-    platformRole,
     organizationId,
     organizationName,
     inviterId: user.id,

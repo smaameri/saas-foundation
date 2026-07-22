@@ -150,6 +150,29 @@ export async function createAdminPortalInvitation(params: {
   });
 }
 
+export async function createCustomerPortalInvitation(params: {
+  email: string;
+  role: string;
+  organizationId: string;
+  inviterId: string;
+  expiresAt: Date;
+}) {
+  const { email, role, organizationId, inviterId, expiresAt } = params;
+
+  return prisma.invitation.create({
+    data: {
+      id: crypto.randomUUID(),
+      email,
+      role,
+      portal: Portal.customer,
+      organizationId,
+      status: "pending",
+      inviterId,
+      expiresAt,
+    },
+  });
+}
+
 function portalFilter(portal: Portal | undefined): Prisma.InvitationWhereInput | undefined {
   if (!portal) return undefined;
   return { portal };

@@ -1,12 +1,11 @@
 import { sendOrganizationInvitationEmail } from "@/lib/email";
-import { prisma } from "@/lib/prisma";
+import { createCustomerPortalInvitation } from "@/repositories/admin/invitationRepository";
 
 const INVITATION_EXPIRES_IN_DAYS = 2;
 
 type SendInvitationParams = {
   email: string;
   role: string;
-  platformRole: string;
   organizationId: string;
   organizationName: string;
   inviterId: string;
@@ -16,7 +15,6 @@ type SendInvitationParams = {
 export async function sendInvitation({
   email,
   role,
-  platformRole,
   organizationId,
   organizationName,
   inviterId,
@@ -25,17 +23,12 @@ export async function sendInvitation({
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + INVITATION_EXPIRES_IN_DAYS);
 
-  const invitation = await prisma.invitation.create({
-    data: {
-      id: crypto.randomUUID(),
-      email,
-      role,
-      platformRole,
-      status: "pending",
-      organizationId,
-      inviterId,
-      expiresAt,
-    },
+  const invitation = await createCustomerPortalInvitation({
+    email,
+    role,
+    organizationId,
+    inviterId,
+    expiresAt,
   });
 
   const inviteLink = `${process.env.BETTER_AUTH_URL}/accept-invitation/${invitation.id}`;

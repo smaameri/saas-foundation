@@ -58,8 +58,7 @@ export function InviteUserModal({ organizationId }: { organizationId: string }) 
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: FormValues) =>
-      invitationsApi.sendInvitation(organizationId, { ...values, platformRole: "user" }),
+    mutationFn: (values: FormValues) => invitationsApi.sendInvitation(organizationId, values),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "invitations"] });
       toast.success("Invitation sent.");

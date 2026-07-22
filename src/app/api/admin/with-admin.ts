@@ -1,4 +1,5 @@
 import type { Session, User } from "@generated/prisma/client";
+import { auth } from "@/lib/auth/auth";
 import { type Permissions } from "@/lib/auth/permissions";
 import { fetchSession } from "@/lib/auth/session";
 import { forbiddenResponse, unauthorizedResponse } from "@/app/api/response";
@@ -30,6 +31,14 @@ export function withAdmin(handler: AdminHandler, permissions?: Permissions) {
 
     if (!user.role) {
       return forbiddenResponse();
+    }
+
+    if (session.activeOrganizationId) {
+      await auth.api.setActiveOrganization({
+        body: { organizationId: null },
+        headers: request.headers,
+      });
+      session.activeOrganizationId = null;
     }
 
     const adminContext: AdminContext = { user, session };

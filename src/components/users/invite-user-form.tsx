@@ -52,7 +52,7 @@ export function InviteUserForm({
     defaultValues: {
       email: "",
       role: "member",
-      organizationIds: organizations[0]?.id ?? "",
+      organizationId: organizations[0]?.id ?? "",
     },
   });
 
@@ -61,7 +61,6 @@ export function InviteUserForm({
       await invitationsApi.sendInvitation(values.organizationId, {
         email: values.email,
         role: values.role,
-        platformRole: "user",
       });
     },
     onSuccess: () => {

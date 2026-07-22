@@ -6,13 +6,11 @@ import { BaseValidator } from "@/validators/BaseValidator";
 const schema = z.object({
   email: z.string().trim().email("Enter a valid email"),
   role: z.enum(["owner", "admin", "member"]),
-  platformRole: z.enum(["admin", "user"]).default("user"),
 });
 
 type ValidatedData = {
   email: string;
   role: string;
-  platformRole: string;
   organizationName: string;
 };
 
@@ -31,7 +29,7 @@ export class CreateInvitationValidator extends BaseValidator<ValidatedData> {
       return false;
     }
 
-    const { email, role, platformRole } = parsed.data;
+    const { email, role } = parsed.data;
 
     const organization = await findById(this.organizationId);
     if (!organization) {
@@ -48,7 +46,7 @@ export class CreateInvitationValidator extends BaseValidator<ValidatedData> {
       return false;
     }
 
-    this.validatedData = { email, role, platformRole, organizationName: organization.name };
+    this.validatedData = { email, role, organizationName: organization.name };
     return true;
   }
 }
