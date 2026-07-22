@@ -12,7 +12,7 @@ export default function MembersLayout({ children }: { children: ReactNode }) {
     >
       <NavTabs
         tabs={[
-          { label: "Team", href: "/admin/team" },
+          { label: "Members", href: "/admin/team" },
           { label: "Invitations", href: "/admin/team/invitations" },
         ]}
       />
