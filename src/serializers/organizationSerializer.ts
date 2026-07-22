@@ -1,5 +1,5 @@
 import type { Organization as PrismaOrganization } from "@generated/prisma/client";
-import type { Organization } from "@/services/api/types/organization";
+import { Organization } from "@/types/organization";
 
 export function serializeOrganization(organization: PrismaOrganization): Organization {
   return {

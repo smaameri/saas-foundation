@@ -34,7 +34,7 @@ export default function EditMemberPage({ params }: { params: Promise<{ id: strin
 
   const { data: member, isLoading } = useQuery({
     queryKey: ["admin", "members", id],
-    queryFn: () => membersApi.getMember(id),
+    queryFn: () => membersApi.findMember(id),
   });
 
   const form = useForm<UpdateMemberBody>({

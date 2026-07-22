@@ -6,7 +6,6 @@ import { admin, organization } from "better-auth/plugins";
 import { ac, adminRole, userRole } from "@/lib/auth/permissions";
 import { sendOrganizationInvitationEmail, sendSetPasswordInviteEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { belongsToAdminPortal } from "@/repositories/auth/memberRepository";
 
 const authSecret = process.env.BETTER_AUTH_SECRET;
 
@@ -48,9 +47,6 @@ export const auth = betterAuth({
       defaultRole: "user",
     }),
     organization({
-      allowUserToCreateOrganization: async (user) => {
-        return belongsToAdminPortal(user.id);
-      },
       async sendInvitationEmail(data) {
         await sendOrganizationInvitationEmail({
           email: data.email,

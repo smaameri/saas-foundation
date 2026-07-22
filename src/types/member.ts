@@ -1,3 +1,4 @@
+import type { Organization } from "@/types/organization";
 import type { User } from "@/types/user";
 
 export type Member = {
@@ -5,5 +6,6 @@ export type Member = {
   role: string;
   platformRole: string | null;
   user: User;
+  organizations?: Organization[];
   createdAt: string;
 };
