@@ -59,6 +59,17 @@ export async function listUserOrganizations(userId: string) {
   });
 }
 
+export async function updateOrganization(id: string, data: { name: string; slug: string }) {
+  return prisma.organization.update({
+    where: { id },
+    data,
+  });
+}
+
+export async function deleteOrganization(id: string) {
+  return prisma.organization.delete({ where: { id } });
+}
+
 function buildOrderBy(sort: OrganizationSortField | undefined, order: SortOrder | undefined) {
   return { [sort ?? "name"]: order ?? "asc" } as const;
 }

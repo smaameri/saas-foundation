@@ -7,7 +7,7 @@ export const listOrganizationsSchema = z.object({
   perPage: z.coerce.number().int().positive().optional().default(10),
 });
 
-export const createOrganizationSchema = z.object({
+const organizationPayloadSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
   slug: z
     .string()
@@ -20,4 +20,8 @@ export const createOrganizationSchema = z.object({
     ),
 });
 
+export const createOrganizationSchema = organizationPayloadSchema;
+export const updateOrganizationSchema = organizationPayloadSchema;
+
 export type CreateOrganizationBody = z.infer<typeof createOrganizationSchema>;
+export type UpdateOrganizationBody = z.infer<typeof updateOrganizationSchema>;

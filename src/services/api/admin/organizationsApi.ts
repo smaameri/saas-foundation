@@ -7,6 +7,7 @@ import type {
 } from "@/services/api/types/organization";
 import type { ListOrganizationMembersParams } from "@/app/api/admin/members/schema";
 import type { ListOrganizationInvitationsParams } from "@/app/api/admin/organizations/[id]/invitations/schema";
+import type { UpdateOrganizationBody } from "@/app/api/admin/organizations/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Invitation } from "@/types/invitation";
 
@@ -19,6 +20,14 @@ export const organizationsApi = {
 
   getOrganization(id: string): Promise<OrganizationDetail> {
     return adminApiClient.get<OrganizationDetail>(`/organizations/${id}`);
+  },
+
+  updateOrganization(id: string, body: UpdateOrganizationBody): Promise<OrganizationDetail> {
+    return adminApiClient.patch<OrganizationDetail>(`/organizations/${id}`, body);
+  },
+
+  deleteOrganization(id: string): Promise<void> {
+    return adminApiClient.delete(`/organizations/${id}`);
   },
 
   listOrganizationMembers(

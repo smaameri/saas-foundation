@@ -1,21 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
-import { Button } from "@/components/ui/button";
+import { DataTableRowActions } from "@/app/(web)/admin/organizations/_components/data-table-row-actions";
 import type { Organization } from "@/types/organization";
-
-function OrganizationActionsCell({ organization }: { organization: Organization }) {
-  return (
-    <Button variant="ghost" size="icon" asChild aria-label="View organization details">
-      <Link href={`/admin/organizations/${organization.id}`}>
-        <Eye className="h-4 w-4" />
-      </Link>
-    </Button>
-  );
-}
 
 export const columns: ColumnDef<Organization>[] = [
   {
@@ -39,7 +27,7 @@ export const columns: ColumnDef<Organization>[] = [
   {
     id: "actions",
     header: () => null,
-    cell: ({ row }) => <OrganizationActionsCell organization={row.original} />,
+    cell: (context) => <DataTableRowActions row={context.row} />,
     enableSorting: false,
     enableHiding: false,
   },
