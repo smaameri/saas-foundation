@@ -7,15 +7,11 @@ import { paginatedResponse } from "@/app/api/response";
 
 export const GET = withAdmin(async (request) => {
   const validated = validateQuery(request, listTeamMembersSchema);
-  const page = validated.page;
-  const perPage = validated.perPage;
+  const { page, perPage, order, sort, status } = validated;
 
   const { data, total } = await listTeamMembers({
-    sort: validated.sort,
-    order: validated.order,
-    page,
-    perPage,
-    status: validated.status,
+    params: { page, perPage, order, sort },
+    filters: { status },
   });
   return paginatedResponse(data.map(serializeUser), {
     page,

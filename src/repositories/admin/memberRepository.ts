@@ -1,50 +1,35 @@
 import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { ListOrganizationMembersParams } from "@/app/api/admin/members/schema";
+import type { BaseListParams, SortOrder } from "@/repositories/types";
+import { combineFilters } from "@/repositories/utils";
 
-export async function listOrganizationMembers(
-  organizationId?: string,
-  params?: ListOrganizationMembersParams,
-) {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 10;
+type MemberSortField = "createdAt" | "firstName" | "lastName" | "email";
 
-  const organizationIds = Array.from(
-    new Set(
-      [...(organizationId ? [organizationId] : []), ...(params?.organizationIds ?? [])].filter(
-        Boolean,
-      ),
-    ),
-  ) as string[];
+type MemberFilters = {
+  organizations?: string[];
+  status?: string[];
+  search?: string;
+};
 
-  const where: Prisma.MemberWhereInput = {};
+export type ListMembersParams = {
+  params: BaseListParams<MemberSortField>;
+  filters?: MemberFilters;
+};
 
-  if (organizationIds.length === 1) {
-    where.organizationId = organizationIds[0];
-  } else if (organizationIds.length > 1) {
-    where.organizationId = { in: organizationIds };
-  }
-
-  const filters: Prisma.MemberWhereInput[] = [];
-  const statusFilter = buildStatusFilter(params?.status);
-  if (statusFilter) filters.push(statusFilter);
-
-  const searchFilter = buildSearchFilter(params?.search);
-  if (searchFilter) filters.push(searchFilter);
-
-  if (filters.length > 0) {
-    where.AND = where.AND
-      ? [...(Array.isArray(where.AND) ? where.AND : [where.AND]), ...filters]
-      : filters;
-  }
-
-  const orderBy = buildOrderBy(params?.sort, params?.order);
+export async function listMembers({ params, filters }: ListMembersParams) {
+  const { page, perPage, sort, order } = params;
+  const { organizations, status, search } = filters ?? {};
+  const where = combineFilters<Prisma.MemberWhereInput>(
+    organizationsFilter(organizations),
+    statusFilter(status),
+    searchFilter(search),
+  );
 
   const [data, total] = await prisma.$transaction([
     prisma.member.findMany({
       where,
       include: { user: true },
-      orderBy,
+      orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -73,7 +58,14 @@ export async function deleteMember(id: string) {
   return prisma.member.delete({ where: { id } });
 }
 
-function buildStatusFilter(status?: string[]): Prisma.MemberWhereInput | undefined {
+function organizationsFilter(organizations?: string[]): Prisma.MemberWhereInput | undefined {
+  const unique = Array.from(new Set((organizations ?? []).filter(Boolean)));
+  if (unique.length === 0) return undefined;
+  if (unique.length === 1) return { organizationId: unique[0] };
+  return { organizationId: { in: unique } };
+}
+
+function statusFilter(status?: string[]): Prisma.MemberWhereInput | undefined {
   if (!status?.length) return undefined;
 
   const normalized = Array.from(
@@ -97,7 +89,7 @@ function buildStatusFilter(status?: string[]): Prisma.MemberWhereInput | undefin
   return undefined;
 }
 
-function buildSearchFilter(search?: string): Prisma.MemberWhereInput | undefined {
+function searchFilter(search?: string): Prisma.MemberWhereInput | undefined {
   const term = search?.trim();
   if (!term) return undefined;
 
@@ -121,8 +113,8 @@ function buildSearchFilter(search?: string): Prisma.MemberWhereInput | undefined
 }
 
 function buildOrderBy(
-  sort: ListOrganizationMembersParams["sort"],
-  order: ListOrganizationMembersParams["order"],
+  sort: MemberSortField | undefined,
+  order: SortOrder | undefined,
 ): Prisma.MemberOrderByWithRelationInput {
   const direction = order ?? "desc";
 

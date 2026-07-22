@@ -1,5 +1,7 @@
+import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { SortOrder } from "@/repositories/types";
+import type { BaseListParams, SortOrder } from "@/repositories/types";
+import { combineFilters } from "@/repositories/utils";
 import { Portal } from "@/config/portals";
 
 export async function findPendingInvitation(email: string, organizationId: string) {
@@ -21,27 +23,53 @@ export async function cancelInvitation(id: string) {
   });
 }
 
-export async function listAdminPortalInvitations(params?: {
-  organizationId?: string | null;
-  sort?: string;
-  order?: SortOrder;
-  page?: number;
-  perPage?: number;
-  status?: string[];
-}) {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 10;
+type InvitationSortField = "email" | "role" | "status" | "createdAt" | "expiresAt";
 
-  const where = {
-    portal: Portal.admin,
-    organizationId: params?.organizationId ?? null,
-    ...(params?.status?.length ? { status: { in: params.status } } : {}),
-  };
+type StatusFilter = string[] | undefined;
+
+type AdminInvitationFilters = {
+  organizationId?: string | null;
+  status?: StatusFilter;
+};
+
+type CustomerInvitationFilters = {
+  organizationIds?: string[];
+  status?: StatusFilter;
+};
+
+type OrganizationInvitationFilters = {
+  status?: StatusFilter;
+};
+
+export type ListAdminInvitationsOptions = {
+  params: BaseListParams<InvitationSortField>;
+  filters?: AdminInvitationFilters;
+};
+
+export type ListCustomerInvitationsOptions = {
+  params: BaseListParams<InvitationSortField>;
+  filters?: CustomerInvitationFilters;
+};
+
+export type ListOrganizationInvitationsOptions = {
+  params: BaseListParams<InvitationSortField>;
+  filters?: OrganizationInvitationFilters;
+};
+
+export async function listAdminPortalInvitations({ params, filters }: ListAdminInvitationsOptions) {
+  const { page, perPage, sort, order } = params;
+  const organizationId = filters?.organizationId ?? null;
+
+  const where = combineFilters<Prisma.InvitationWhereInput>(
+    portalFilter(Portal.admin),
+    organizationIdFilter(organizationId),
+    statusFilter(filters?.status),
+  );
 
   const [data, total] = await prisma.$transaction([
     prisma.invitation.findMany({
       where,
-      orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "desc" },
+      orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -51,27 +79,22 @@ export async function listAdminPortalInvitations(params?: {
   return { data, total };
 }
 
-export async function listCustomerPortalInvitations(params?: {
-  organizationIds?: string[];
-  sort?: string;
-  order?: SortOrder;
-  page?: number;
-  perPage?: number;
-  status?: string[];
-}) {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 10;
+export async function listCustomerPortalInvitations({
+  params,
+  filters,
+}: ListCustomerInvitationsOptions) {
+  const { page, perPage, sort, order } = params;
 
-  const where = {
-    portal: Portal.customer,
-    ...(params?.organizationIds?.length ? { organizationId: { in: params.organizationIds } } : {}),
-    ...(params?.status?.length ? { status: { in: params.status } } : {}),
-  };
+  const where = combineFilters<Prisma.InvitationWhereInput>(
+    portalFilter(Portal.customer),
+    organizationIdsFilter(filters?.organizationIds),
+    statusFilter(filters?.status),
+  );
 
   const [data, total] = await prisma.$transaction([
     prisma.invitation.findMany({
       where,
-      orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "desc" },
+      orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -83,26 +106,19 @@ export async function listCustomerPortalInvitations(params?: {
 
 export async function listOrganizationInvitations(
   organizationId: string,
-  params?: {
-    sort?: string;
-    order?: SortOrder;
-    page?: number;
-    perPage?: number;
-    status?: string[];
-  },
+  { params, filters }: ListOrganizationInvitationsOptions,
 ) {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 10;
+  const { page, perPage, sort, order } = params;
 
-  const where = {
-    organizationId,
-    ...(params?.status?.length ? { status: { in: params.status } } : {}),
-  };
+  const where = combineFilters<Prisma.InvitationWhereInput>(
+    organizationIdFilter(organizationId),
+    statusFilter(filters?.status),
+  );
 
   const [data, total] = await prisma.$transaction([
     prisma.invitation.findMany({
       where,
-      orderBy: { [params?.sort ?? "createdAt"]: params?.order ?? "desc" },
+      orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -132,4 +148,38 @@ export async function createAdminPortalInvitation(params: {
       expiresAt,
     },
   });
+}
+
+function portalFilter(portal: Portal | undefined): Prisma.InvitationWhereInput | undefined {
+  if (!portal) return undefined;
+  return { portal };
+}
+
+function organizationIdFilter(
+  organizationId: string | null | undefined,
+): Prisma.InvitationWhereInput | undefined {
+  if (organizationId === undefined) return undefined;
+  return { organizationId };
+}
+
+function organizationIdsFilter(
+  organizationIds?: string[],
+): Prisma.InvitationWhereInput | undefined {
+  if (!organizationIds?.length) return undefined;
+  const unique = Array.from(new Set(organizationIds.filter(Boolean)));
+  if (unique.length === 0) return undefined;
+  if (unique.length === 1) return { organizationId: unique[0] };
+  return { organizationId: { in: unique } };
+}
+
+function statusFilter(status?: StatusFilter): Prisma.InvitationWhereInput | undefined {
+  if (!status?.length) return undefined;
+  const values = Array.from(new Set(status.filter(Boolean)));
+  if (values.length === 0) return undefined;
+  if (values.length === 1) return { status: values[0] };
+  return { status: { in: values } };
+}
+
+function buildOrderBy(sort: InvitationSortField | undefined, order: SortOrder | undefined) {
+  return { [sort ?? "createdAt"]: order ?? "desc" } as const;
 }

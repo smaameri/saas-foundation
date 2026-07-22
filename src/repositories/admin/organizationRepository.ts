@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
-import type { SortOrder } from "@/repositories/types";
+import type { BaseListParams, SortOrder } from "@/repositories/types";
 
 type CreateOrganizationInput = {
   name: string;
@@ -23,18 +23,18 @@ export async function findById(id: string) {
   });
 }
 
-export async function listOrganizations(params?: {
-  sort?: string;
-  order?: SortOrder;
-  page?: number;
-  perPage?: number;
-}) {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 10;
+type OrganizationSortField = "name" | "slug" | "createdAt";
+
+export type ListOrganizationsParams = {
+  params: BaseListParams<OrganizationSortField>;
+};
+
+export async function listOrganizations({ params }: ListOrganizationsParams) {
+  const { page, perPage, sort, order } = params;
 
   const [data, total] = await prisma.$transaction([
     prisma.organization.findMany({
-      orderBy: { [params?.sort ?? "name"]: params?.order ?? "asc" },
+      orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
@@ -57,4 +57,8 @@ export async function listUserOrganizations(userId: string) {
       name: "asc",
     },
   });
+}
+
+function buildOrderBy(sort: OrganizationSortField | undefined, order: SortOrder | undefined) {
+  return { [sort ?? "name"]: order ?? "asc" } as const;
 }

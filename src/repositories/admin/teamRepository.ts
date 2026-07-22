@@ -1,9 +1,42 @@
 import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { SortOrder } from "@/repositories/types";
+import type { BaseListParams, SortOrder } from "@/repositories/types";
+import { combineFilters } from "@/repositories/utils";
+
+type TeamSortField = "createdAt" | "role";
+
+type TeamFilters = {
+  status?: string[];
+};
+
+export type ListTeamMembersOptions = {
+  params: BaseListParams<TeamSortField>;
+  filters?: TeamFilters;
+};
 
 function whereHasAdminPortalAccess(): Prisma.UserWhereInput {
   return { role: { not: null } };
+}
+
+export async function listTeamMembers({ params, filters }: ListTeamMembersOptions) {
+  const { page, perPage, sort, order } = params;
+
+  const where = combineFilters<Prisma.UserWhereInput>(
+    whereHasAdminPortalAccess(),
+    statusFilter(filters?.status),
+  );
+
+  const [data, total] = await prisma.$transaction([
+    prisma.user.findMany({
+      where,
+      orderBy: buildOrderBy(sort, order),
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.user.count({ where }),
+  ]);
+
+  return { data, total };
 }
 
 export async function findUserByEmail(email: string) {
@@ -31,45 +64,28 @@ export async function deleteTeamMember(id: string) {
   return count > 0;
 }
 
-export async function listTeamMembers(params: {
-  sort?: string;
-  order?: SortOrder;
-  page: number;
-  perPage: number;
-  status?: string[];
-}) {
-  const { page, perPage } = params;
+function statusFilter(statuses?: string[]): Prisma.UserWhereInput | undefined {
+  if (!statuses?.length) return undefined;
 
-  const baseWhere = whereHasAdminPortalAccess();
+  const normalized = Array.from(
+    new Set(statuses.map((value) => value.trim().toLowerCase()).filter(Boolean)),
+  );
 
-  const statuses = params.status?.map((value) => value.toLowerCase());
+  if (normalized.length !== 1) return undefined;
 
-  let where: Prisma.UserWhereInput = baseWhere;
+  const [status] = normalized;
 
-  if (statuses && statuses.length > 0 && statuses.length < 2) {
-    if (statuses.includes("banned")) {
-      where = { AND: [baseWhere, { banned: true }] };
-    } else if (statuses.includes("active")) {
-      where = {
-        AND: [
-          baseWhere,
-          {
-            OR: [{ banned: false }, { banned: null }],
-          },
-        ],
-      };
-    }
+  if (status === "banned") {
+    return { banned: true };
   }
 
-  const [data, total] = await prisma.$transaction([
-    prisma.user.findMany({
-      where,
-      orderBy: { [params.sort ?? "createdAt"]: params.order ?? "asc" },
-      skip: (page - 1) * perPage,
-      take: perPage,
-    }),
-    prisma.user.count({ where }),
-  ]);
+  if (status === "active") {
+    return { OR: [{ banned: false }, { banned: null }] };
+  }
 
-  return { data, total };
+  return undefined;
+}
+
+function buildOrderBy(sort: TeamSortField | undefined, order: SortOrder | undefined) {
+  return { [sort ?? "createdAt"]: order ?? "asc" } as const;
 }

@@ -1,5 +1,7 @@
+import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { BaseListParams, SortOrder } from "@/repositories/types";
+import { combineFilters } from "@/repositories/utils";
 
 type SortField = "name" | "createdAt" | "expiresAt";
 
@@ -17,11 +19,11 @@ export type ListApiKeysParams = {
 export async function listApiKeys({ params, filters }: ListApiKeysParams) {
   const { page, perPage, sort, order } = params;
   const { enabled, search, users } = filters ?? {};
-  const where = {
-    ...enabledFilter(enabled),
-    ...searchFilter(search),
-    ...usersFilter(users),
-  };
+  const where = combineFilters<Prisma.ApikeyWhereInput>(
+    enabledFilter(enabled),
+    searchFilter(search),
+    usersFilter(users),
+  );
 
   const [data, total] = await prisma.$transaction([
     prisma.apikey.findMany({
@@ -48,7 +50,7 @@ export async function disableApiKeyById(id: string) {
   });
 }
 
-function enabledFilter(enabled?: string[]) {
+function enabledFilter(enabled?: string[]): Prisma.ApikeyWhereInput | undefined {
   const hasTrue = enabled?.includes("true") ?? false;
   const hasFalse = enabled?.includes("false") ?? false;
 
@@ -57,7 +59,7 @@ function enabledFilter(enabled?: string[]) {
   return undefined;
 }
 
-function searchFilter(search?: string) {
+function searchFilter(search?: string): Prisma.ApikeyWhereInput | undefined {
   if (!search) return undefined;
   return {
     OR: [
@@ -67,7 +69,7 @@ function searchFilter(search?: string) {
   };
 }
 
-function usersFilter(users?: string[]) {
+function usersFilter(users?: string[]): Prisma.ApikeyWhereInput | undefined {
   if (!users?.length) return undefined;
   if (users.length === 1) return { referenceId: users[0] };
   return { referenceId: { in: users } };

@@ -9,15 +9,11 @@ import { createdResponse, paginatedResponse, validationErrorResponse } from "@/a
 
 export const GET = withAdmin(async (request) => {
   const parsed = validateQuery(request, listCustomerInvitationsSchema);
-  const page = parsed.page ?? 1;
-  const perPage = parsed.perPage ?? 10;
+  const { page, perPage, order, sort, status, organizationIds } = parsed;
+
   const { data, total } = await listCustomerPortalInvitations({
-    sort: parsed.sort,
-    order: parsed.order,
-    page,
-    perPage,
-    status: parsed.status,
-    organizationIds: parsed.organizationIds,
+    params: { page, perPage, order, sort },
+    filters: { status, organizationIds },
   });
 
   return paginatedResponse(data.map(serializeInvitation), {

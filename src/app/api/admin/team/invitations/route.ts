@@ -14,9 +14,12 @@ const INVITATION_EXPIRES_IN_DAYS = 2;
 
 export const GET = withAdmin(async (request) => {
   const parsed = validateQuery(request, listAdminPortalInvitationsSchema);
-  const { data, total } = await listAdminPortalInvitations(parsed);
-  const page = parsed.page ?? 1;
-  const perPage = parsed.perPage ?? 10;
+  const { page, perPage, order, sort, status } = parsed;
+
+  const { data, total } = await listAdminPortalInvitations({
+    params: { page, perPage, order, sort },
+    filters: { status },
+  });
 
   return paginatedResponse(data.map(serializeInvitation), {
     page,
