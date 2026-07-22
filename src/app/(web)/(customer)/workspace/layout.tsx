@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
 
-export default function CustomerRootLayout({ children }: { children: ReactNode }) {
+export default function WorkspaceLayout({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }

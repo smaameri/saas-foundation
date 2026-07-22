@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { auth } from "@/lib/auth/auth";
 import { requireSession } from "@/lib/auth/session";
 import { listUserOrganizations } from "@/repositories/customers/organizationRepository";
+import { serializeUser } from "@/serializers/userSerializer";
+import { CustomerLayout } from "@/components/layout/customer/customer-layout";
 
 export default async function CustomerPortalLayout({ children }: { children: ReactNode }) {
   const session = await requireSession();
@@ -35,5 +37,5 @@ export default async function CustomerPortalLayout({ children }: { children: Rea
     }
   }
 
-  return <>{children}</>;
+  return <CustomerLayout user={serializeUser(session.user)}>{children}</CustomerLayout>;
 }
