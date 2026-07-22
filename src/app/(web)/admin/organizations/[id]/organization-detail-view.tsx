@@ -6,9 +6,9 @@ import { organizationsApi } from "@/services/api/admin/organizationsApi";
 import { ContentLayout } from "@/components/platform/content-layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { InviteOrganizationMemberModal } from "@/app/(web)/admin/organizations/[id]/_components/invite-organization-member-modal";
-import { OrganizationInvitationsTable } from "@/app/(web)/admin/organizations/[id]/_components/organization-invitations-table";
-import { OrganizationMembersTable } from "@/app/(web)/admin/organizations/[id]/_components/organization-members-table";
+import { InviteOrganizationMemberModal } from "@/app/(web)/admin/organizations/[id]/_components/invitations/invite-organization-member-modal";
+import { OrganizationInvitationsTable } from "@/app/(web)/admin/organizations/[id]/_components/invitations/organization-invitations-table";
+import { OrganizationMembersTable } from "@/app/(web)/admin/organizations/[id]/_components/members/organization-members-table";
 import { OrganizationSummary } from "@/app/(web)/admin/organizations/[id]/_components/organization-summary";
 
 function LoadingState() {

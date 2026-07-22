@@ -5,17 +5,16 @@ import { serializeMember } from "@/serializers/memberSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { paginatedResponse } from "@/app/api/response";
 
-export const GET = withAdmin(async (request, { params }) => {
-  const { id: organizationId } = await params;
+export const GET = withAdmin(async (request) => {
   const validated = validateQuery(request, listMembersSchema);
   const { page, perPage, order, sort, search, status, organizationIds } = validated;
-  const organizations = [organizationId, ...(organizationIds ?? [])].filter(Boolean) as string[];
+  const organizations = organizationIds?.filter(Boolean);
 
   const { data, total } = await listMembers({
     params: { page, perPage, order, sort },
     filters: {
-      organizations: organizations.length > 0 ? organizations : undefined,
-      status,
+      organizations: organizations && organizations.length > 0 ? organizations : undefined,
+      status: status && status.length > 0 ? status : undefined,
       search,
     },
   });

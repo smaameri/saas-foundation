@@ -9,9 +9,13 @@ export const membersApi = {
   listMembers(
     params?: ListOrganizationMembersParams,
   ): Promise<{ data: Member[]; pagination: PaginationData }> {
-    const filters: Record<string, string[]> = {};
+    const filters: Partial<Record<string, string[]>> = {};
+
     if (params?.status && params.status.length > 0) {
       filters.status = params.status;
+    }
+    if (params?.organizationIds && params.organizationIds.length > 0) {
+      filters.organizationIds = params.organizationIds;
     }
 
     return adminApiClient.getPaginated<Member>("/members", {
@@ -20,7 +24,7 @@ export const membersApi = {
       order: params?.order,
       page: params?.page ?? 1,
       perPage: params?.perPage ?? 10,
-      filters: Object.keys(filters).length > 0 ? filters : undefined,
+      filters: toRequestFilters(filters),
     });
   },
 
@@ -28,21 +32,24 @@ export const membersApi = {
     organizationId: string,
     params?: ListParams,
   ): Promise<{ data: Member[]; pagination: PaginationData }> {
-    const filters: Record<string, string[]> = {};
-    if (params?.status && params.status.length > 0) {
-      filters.status = params.status;
-    }
-    if (organizationId) {
-      filters.organizationIds = [organizationId];
+    const filters = normalizeFilters(params?.filters);
+    const existingOrgIds = filters.organizationIds ?? [];
+    const mergedOrgIds = Array.from(
+      new Set(
+        [organizationId, ...existingOrgIds].filter((value): value is string => Boolean(value)),
+      ),
+    );
+    if (mergedOrgIds.length > 0) {
+      filters.organizationIds = mergedOrgIds;
     }
 
-    return adminApiClient.getPaginated<Member>(`/members`, {
+    return adminApiClient.getPaginated<Member>("/members", {
       search: params?.search,
       sort: params?.sort,
       order: params?.order,
       page: params?.page ?? 1,
       perPage: params?.perPage ?? 10,
-      filters: Object.keys(filters).length > 0 ? filters : undefined,
+      filters: toRequestFilters(filters),
     });
   },
 
@@ -58,3 +65,41 @@ export const membersApi = {
     return adminApiClient.delete(`/members/${id}`);
   },
 };
+
+function normalizeFilters(filters?: ListParams["filters"]): Partial<Record<string, string[]>> {
+  if (!filters) return {};
+  return Object.entries(filters).reduce<Partial<Record<string, string[]>>>((acc, [key, value]) => {
+    const values = toStringArray(value);
+    if (values && values.length > 0) {
+      acc[key] = values;
+    }
+    return acc;
+  }, {});
+}
+
+function toStringArray(value: unknown): string[] | undefined {
+  if (Array.isArray(value)) {
+    const normalized = value
+      .map((item) => (item != null ? String(item).trim() : ""))
+      .filter((item) => item.length > 0);
+    return normalized.length > 0 ? normalized : undefined;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? [trimmed] : undefined;
+  }
+  return undefined;
+}
+
+function toRequestFilters(
+  filters: Partial<Record<string, string[]>>,
+): Record<string, string[]> | undefined {
+  const entries = Object.entries(filters).filter(([, values]) => values && values.length > 0) as [
+    string,
+    string[],
+  ][];
+  if (entries.length === 0) {
+    return undefined;
+  }
+  return Object.fromEntries(entries);
+}

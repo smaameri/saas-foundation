@@ -1,10 +1,10 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import type { OrganizationMember } from "@/services/api/types/organization";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import type { Member } from "@/types/member";
 
-export const memberColumns: ColumnDef<OrganizationMember>[] = [
+export const memberColumns: ColumnDef<Member>[] = [
   {
     accessorKey: "user.name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
@@ -26,17 +26,9 @@ export const memberColumns: ColumnDef<OrganizationMember>[] = [
   },
   {
     accessorKey: "role",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Org Role" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
     cell: ({ row }) => (
       <span className="capitalize text-muted-foreground">{row.original.role}</span>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: "platformRole",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Platform Role" />,
-    cell: ({ row }) => (
-      <span className="capitalize text-muted-foreground">{row.original.platformRole ?? "—"}</span>
     ),
     enableSorting: false,
   },
