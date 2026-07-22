@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { z } from "zod";
 import { authApi } from "@/services/api/auth/authApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
@@ -34,13 +35,20 @@ export function ChangePasswordForm() {
     defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
   });
 
-  const { mutate, isPending, isSuccess, isError, error } = useMutation({
+  const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: FormValues) =>
       authApi.changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       }),
-    onSuccess: () => form.reset(),
+    onSuccess: () => {
+      toast.success("Password changed successfully.");
+      form.reset();
+    },
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : "Failed to change password.";
+      toast.error(message);
+    },
   });
 
   return (
@@ -100,12 +108,7 @@ export function ChangePasswordForm() {
               fallback="Failed to change password. Please try again."
             />
 
-            <div className="flex items-center justify-between">
-              {isSuccess ? (
-                <p className="text-sm text-muted-foreground">Password changed successfully.</p>
-              ) : (
-                <span />
-              )}
+            <div className="flex justify-end">
               <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
                 Change password
               </PrimaryButton>
