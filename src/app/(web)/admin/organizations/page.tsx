@@ -10,22 +10,23 @@ import { OrganizationsProvider } from "@/app/(web)/admin/organizations/_componen
 import { UpdateOrganizationDialog } from "@/app/(web)/admin/organizations/_components/update-organization-dialog";
 import { columns } from "@/app/(web)/admin/organizations/columns";
 
+const ORGANIZATIONS_QUERY_KEY = ["admin", "organizations"];
+
 export default function OrganizationsPage() {
   const { table } = useConnectedTable({
-    queryKey: ["admin", "organizations"],
+    queryKey: ORGANIZATIONS_QUERY_KEY,
     queryFn: (params) => organizationsApi.listOrganizations(params),
     columns,
   });
 
   return (
     <OrganizationsProvider>
-      <ContentLayout title="Organizations" description="Manage organizations and members">
-        <div className="space-y-4">
-          <div className="flex justify-end">
-            <AddOrganizationModal />
-          </div>
-          <DataTable table={table} />
-        </div>
+      <ContentLayout
+        title="Organizations"
+        description="Manage organizations and members"
+        actions={<AddOrganizationModal queryKey={ORGANIZATIONS_QUERY_KEY} />}
+      >
+        <DataTable table={table} />
       </ContentLayout>
 
       <UpdateOrganizationDialog />

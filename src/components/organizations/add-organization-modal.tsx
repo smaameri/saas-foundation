@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { adminApiClient } from "@/services/api/client";
@@ -43,7 +43,11 @@ function toSlug(value: string) {
     .replace(/-+/g, "-");
 }
 
-export function AddOrganizationModal() {
+export function AddOrganizationModal({
+  queryKey = ["admin", "organizations"],
+}: {
+  queryKey?: QueryKey;
+}) {
   const [open, setOpen] = useState(false);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const queryClient = useQueryClient();
@@ -58,7 +62,7 @@ export function AddOrganizationModal() {
       await adminApiClient.post<{ message: string }>("/organizations", values);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["admin", "organizations"] });
+      void queryClient.invalidateQueries({ queryKey });
       toast.success("Organization created.");
       handleClose(false);
     },

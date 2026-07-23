@@ -6,7 +6,12 @@ import { ContentLayout } from "@/components/platform/content-layout";
 
 export default async function CustomerHomePage() {
   const session = await requireSession();
-  const organizationId = session.session.activeOrganizationId!;
+  const organizationId = session.session.activeOrganizationId;
+
+  if (!organizationId) {
+    redirect("/workspace/select-organization");
+  }
+
   const organization = await findOrganizationById(organizationId);
   if (!organization) {
     redirect("/workspace/no-organization");
