@@ -26,7 +26,7 @@ export default function OrganizationsPage() {
         description="Manage organizations and members"
         actions={<AddOrganizationModal queryKey={ORGANIZATIONS_QUERY_KEY} />}
       >
-        <DataTable table={table} />
+        <DataTable table={table} showSearch searchPlaceholder="Search by name or slug..." />
       </ContentLayout>
 
       <UpdateOrganizationDialog />

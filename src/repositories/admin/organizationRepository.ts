@@ -1,3 +1,4 @@
+import type { Prisma } from "@generated/prisma/client";
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 import type { BaseListParams, SortOrder } from "@/repositories/types";
@@ -25,20 +26,27 @@ export async function findById(id: string) {
 
 type OrganizationSortField = "name" | "slug" | "createdAt";
 
-export type ListOrganizationsParams = {
-  params: BaseListParams<OrganizationSortField>;
+type OrganizationFilters = {
+  search?: string;
 };
 
-export async function listOrganizations({ params }: ListOrganizationsParams) {
+export type ListOrganizationsParams = {
+  params: BaseListParams<OrganizationSortField>;
+  filters?: OrganizationFilters;
+};
+
+export async function listOrganizations({ params, filters }: ListOrganizationsParams) {
   const { page, perPage, sort, order } = params;
+  const where = searchFilter(filters?.search);
 
   const [data, total] = await prisma.$transaction([
     prisma.organization.findMany({
+      where,
       orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
     }),
-    prisma.organization.count(),
+    prisma.organization.count({ where }),
   ]);
 
   return { data, total };
@@ -72,4 +80,16 @@ export async function deleteOrganization(id: string) {
 
 function buildOrderBy(sort: OrganizationSortField | undefined, order: SortOrder | undefined) {
   return { [sort ?? "name"]: order ?? "asc" } as const;
+}
+
+function searchFilter(search?: string): Prisma.OrganizationWhereInput | undefined {
+  const term = search?.trim();
+  if (!term) return undefined;
+
+  return {
+    OR: [
+      { name: { contains: term, mode: "insensitive" } },
+      { slug: { contains: term, mode: "insensitive" } },
+    ],
+  };
 }

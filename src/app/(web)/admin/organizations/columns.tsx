@@ -30,5 +30,9 @@ export const columns: ColumnDef<Organization>[] = [
     cell: (context) => <DataTableRowActions row={context.row} />,
     enableSorting: false,
     enableHiding: false,
+    meta: {
+      className: "w-[72px] text-right",
+      tdClassName: "text-right",
+    },
   },
 ];

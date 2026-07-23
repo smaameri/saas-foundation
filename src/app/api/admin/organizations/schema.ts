@@ -1,10 +1,9 @@
 import { z } from "zod";
+import { listSchema } from "@/app/api/schemas";
 
-export const listOrganizationsSchema = z.object({
+export const listOrganizationsSchema = listSchema.extend({
+  search: z.string().optional(),
   sort: z.enum(["name", "slug", "createdAt"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
-  page: z.coerce.number().int().positive().optional().default(1),
-  perPage: z.coerce.number().int().positive().optional().default(10),
 });
 
 const organizationPayloadSchema = z.object({
