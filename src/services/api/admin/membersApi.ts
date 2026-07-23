@@ -17,6 +17,9 @@ export const membersApi = {
     if (params?.organizationIds && params.organizationIds.length > 0) {
       filters.organizationIds = params.organizationIds;
     }
+    if (params?.role && params.role.length > 0) {
+      filters.role = params.role;
+    }
 
     return adminApiClient.getPaginated<Member>("/members", {
       search: params?.search,

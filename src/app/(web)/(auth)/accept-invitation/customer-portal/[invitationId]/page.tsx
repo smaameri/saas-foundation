@@ -1,7 +1,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { markInvitationAccepted } from "@/repositories/auth/invitationRepository";
 import { findCustomerInvitationById } from "@/repositories/customers/invitationRepository";
+import {
+  createMember,
+  findMemberByOrganizationAndUser,
+} from "@/repositories/customers/memberRepository";
+import { findUserByEmail } from "@/repositories/customers/userRepository";
 import { AcceptCustomerInvitationForm } from "@/components/auth/accept-customer-invitation-form";
+import { Button } from "@/components/ui/button";
 
 export default async function AcceptCustomerInvitationPage({
   params,
@@ -33,19 +40,6 @@ export default async function AcceptCustomerInvitationPage({
         </p>
       </>
     );
-  } else if (invitation.status === "accepted") {
-    content = (
-      <>
-        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Already joined</h1>
-        <p className="text-sm text-muted-foreground">
-          This invitation has already been accepted. You can{" "}
-          <Link className="font-medium text-primary" href="/login">
-            sign in here
-          </Link>
-          .
-        </p>
-      </>
-    );
   } else if (invitation.status === "canceled") {
     content = (
       <>
@@ -65,18 +59,69 @@ export default async function AcceptCustomerInvitationPage({
         </p>
       </>
     );
-  } else {
+  } else if (invitation.status === "accepted") {
     content = (
       <>
-        <h1 className="mb-1 text-2xl font-semibold tracking-tight">
-          Join {invitation.organization.name}
-        </h1>
-        <p className="mb-8 text-sm text-muted-foreground">
-          Set your profile details and password to finish setting up your access.
+        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Already joined</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation has already been accepted. You can{" "}
+          <Link className="font-medium text-primary" href="/login">
+            sign in here
+          </Link>
+          .
         </p>
-        <AcceptCustomerInvitationForm invitationId={invitationId} email={invitation.email} />
       </>
     );
+  } else {
+    const email = invitation.email.toLowerCase();
+    const existingUser = await findUserByEmail(email);
+
+    if (existingUser && invitation.organizationId) {
+      const existingMember = await findMemberByOrganizationAndUser(
+        invitation.organizationId,
+        existingUser.id,
+      );
+
+      if (!existingMember) {
+        await createMember({
+          userId: existingUser.id,
+          organizationId: invitation.organizationId,
+          role: invitation.role,
+        });
+      }
+
+      if (invitation.status !== "accepted") {
+        await markInvitationAccepted(invitationId);
+      }
+
+      content = (
+        <>
+          <h1 className="mb-1 text-2xl font-semibold tracking-tight">Invitation accepted</h1>
+          <p className="mb-6 text-sm text-muted-foreground">
+            You now have access to {invitation.organization.name}. Continue to the workspace when
+            you’re ready.
+          </p>
+          <Button asChild>
+            <Link href="/workspace">Go to workspace</Link>
+          </Button>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Use your existing account ({invitation.email}) to sign in if prompted.
+          </p>
+        </>
+      );
+    } else {
+      content = (
+        <>
+          <h1 className="mb-1 text-2xl font-semibold tracking-tight">
+            Join {invitation.organization.name}
+          </h1>
+          <p className="mb-8 text-sm text-muted-foreground">
+            Set your profile details and password to finish setting up your access.
+          </p>
+          <AcceptCustomerInvitationForm invitationId={invitationId} email={invitation.email} />
+        </>
+      );
+    }
   }
 
   return (

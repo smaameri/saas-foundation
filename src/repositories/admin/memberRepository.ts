@@ -3,12 +3,13 @@ import { prisma } from "@/lib/prisma";
 import type { BaseListParams, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
 
-type MemberSortField = "createdAt" | "firstName" | "lastName" | "email";
+type MemberSortField = "createdAt" | "firstName" | "lastName" | "email" | "role" | "name";
 
 type MemberFilters = {
   organizations?: string[];
   status?: string[];
   search?: string;
+  roles?: string[];
 };
 
 export type ListMembersParams = {
@@ -18,10 +19,11 @@ export type ListMembersParams = {
 
 export async function listMembers({ params, filters }: ListMembersParams) {
   const { page, perPage, sort, order } = params;
-  const { organizations, status, search } = filters ?? {};
+  const { organizations, status, search, roles } = filters ?? {};
   const where = combineFilters<Prisma.MemberWhereInput>(
     organizationsFilter(organizations),
     statusFilter(status),
+    rolesFilter(roles),
     searchFilter(search),
   );
 
@@ -89,6 +91,22 @@ function statusFilter(status?: string[]): Prisma.MemberWhereInput | undefined {
   return undefined;
 }
 
+function rolesFilter(roles?: string[]): Prisma.MemberWhereInput | undefined {
+  if (!roles?.length) return undefined;
+
+  const normalized = Array.from(
+    new Set(roles.map((value) => value.trim().toLowerCase()).filter(Boolean)),
+  );
+
+  if (normalized.length === 0) return undefined;
+
+  if (normalized.length === 1) {
+    return { role: normalized[0] };
+  }
+
+  return { role: { in: normalized } };
+}
+
 function searchFilter(search?: string): Prisma.MemberWhereInput | undefined {
   const term = search?.trim();
   if (!term) return undefined;
@@ -125,6 +143,10 @@ function buildOrderBy(
       return { user: { lastName: direction } };
     case "email":
       return { user: { email: direction } };
+    case "role":
+      return { role: direction };
+    case "name":
+      return { user: { name: direction } };
     default:
       return { createdAt: direction };
   }

@@ -6,7 +6,11 @@ import type { Member } from "@/types/member";
 
 export const memberColumns: ColumnDef<Member>[] = [
   {
-    accessorKey: "user.name",
+    id: "name",
+    accessorFn: (member) =>
+      [member.user.firstName, member.user.lastName].filter(Boolean).join(" ") ||
+      member.user.name ||
+      "",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
     cell: ({ row }) => {
       const { firstName, lastName, name } = row.original.user;
@@ -16,13 +20,14 @@ export const memberColumns: ColumnDef<Member>[] = [
         </span>
       );
     },
-    enableSorting: false,
+    enableSorting: true,
   },
   {
-    accessorKey: "user.email",
+    id: "email",
+    accessorFn: (member) => member.user.email || "",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
     cell: ({ row }) => <span className="text-muted-foreground">{row.original.user.email}</span>,
-    enableSorting: false,
+    enableSorting: true,
   },
   {
     accessorKey: "role",
@@ -30,7 +35,7 @@ export const memberColumns: ColumnDef<Member>[] = [
     cell: ({ row }) => (
       <span className="capitalize text-muted-foreground">{row.original.role}</span>
     ),
-    enableSorting: false,
+    enableSorting: true,
   },
   {
     accessorKey: "createdAt",

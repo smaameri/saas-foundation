@@ -6,7 +6,8 @@ export const listMembersSchema = listSchema.extend({
   organizationIds: z.string().transform(parseCommaSeparatedList).optional(),
   search: z.string().optional(),
   status: z.string().transform(parseCommaSeparatedList).optional(),
-  sort: z.enum(["createdAt", "firstName", "lastName", "email"]).optional(),
+  role: z.string().transform(parseCommaSeparatedList).optional(),
+  sort: z.enum(["createdAt", "firstName", "lastName", "email", "role", "name"]).optional(),
 });
 
 export type ListOrganizationMembersParams = z.infer<typeof listMembersSchema>;
