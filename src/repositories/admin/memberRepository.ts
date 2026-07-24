@@ -50,22 +50,16 @@ export async function findOrganizationMember(organizationId: string, memberId: s
   });
 }
 
-export async function updateMember(id: string, params: { role: string }) {
+export async function updateMemberRole(id: string, role: string) {
   return prisma.member.update({
     where: { id },
-    data: { role: params.role },
+    data: { role },
     include: { user: true },
   });
 }
 
 export async function deleteMember(id: string) {
   return prisma.member.delete({ where: { id } });
-}
-
-export async function countOrganizationOwners(organizationId: string) {
-  return prisma.member.count({
-    where: { organizationId, role: "owner" },
-  });
 }
 
 function statusFilter(status?: string[]): Prisma.MemberWhereInput | undefined {

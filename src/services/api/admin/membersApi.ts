@@ -1,6 +1,6 @@
 import { adminApiClient } from "@/services/api/client";
 import type { ListParams } from "@/services/api/listParams";
-import type { UpdateMemberBody } from "@/app/api/admin/organizations/[id]/members/[memberId]/schema";
+import type { UpdateMemberRoleBody } from "@/app/api/admin/organizations/[id]/members/[memberId]/role/schema";
 import type { ListOrganizationMembersParams } from "@/app/api/admin/organizations/[id]/members/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Member } from "@/types/member";
@@ -20,9 +20,13 @@ export const membersApi = {
     });
   },
 
-  updateMember(organizationId: string, memberId: string, body: UpdateMemberBody): Promise<Member> {
+  updateMemberRole(
+    organizationId: string,
+    memberId: string,
+    body: UpdateMemberRoleBody,
+  ): Promise<Member> {
     return adminApiClient.patch<Member>(
-      `/organizations/${organizationId}/members/${memberId}`,
+      `/organizations/${organizationId}/members/${memberId}/role`,
       body,
     );
   },

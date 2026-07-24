@@ -19,9 +19,9 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import {
-  type UpdateMemberBody,
-  updateMemberSchema,
-} from "@/app/api/admin/organizations/[id]/members/[memberId]/schema";
+  type UpdateMemberRoleBody,
+  updateMemberRoleSchema,
+} from "@/app/api/admin/organizations/[id]/members/[memberId]/role/schema";
 
 const ORGANIZATION_ROLES = [
   { value: "owner", label: "Owner" },
@@ -32,16 +32,16 @@ const ORGANIZATION_ROLES = [
 export function ChangeMemberRoleDialog() {
   const { open, setOpen, currentMember, organizationId, currentUserId } = useOrganizationMembers();
   const queryClient = useQueryClient();
-  const form = useForm<UpdateMemberBody>({
-    resolver: zodResolver(updateMemberSchema),
+  const form = useForm<UpdateMemberRoleBody>({
+    resolver: zodResolver(updateMemberRoleSchema),
     values: {
-      role: (currentMember?.role as UpdateMemberBody["role"]) ?? "member",
+      role: (currentMember?.role as UpdateMemberRoleBody["role"]) ?? "member",
     },
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: UpdateMemberBody) =>
-      membersApi.updateMember(organizationId, currentMember!.id, values),
+    mutationFn: (values: UpdateMemberRoleBody) =>
+      membersApi.updateMemberRole(organizationId, currentMember!.id, values),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: ["admin", "organizations", organizationId, "members"],
