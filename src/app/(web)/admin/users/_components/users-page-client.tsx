@@ -33,6 +33,14 @@ function UsersTable() {
       searchPlaceholder="Search by name or email..."
       filters={[
         {
+          columnId: "access",
+          title: "Access",
+          options: [
+            { label: "Customer portal access", value: "customer" },
+            { label: "Admin portal access", value: "admin" },
+          ],
+        },
+        {
           columnId: "status",
           title: "Status",
           options: [

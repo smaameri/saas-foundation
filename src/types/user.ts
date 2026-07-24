@@ -13,3 +13,9 @@ export type User = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type UserAccess = "admin_only" | "customer_only" | "both" | "none";
+
+export type UserWithAccess = User & {
+  access: UserAccess;
+};

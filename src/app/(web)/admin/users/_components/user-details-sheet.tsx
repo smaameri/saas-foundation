@@ -67,6 +67,18 @@ export function UserDetailsSheet() {
               label="Admin role"
               value={<span className="capitalize">{currentUser.role}</span>}
             />
+            <DetailRow
+              label="Portal access"
+              value={
+                currentUser.access === "both"
+                  ? "Admin and customer"
+                  : currentUser.access === "admin_only"
+                    ? "Admin only"
+                    : currentUser.access === "customer_only"
+                      ? "Customer only"
+                      : "None"
+              }
+            />
           </section>
 
           <section className="flex flex-col gap-4">

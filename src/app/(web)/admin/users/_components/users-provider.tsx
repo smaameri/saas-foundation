@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 import useDialogState from "@/hooks/use-dialog-state";
-import type { User } from "@/types/user";
+import type { UserWithAccess } from "@/types/user";
 
 type UsersDialogType = "view" | "ban" | "unban" | "delete";
 
 type UsersContextType = {
   open: UsersDialogType | null;
   setOpen: (value: UsersDialogType | null) => void;
-  currentUser: User | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
+  currentUser: UserWithAccess | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<UserWithAccess | null>>;
   currentUserId: string;
 };
 
@@ -24,7 +24,7 @@ export function UsersProvider({
   currentUserId: string;
 }) {
   const [open, setOpen] = useDialogState<UsersDialogType>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserWithAccess | null>(null);
 
   return (
     <UsersContext value={{ open, setOpen, currentUser, setCurrentUser, currentUserId }}>

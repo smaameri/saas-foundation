@@ -5,9 +5,9 @@ import type { Row } from "@tanstack/react-table";
 import { Ban, RotateCcw, Trash2, UserSearch } from "lucide-react";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import type { User } from "@/types/user";
+import type { UserWithAccess } from "@/types/user";
 
-export function UserRowActions({ row }: { row: Row<User> }) {
+export function UserRowActions({ row }: { row: Row<UserWithAccess> }) {
   const { setOpen, setCurrentUser, currentUserId } = useUsers();
   const user = row.original;
   const canModify = user.id !== currentUserId;

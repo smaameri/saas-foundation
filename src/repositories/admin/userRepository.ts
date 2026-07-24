@@ -8,6 +8,7 @@ type UserSortField = "name" | "email" | "createdAt";
 type UserFilters = {
   search?: string;
   status?: string[];
+  access?: string[];
 };
 
 export type ListUsersOptions = {
@@ -31,11 +32,17 @@ export async function listUsers({ params, filters }: ListUsersOptions) {
   const where = combineFilters<Prisma.UserWhereInput>(
     searchFilter(filters?.search),
     statusFilter(filters?.status),
+    accessFilter(filters?.access),
   );
 
   const [data, total] = await prisma.$transaction([
     prisma.user.findMany({
       where,
+      include: {
+        _count: {
+          select: { members: true },
+        },
+      },
       orderBy: buildOrderBy(sort, order),
       skip: (page - 1) * perPage,
       take: perPage,
@@ -78,6 +85,28 @@ function statusFilter(statuses?: string[]): Prisma.UserWhereInput | undefined {
     : normalized[0] === "active"
       ? { OR: [{ banned: false }, { banned: null }] }
       : undefined;
+}
+
+function accessFilter(accessValues?: string[]): Prisma.UserWhereInput | undefined {
+  const accessFilters = Array.from(
+    new Set(accessValues?.map((value) => value.trim().toLowerCase()).filter(Boolean)),
+  )
+    .map(accessCategoryFilter)
+    .filter((filter): filter is Prisma.UserWhereInput => Boolean(filter));
+
+  return accessFilters.length ? { OR: accessFilters } : undefined;
+}
+
+function accessCategoryFilter(access: string): Prisma.UserWhereInput | undefined {
+  if (access === "admin") {
+    return { role: { not: null } };
+  }
+
+  if (access === "customer") {
+    return { members: { some: {} } };
+  }
+
+  return undefined;
 }
 
 function buildOrderBy(sort: UserSortField | undefined, order: SortOrder | undefined) {
