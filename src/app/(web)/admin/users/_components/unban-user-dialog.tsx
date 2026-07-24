@@ -1,33 +1,35 @@
 "use client";
 
-import { useMembers } from "./members-provider";
+import { useUsers } from "./users-provider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { teamApi } from "@/services/api/admin/teamApi";
+import { usersApi } from "@/services/api/admin/usersApi";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 
 export function UnbanUserDialog() {
-  const { open, setOpen, currentRow, currentUserId } = useMembers();
+  const { open, setOpen, currentUser, currentUserId } = useUsers();
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () => teamApi.unbanUser(currentRow!.id),
+    mutationFn: () => usersApi.unbanUser(currentUser!.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
       toast.success("User unbanned.");
       setOpen(null);
     },
   });
 
-  if (!currentRow || currentRow.id === currentUserId) return null;
+  if (!currentUser || currentUser.id === currentUserId) return null;
 
   return (
     <DeleteDialog
       open={open === "unban"}
-      onOpenChange={(val) => !val && setOpen(null)}
+      onOpenChange={(value) => !value && setOpen(null)}
       title="Unban user"
-      description={`${currentRow.name} will regain access to the admin portal.`}
-      onDelete={mutateAsync}
+      description={`${currentUser.name} will be able to sign in again.`}
+      onDelete={async () => {
+        await mutateAsync();
+      }}
       isPending={isPending}
       confirmLabel="Unban"
       confirmPendingLabel="Unbanning..."

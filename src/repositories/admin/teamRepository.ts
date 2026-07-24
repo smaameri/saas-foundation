@@ -57,11 +57,27 @@ export async function findTeamMember(id: string) {
   return prisma.user.findFirst({ where: { id, ...whereHasAdminPortalAccess() } });
 }
 
-export async function deleteTeamMember(id: string) {
-  const { count } = await prisma.user.deleteMany({
-    where: { id, ...whereHasAdminPortalAccess() },
+export async function revokeTeamMemberAccess(id: string) {
+  return prisma.$transaction(async (transaction) => {
+    const user = await transaction.user.findFirst({
+      where: { id, ...whereHasAdminPortalAccess() },
+      select: { role: true },
+    });
+
+    if (!user) return "not_found" as const;
+
+    if (user.role === "admin") {
+      const adminCount = await transaction.user.count({ where: { role: "admin" } });
+      if (adminCount <= 1) return "last_admin" as const;
+    }
+
+    await transaction.user.update({
+      where: { id },
+      data: { role: null },
+    });
+
+    return "revoked" as const;
   });
-  return count > 0;
 }
 
 function statusFilter(statuses?: string[]): Prisma.UserWhereInput | undefined {

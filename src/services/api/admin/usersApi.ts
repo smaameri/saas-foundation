@@ -4,8 +4,14 @@ import type { PaginationData } from "@/app/api/response";
 import type { User } from "@/types/user";
 
 export const usersApi = {
-  listUsers(params?: ListUsersParams): Promise<{ data: User[]; pagination: PaginationData }> {
+  listUsers(
+    params?: ListUsersParams & { filters?: Record<string, string[]> },
+  ): Promise<{ data: User[]; pagination: PaginationData }> {
     return adminApiClient.getPaginated<User>("/users", params);
+  },
+
+  deleteUser(id: string): Promise<void> {
+    return adminApiClient.delete(`/users/${id}`);
   },
 
   banUser(id: string, body: { banReason?: string; banExpiresIn?: number }): Promise<User> {

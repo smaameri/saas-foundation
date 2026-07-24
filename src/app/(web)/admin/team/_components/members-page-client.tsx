@@ -1,12 +1,10 @@
 "use client";
 
 import { columns } from "../columns";
-import { BanUserDialog } from "./ban-user-dialog";
 import { ChangeRoleDialog } from "./change-role-dialog";
-import { DeleteUserDialog } from "./delete-user-dialog";
 import { MemberDetailsSheet } from "./member-details-sheet";
 import { MembersProvider } from "./members-provider";
-import { UnbanUserDialog } from "./unban-user-dialog";
+import { RevokeAccessDialog } from "./revoke-access-dialog";
 import { teamApi } from "@/services/api/admin/teamApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
@@ -50,9 +48,7 @@ export function MembersPageClient({ currentUserId }: { currentUserId: string }) 
       <MembersTable />
       <MemberDetailsSheet />
       <ChangeRoleDialog />
-      <BanUserDialog />
-      <UnbanUserDialog />
-      <DeleteUserDialog />
+      <RevokeAccessDialog />
     </MembersProvider>
   );
 }

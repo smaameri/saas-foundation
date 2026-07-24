@@ -1,31 +1,32 @@
 "use client";
 
-import { useMembers } from "./members-provider";
+import { useUsers } from "./users-provider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { teamApi } from "@/services/api/admin/teamApi";
+import { usersApi } from "@/services/api/admin/usersApi";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 
 export function DeleteUserDialog() {
-  const { open, setOpen, currentRow, currentUserId } = useMembers();
+  const { open, setOpen, currentUser, currentUserId } = useUsers();
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () => teamApi.deleteUser(currentRow!.id),
+    mutationFn: () => usersApi.deleteUser(currentUser!.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
       toast.success("User deleted.");
+      setOpen(null);
     },
   });
 
-  if (!currentRow || currentRow.id === currentUserId) return null;
+  if (!currentUser || currentUser.id === currentUserId) return null;
 
   return (
     <DeleteDialog
       open={open === "delete"}
-      onOpenChange={(val) => !val && setOpen(null)}
+      onOpenChange={(value) => !value && setOpen(null)}
       title="Delete user"
-      description={`This will permanently delete ${currentRow.name} and revoke their access. This action cannot be undone.`}
+      description={`This permanently deletes ${currentUser.name} and all associated access. This action cannot be undone.`}
       onDelete={mutateAsync}
       isPending={isPending}
       confirmLabel="Delete"

@@ -6,7 +6,7 @@ import { ContentLayout } from "@/components/platform/content-layout";
 export default function MembersLayout({ children }: { children: ReactNode }) {
   return (
     <ContentLayout
-      title="Team"
+      title="Admin Team"
       description="Manage your team members"
       actions={<InviteTeamMemberModal />}
     >

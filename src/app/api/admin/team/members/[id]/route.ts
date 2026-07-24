@@ -1,7 +1,8 @@
-import { deleteTeamMember, findTeamMember } from "@/repositories/admin/teamRepository";
+import { findTeamMember, revokeTeamMemberAccess } from "@/repositories/admin/teamRepository";
 import { serializeUser } from "@/serializers/userSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import {
+  conflictResponse,
   detailResponse,
   forbiddenResponse,
   noContentResponse,
@@ -22,10 +23,13 @@ export const DELETE = withAdmin(
       return forbiddenResponse("You cannot delete your own account.");
     }
 
-    const deleted = await deleteTeamMember(id);
-    if (!deleted) return notFoundResponse();
+    const result = await revokeTeamMemberAccess(id);
+    if (result === "not_found") return notFoundResponse();
+    if (result === "last_admin") {
+      return conflictResponse("You cannot revoke access from the last administrator.");
+    }
 
     return noContentResponse();
   },
-  { user: ["delete"] },
+  { user: ["set-role"] },
 );

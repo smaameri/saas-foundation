@@ -27,9 +27,14 @@ export const sidebarData: SidebarData = {
       title: "Administration",
       items: [
         {
-          title: "Team",
+          title: "Admin Team",
           url: "/admin/team",
           icon: UserCog,
+        },
+        {
+          title: "Users",
+          url: "/admin/users",
+          icon: Users,
         },
         {
           title: "API Keys",

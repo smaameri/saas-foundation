@@ -21,19 +21,11 @@ export const teamApi = {
     );
   },
 
-  deleteUser(id: string): Promise<void> {
+  revokeAdminPortalAccess(id: string): Promise<void> {
     return adminApiClient.delete(`/team/members/${id}`);
   },
 
   changeRole(id: string, role: "admin" | "user"): Promise<User> {
     return adminApiClient.patch<User>(`/team/members/${id}/role`, { role });
-  },
-
-  banUser(id: string, body: { banReason?: string; banExpiresIn?: number }): Promise<User> {
-    return adminApiClient.post<User>(`/team/members/${id}/ban`, body);
-  },
-
-  unbanUser(id: string): Promise<User> {
-    return adminApiClient.post<User>(`/team/members/${id}/unban`, {});
   },
 };

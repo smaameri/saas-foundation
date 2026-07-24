@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useMembers } from "./members-provider";
+import { useUsers } from "./users-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
-import { teamApi } from "@/services/api/admin/teamApi";
+import { usersApi } from "@/services/api/admin/usersApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
@@ -35,50 +35,40 @@ const banUserSchema = z.object({
 type BanUserValues = z.infer<typeof banUserSchema>;
 
 export function BanUserDialog() {
-  const { open, setOpen, currentRow, currentUserId } = useMembers();
+  const { open, setOpen, currentUser, currentUserId } = useUsers();
   const queryClient = useQueryClient();
-
   const form = useForm<BanUserValues>({
     resolver: zodResolver(banUserSchema),
     defaultValues: { banReason: "" },
   });
 
   useEffect(() => {
-    if (open === "ban") {
-      form.reset({ banReason: "" });
-    }
+    if (open === "ban") form.reset({ banReason: "" });
   }, [open, form]);
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: BanUserValues) => {
-      return teamApi.banUser(currentRow!.id, {
+    mutationFn: (values: BanUserValues) =>
+      usersApi.banUser(currentUser!.id, {
         banReason: values.banReason || undefined,
-      });
-    },
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
       toast.success("User banned.");
       setOpen(null);
     },
   });
 
-  const handleOpenChange = (val: boolean) => {
-    if (!val) setOpen(null);
-  };
-
-  if (!currentRow || currentRow.id === currentUserId) return null;
+  if (!currentUser || currentUser.id === currentUserId) return null;
 
   return (
-    <Dialog open={open === "ban"} onOpenChange={handleOpenChange}>
+    <Dialog open={open === "ban"} onOpenChange={(value) => !value && setOpen(null)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Ban user</DialogTitle>
           <DialogDescription>
-            Prevent {currentRow?.name} from signing in. You can optionally provide a reason for the
-            ban.
+            Prevent {currentUser.name} from signing in. You can optionally provide a reason.
           </DialogDescription>
         </DialogHeader>
-
         <Form {...form}>
           <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
             <FormField
@@ -94,13 +84,11 @@ export function BanUserDialog() {
                 </FormItem>
               )}
             />
-
             <MutationError
               isError={isError}
               error={error}
               fallback="Failed to ban user. Please try again."
             />
-
             <div className="flex justify-end gap-2">
               <CancelButton onClick={() => setOpen(null)} disabled={isPending} />
               <PrimaryButton type="submit" isPending={isPending} pendingLabel="Banning...">

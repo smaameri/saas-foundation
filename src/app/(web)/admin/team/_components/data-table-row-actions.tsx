@@ -2,7 +2,7 @@
 
 import { useMembers } from "./members-provider";
 import type { Row } from "@tanstack/react-table";
-import { Ban, RotateCcw, ShieldCheck, Trash2, UserSearch } from "lucide-react";
+import { ShieldCheck, UserMinus, UserSearch } from "lucide-react";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import type { User } from "@/types/user";
@@ -13,7 +13,6 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow, currentUserId } = useMembers();
-  const isBanned = row.original.banned ?? false;
   const canModify = currentUserId ? row.original.id !== currentUserId : true;
 
   return (
@@ -39,42 +38,15 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       </DropdownMenuItem>
       {canModify && <DropdownMenuSeparator />}
       {canModify && (
-        <>
-          {isBanned ? (
-            <DropdownMenuItem
-              onClick={() => {
-                setCurrentRow(row.original);
-                setOpen("unban");
-              }}
-            >
-              Unban user
-              <RotateCcw size={16} className="ml-auto" />
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={() => {
-                setCurrentRow(row.original);
-                setOpen("ban");
-              }}
-            >
-              Ban user
-              <Ban size={16} className="ml-auto" />
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuSeparator />
-        </>
-      )}
-      {canModify && (
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onClick={() => {
             setCurrentRow(row.original);
-            setOpen("delete");
+            setOpen("revoke-access");
           }}
         >
-          Delete user
-          <Trash2 size={16} className="ml-auto" />
+          Revoke access
+          <UserMinus size={16} className="ml-auto" />
         </DropdownMenuItem>
       )}
     </RowActionsDropdown>
