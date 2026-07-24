@@ -31,12 +31,12 @@ type OrganizationFilters = {
 };
 
 export type ListOrganizationsParams = {
-  params: BaseListOptions<OrganizationSortField>;
+  options: BaseListOptions<OrganizationSortField>;
   filters?: OrganizationFilters;
 };
 
-export async function listOrganizations({ params, filters }: ListOrganizationsParams) {
-  const { page, perPage, sort, order } = params;
+export async function listOrganizations({ options, filters }: ListOrganizationsParams) {
+  const { page, perPage, sort, order } = options;
   const where = searchFilter(filters?.search);
 
   const [data, total] = await prisma.$transaction([

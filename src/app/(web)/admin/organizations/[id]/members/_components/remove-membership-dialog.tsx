@@ -11,7 +11,7 @@ export function RemoveMembershipDialog() {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () => membersApi.deleteMember(currentMember!.id),
+    mutationFn: () => membersApi.deleteMember(organizationId, currentMember!.id),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: ["admin", "organizations", organizationId, "members"],

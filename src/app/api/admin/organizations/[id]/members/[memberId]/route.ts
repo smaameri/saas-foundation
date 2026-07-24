@@ -2,7 +2,7 @@ import { updateMemberSchema } from "./schema";
 import {
   countOrganizationOwners,
   deleteMember,
-  findMember,
+  findOrganizationMember,
   updateMember,
 } from "@/repositories/admin/memberRepository";
 import { serializeMember } from "@/serializers/memberSerializer";
@@ -16,16 +16,16 @@ import {
 } from "@/app/api/response";
 
 export const GET = withAdmin(async (_request, { params }) => {
-  const { id } = await params;
-  const member = await findMember(id);
+  const { id: organizationId, memberId } = await params;
+  const member = await findOrganizationMember(organizationId, memberId);
   if (!member) return notFoundResponse();
   return detailResponse(serializeMember(member));
 });
 
 export const PATCH = withAdmin(
   async (request, { params }, { user }) => {
-    const { id } = await params;
-    const existing = await findMember(id);
+    const { id: organizationId, memberId } = await params;
+    const existing = await findOrganizationMember(organizationId, memberId);
     if (!existing) return notFoundResponse();
     if (existing.userId === user.id) {
       return forbiddenResponse("You cannot update your own membership.");
@@ -40,7 +40,7 @@ export const PATCH = withAdmin(
       return conflictResponse("You cannot change the role of the last organization owner.");
     }
 
-    const updated = await updateMember(id, body);
+    const updated = await updateMember(memberId, body);
     return detailResponse(serializeMember(updated));
   },
   { member: ["update"] },
@@ -48,8 +48,8 @@ export const PATCH = withAdmin(
 
 export const DELETE = withAdmin(
   async (_request, { params }, { user }) => {
-    const { id } = await params;
-    const existing = await findMember(id);
+    const { id: organizationId, memberId } = await params;
+    const existing = await findOrganizationMember(organizationId, memberId);
     if (!existing) return notFoundResponse();
     if (existing.userId === user.id) {
       return forbiddenResponse("You cannot remove your own membership.");
@@ -61,7 +61,7 @@ export const DELETE = withAdmin(
       return conflictResponse("You cannot remove the last organization owner.");
     }
 
-    await deleteMember(id);
+    await deleteMember(memberId);
     return noContentResponse();
   },
   { member: ["delete"] },

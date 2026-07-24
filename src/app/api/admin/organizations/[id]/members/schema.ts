@@ -3,7 +3,6 @@ import { parseCommaSeparatedList } from "@/lib/api";
 import { listSchema } from "@/app/api/schemas";
 
 export const listMembersSchema = listSchema.extend({
-  organizationIds: z.string().transform(parseCommaSeparatedList).optional(),
   search: z.string().optional(),
   status: z.string().transform(parseCommaSeparatedList).optional(),
   role: z.string().transform(parseCommaSeparatedList).optional(),

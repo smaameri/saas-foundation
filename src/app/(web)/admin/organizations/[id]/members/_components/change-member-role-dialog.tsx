@@ -18,7 +18,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { type UpdateMemberBody, updateMemberSchema } from "@/app/api/admin/members/[id]/schema";
+import {
+  type UpdateMemberBody,
+  updateMemberSchema,
+} from "@/app/api/admin/organizations/[id]/members/[memberId]/schema";
 
 const ORGANIZATION_ROLES = [
   { value: "owner", label: "Owner" },
@@ -37,7 +40,8 @@ export function ChangeMemberRoleDialog() {
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: UpdateMemberBody) => membersApi.updateMember(currentMember!.id, values),
+    mutationFn: (values: UpdateMemberBody) =>
+      membersApi.updateMember(organizationId, currentMember!.id, values),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: ["admin", "organizations", organizationId, "members"],

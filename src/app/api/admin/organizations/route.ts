@@ -10,7 +10,7 @@ export const GET = withAdmin(async (request) => {
   const { page, perPage, order, sort, search } = validated;
 
   const { data, total } = await listOrganizations({
-    params: { page, perPage, order, sort },
+    options: { page, perPage, order, sort },
     filters: search ? { search } : undefined,
   });
 

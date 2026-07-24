@@ -6,22 +6,24 @@ import { combineFilters } from "@/repositories/utils";
 type MemberSortField = "createdAt" | "firstName" | "lastName" | "email" | "role" | "name";
 
 type MemberFilters = {
-  organizations?: string[];
   status?: string[];
   search?: string;
   roles?: string[];
 };
 
-export type ListMembersParams = {
-  params: BaseListOptions<MemberSortField>;
+export type ListOrganizationMembersParams = {
+  options: BaseListOptions<MemberSortField>;
   filters?: MemberFilters;
 };
 
-export async function listMembers({ params, filters }: ListMembersParams) {
-  const { page, perPage, sort, order } = params;
-  const { organizations, status, search, roles } = filters ?? {};
+export async function listOrganizationMembers(
+  organizationId: string,
+  { options, filters }: ListOrganizationMembersParams,
+) {
+  const { page, perPage, sort, order } = options;
+  const { status, search, roles } = filters ?? {};
   const where = combineFilters<Prisma.MemberWhereInput>(
-    organizationsFilter(organizations),
+    { organizationId },
     statusFilter(status),
     rolesFilter(roles),
     searchFilter(search),
@@ -41,9 +43,9 @@ export async function listMembers({ params, filters }: ListMembersParams) {
   return { data, total };
 }
 
-export async function findMember(id: string) {
-  return prisma.member.findUnique({
-    where: { id },
+export async function findOrganizationMember(organizationId: string, memberId: string) {
+  return prisma.member.findFirst({
+    where: { id: memberId, organizationId },
     include: { user: true },
   });
 }
@@ -64,13 +66,6 @@ export async function countOrganizationOwners(organizationId: string) {
   return prisma.member.count({
     where: { organizationId, role: "owner" },
   });
-}
-
-function organizationsFilter(organizations?: string[]): Prisma.MemberWhereInput | undefined {
-  const unique = Array.from(new Set((organizations ?? []).filter(Boolean)));
-  if (unique.length === 0) return undefined;
-  if (unique.length === 1) return { organizationId: unique[0] };
-  return { organizationId: { in: unique } };
 }
 
 function statusFilter(status?: string[]): Prisma.MemberWhereInput | undefined {
