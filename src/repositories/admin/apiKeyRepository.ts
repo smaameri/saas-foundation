@@ -12,12 +12,12 @@ type Filters = {
 };
 
 export type ListApiKeysParams = {
-  params: BaseListOptions<SortField>;
+  options: BaseListOptions<SortField>;
   filters?: Filters;
 };
 
-export async function listApiKeys({ params, filters }: ListApiKeysParams) {
-  const { page, perPage, sort, order } = params;
+export async function listApiKeys({ options, filters }: ListApiKeysParams) {
+  const { page, perPage, sort, order } = options;
   const { enabled, search, users } = filters ?? {};
   const where = combineFilters<Prisma.ApikeyWhereInput>(
     enabledFilter(enabled),
@@ -48,6 +48,26 @@ export async function disableApiKeyById(id: string) {
     where: { id },
     data: { enabled: false },
   });
+}
+
+export async function updateApiKeyNameForUser(id: string, userId: string, name: string) {
+  return prisma.$transaction(async (transaction) => {
+    const { count } = await transaction.apikey.updateMany({
+      where: { id, referenceId: userId },
+      data: { name },
+    });
+    if (count === 0) return null;
+
+    return transaction.apikey.findUnique({ where: { id } });
+  });
+}
+
+export async function disableApiKeyForUser(id: string, userId: string) {
+  const { count } = await prisma.apikey.updateMany({
+    where: { id, referenceId: userId },
+    data: { enabled: false },
+  });
+  return count > 0;
 }
 
 function enabledFilter(enabled?: string[]): Prisma.ApikeyWhereInput | undefined {

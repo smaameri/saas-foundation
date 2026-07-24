@@ -11,7 +11,7 @@ export const GET = withAdmin(async (request, _context, { user }) => {
   const { page, perPage, order, sort, enabled, search } = validated;
 
   const { data, total } = await listApiKeys({
-    params: { page, perPage, order, sort },
+    options: { page, perPage, order, sort },
     filters: { enabled, search, users: [user.id] },
   });
   return paginatedResponse(data.map(serializeApiKey), {
