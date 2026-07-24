@@ -2,7 +2,44 @@ import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { BaseListOptions, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
-import { Portal, PortalValue } from "@/config/portals";
+import { Portal, type PortalValue } from "@/config/portals";
+
+type InvitationSortField = "email" | "role" | "status" | "createdAt" | "expiresAt";
+
+type StatusFilter = string[] | undefined;
+
+type InvitationFilters = {
+  portals?: PortalValue[];
+  organizationIds?: string[];
+  status?: StatusFilter;
+};
+
+export type ListInvitationsParams = {
+  options: BaseListOptions<InvitationSortField>;
+  filters?: InvitationFilters;
+};
+
+export async function listInvitations({ options, filters }: ListInvitationsParams) {
+  const { page, perPage, sort, order } = options;
+
+  const where = combineFilters<Prisma.InvitationWhereInput>(
+    portalsFilter(filters?.portals),
+    organizationIdsFilter(filters?.organizationIds),
+    statusFilter(filters?.status),
+  );
+
+  const [data, total] = await prisma.$transaction([
+    prisma.invitation.findMany({
+      where,
+      orderBy: buildOrderBy(sort, order),
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.invitation.count({ where }),
+  ]);
+
+  return { data, total };
+}
 
 export async function findPendingInvitation(email: string, organizationId: string) {
   return prisma.invitation.findFirst({
@@ -21,111 +58,6 @@ export async function cancelInvitation(id: string) {
     where: { id },
     data: { status: "canceled" },
   });
-}
-
-type InvitationSortField = "email" | "role" | "status" | "createdAt" | "expiresAt";
-
-type StatusFilter = string[] | undefined;
-
-type AdminInvitationFilters = {
-  organizationId?: string | null;
-  status?: StatusFilter;
-};
-
-type CustomerInvitationFilters = {
-  organizationIds?: string[];
-  status?: StatusFilter;
-};
-
-type OrganizationInvitationFilters = {
-  status?: StatusFilter;
-};
-
-export type ListAdminInvitationsOptions = {
-  params: BaseListOptions<InvitationSortField>;
-  filters?: AdminInvitationFilters;
-};
-
-export type ListCustomerInvitationsOptions = {
-  params: BaseListOptions<InvitationSortField>;
-  filters?: CustomerInvitationFilters;
-};
-
-export type ListOrganizationInvitationsOptions = {
-  params: BaseListOptions<InvitationSortField>;
-  filters?: OrganizationInvitationFilters;
-};
-
-export async function listAdminPortalInvitations({ params, filters }: ListAdminInvitationsOptions) {
-  const { page, perPage, sort, order } = params;
-  const organizationId = filters?.organizationId ?? null;
-
-  const where = combineFilters<Prisma.InvitationWhereInput>(
-    portalFilter(Portal.admin),
-    organizationIdFilter(organizationId),
-    statusFilter(filters?.status),
-  );
-
-  const [data, total] = await prisma.$transaction([
-    prisma.invitation.findMany({
-      where,
-      orderBy: buildOrderBy(sort, order),
-      skip: (page - 1) * perPage,
-      take: perPage,
-    }),
-    prisma.invitation.count({ where }),
-  ]);
-
-  return { data, total };
-}
-
-export async function listCustomerPortalInvitations({
-  params,
-  filters,
-}: ListCustomerInvitationsOptions) {
-  const { page, perPage, sort, order } = params;
-
-  const where = combineFilters<Prisma.InvitationWhereInput>(
-    portalFilter(Portal.customer),
-    organizationIdsFilter(filters?.organizationIds),
-    statusFilter(filters?.status),
-  );
-
-  const [data, total] = await prisma.$transaction([
-    prisma.invitation.findMany({
-      where,
-      orderBy: buildOrderBy(sort, order),
-      skip: (page - 1) * perPage,
-      take: perPage,
-    }),
-    prisma.invitation.count({ where }),
-  ]);
-
-  return { data, total };
-}
-
-export async function listOrganizationInvitations(
-  organizationId: string,
-  { params, filters }: ListOrganizationInvitationsOptions,
-) {
-  const { page, perPage, sort, order } = params;
-
-  const where = combineFilters<Prisma.InvitationWhereInput>(
-    organizationIdFilter(organizationId),
-    statusFilter(filters?.status),
-  );
-
-  const [data, total] = await prisma.$transaction([
-    prisma.invitation.findMany({
-      where,
-      orderBy: buildOrderBy(sort, order),
-      skip: (page - 1) * perPage,
-      take: perPage,
-    }),
-    prisma.invitation.count({ where }),
-  ]);
-
-  return { data, total };
 }
 
 export async function createAdminPortalInvitation(params: {
@@ -173,16 +105,12 @@ export async function createCustomerPortalInvitation(params: {
   });
 }
 
-function portalFilter(portal: PortalValue | undefined): Prisma.InvitationWhereInput | undefined {
-  if (!portal) return undefined;
-  return { portal };
-}
-
-function organizationIdFilter(
-  organizationId: string | null | undefined,
-): Prisma.InvitationWhereInput | undefined {
-  if (organizationId === undefined) return undefined;
-  return { organizationId };
+function portalsFilter(portals?: PortalValue[]): Prisma.InvitationWhereInput | undefined {
+  if (!portals?.length) return undefined;
+  const unique = Array.from(new Set(portals.filter(Boolean)));
+  if (unique.length === 0) return undefined;
+  if (unique.length === 1) return { portal: unique[0] };
+  return { portal: { in: unique } };
 }
 
 function organizationIdsFilter(

@@ -2,18 +2,24 @@ import { listCustomerInvitationsSchema } from "./schema";
 import { CreateInvitationValidator } from "./validator";
 import { validateQuery } from "@/lib/api";
 import { sendInvitation } from "@/services/admin/invitationService";
-import { listCustomerPortalInvitations } from "@/repositories/admin/invitationRepository";
+import { listInvitations } from "@/repositories/admin/invitationRepository";
 import { serializeInvitation } from "@/serializers/invitationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { createdResponse, paginatedResponse, validationErrorResponse } from "@/app/api/response";
+import { Portal } from "@/config/portals";
 
-export const GET = withAdmin(async (request) => {
+export const GET = withAdmin(async (request, { params }) => {
+  const { id: organizationId } = await params;
   const parsed = validateQuery(request, listCustomerInvitationsSchema);
-  const { page, perPage, order, sort, status, organizationIds } = parsed;
+  const { page, perPage, order, sort, status } = parsed;
 
-  const { data, total } = await listCustomerPortalInvitations({
-    params: { page, perPage, order, sort },
-    filters: { status, organizationIds },
+  const { data, total } = await listInvitations({
+    options: { page, perPage, order, sort },
+    filters: {
+      status,
+      portals: [Portal.customer],
+      organizationIds: [organizationId],
+    },
   });
 
   return paginatedResponse(data.map(serializeInvitation), {

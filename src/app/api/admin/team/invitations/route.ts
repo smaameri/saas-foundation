@@ -3,12 +3,13 @@ import { validateQuery } from "@/lib/api";
 import { sendAdminPortalInvitationEmail } from "@/lib/email/adminPortalInvitationEmail";
 import {
   createAdminPortalInvitation,
-  listAdminPortalInvitations,
+  listInvitations,
 } from "@/repositories/admin/invitationRepository";
 import { findUserByEmail } from "@/repositories/admin/teamRepository";
 import { serializeInvitation } from "@/serializers/invitationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
 import { conflictResponse, createdResponse, paginatedResponse } from "@/app/api/response";
+import { Portal } from "@/config/portals";
 
 const INVITATION_EXPIRES_IN_DAYS = 2;
 
@@ -16,9 +17,9 @@ export const GET = withAdmin(async (request) => {
   const parsed = validateQuery(request, listAdminPortalInvitationsSchema);
   const { page, perPage, order, sort, status } = parsed;
 
-  const { data, total } = await listAdminPortalInvitations({
-    params: { page, perPage, order, sort },
-    filters: { status },
+  const { data, total } = await listInvitations({
+    options: { page, perPage, order, sort },
+    filters: { status, portals: [Portal.admin] },
   });
 
   return paginatedResponse(data.map(serializeInvitation), {
