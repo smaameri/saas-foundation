@@ -17,5 +17,4 @@ export type CreateCustomerPortalInvitationBody = z.infer<
   typeof createCustomerPortalInvitationSchema
 >;
 export type ListCustomerInvitationsParams = z.infer<typeof listCustomerInvitationsSchema>;
-export type ListInvitationsParams = ListCustomerInvitationsParams;
 export type ListOrganizationInvitationsParams = ListCustomerInvitationsParams;

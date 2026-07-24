@@ -36,8 +36,8 @@ function UsersTable() {
           columnId: "access",
           title: "Access",
           options: [
-            { label: "Customer portal access", value: "customer" },
-            { label: "Admin portal access", value: "admin" },
+            { label: "Customer Portal", value: "customer" },
+            { label: "Admin Portal", value: "admin" },
           ],
         },
         {

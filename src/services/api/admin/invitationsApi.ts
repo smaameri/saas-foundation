@@ -1,8 +1,6 @@
 import { adminApiClient } from "@/services/api/client";
-import type {
-  CreateCustomerPortalInvitationBody,
-  ListInvitationsParams,
-} from "@/app/api/admin/organizations/[id]/invitations/schema";
+import type { ListInvitationsParams } from "@/app/api/admin/invitations/schema";
+import type { CreateCustomerPortalInvitationBody } from "@/app/api/admin/organizations/[id]/invitations/schema";
 import type { ListAdminPortalInvitationsParams } from "@/app/api/admin/team/invitations/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Invitation } from "@/types/invitation";
@@ -11,7 +9,16 @@ export const invitationsApi = {
   listInvitations(
     params?: ListInvitationsParams,
   ): Promise<{ data: Invitation[]; pagination: PaginationData }> {
-    return adminApiClient.getPaginated<Invitation>("/invitations", params);
+    return adminApiClient.getPaginated<Invitation>("/invitations", {
+      sort: params?.sort,
+      order: params?.order,
+      page: params?.page ?? 1,
+      perPage: params?.perPage ?? 10,
+      filters: {
+        status: params?.status ?? [],
+        portals: params?.portals ?? [],
+      },
+    });
   },
 
   listAdminPortalInvitations(
@@ -36,5 +43,9 @@ export const invitationsApi = {
 
   cancelAdminTeamInvitation(invitationId: string) {
     return adminApiClient.delete(`/team/invitations/${invitationId}`);
+  },
+
+  cancelInvitation(invitationId: string) {
+    return adminApiClient.delete(`/invitations/${invitationId}`);
   },
 };
