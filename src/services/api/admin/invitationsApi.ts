@@ -1,13 +1,11 @@
 import { adminApiClient } from "@/services/api/client";
-import type { ListInvitationsParams } from "@/app/api/admin/organizations/[id]/invitations/schema";
+import type {
+  CreateCustomerPortalInvitationBody,
+  ListInvitationsParams,
+} from "@/app/api/admin/organizations/[id]/invitations/schema";
 import type { ListAdminPortalInvitationsParams } from "@/app/api/admin/team/invitations/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { Invitation } from "@/types/invitation";
-
-type SendInvitationParams = {
-  email: string;
-  role: string;
-};
 
 export const invitationsApi = {
   listInvitations(
@@ -28,12 +26,12 @@ export const invitationsApi = {
     });
   },
 
-  sendInvitation(organizationId: string, params: SendInvitationParams) {
+  sendInvitation(organizationId: string, params: CreateCustomerPortalInvitationBody) {
     return adminApiClient.post(`/organizations/${organizationId}/invitations`, params);
   },
 
-  cancelInvitation(invitationId: string) {
-    return adminApiClient.delete(`/invitations/${invitationId}`);
+  cancelOrganizationInvitation(organizationId: string, invitationId: string) {
+    return adminApiClient.delete(`/organizations/${organizationId}/invitations/${invitationId}`);
   },
 
   cancelAdminTeamInvitation(invitationId: string) {

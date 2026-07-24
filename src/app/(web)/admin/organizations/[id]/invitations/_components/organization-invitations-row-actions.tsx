@@ -23,7 +23,7 @@ export function OrganizationInvitationRowActions({
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () => invitationsApi.cancelInvitation(invitation.id),
+    mutationFn: () => invitationsApi.cancelOrganizationInvitation(organizationId, invitation.id),
     onSuccess: () => {
       toast.success("Invitation canceled.");
       void queryClient.invalidateQueries({

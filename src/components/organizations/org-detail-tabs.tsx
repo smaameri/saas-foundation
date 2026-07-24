@@ -36,13 +36,19 @@ type Invitation = {
   expiresAt: Date;
 };
 
-function CancelButton({ invitationId }: { invitationId: string }) {
+function CancelButton({
+  organizationId,
+  invitationId,
+}: {
+  organizationId: string;
+  invitationId: string;
+}) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const handleCancel = () => {
     startTransition(async () => {
-      await invitationsApi.cancelInvitation(invitationId);
+      await invitationsApi.cancelOrganizationInvitation(organizationId, invitationId);
       router.refresh();
     });
   };
@@ -62,9 +68,11 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
 };
 
 export function OrgDetailTabs({
+  organizationId,
   members,
   invitations,
 }: {
+  organizationId: string;
   members: Member[];
   invitations: Invitation[];
 }) {
@@ -136,7 +144,9 @@ export function OrgDetailTabs({
                     {inv.expiresAt.toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    {inv.status === "pending" && <CancelButton invitationId={inv.id} />}
+                    {inv.status === "pending" && (
+                      <CancelButton organizationId={organizationId} invitationId={inv.id} />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

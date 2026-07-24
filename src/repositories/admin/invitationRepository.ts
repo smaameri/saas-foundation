@@ -47,6 +47,16 @@ export async function findPendingInvitation(email: string, organizationId: strin
   });
 }
 
+export async function findCustomerInvitationById(id: string, organizationId: string) {
+  return prisma.invitation.findFirst({
+    where: {
+      id,
+      organizationId,
+      portal: Portal.customer,
+    },
+  });
+}
+
 export async function findInvitationById(id: string) {
   return prisma.invitation.findUnique({
     where: { id },

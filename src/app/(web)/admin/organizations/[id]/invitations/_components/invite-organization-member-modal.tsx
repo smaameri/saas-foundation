@@ -34,13 +34,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createCustomerPortalInvitationSchema } from "@/app/api/admin/organizations/[id]/invitations/schema";
 
-const formSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  role: z.enum(["owner", "admin", "member"]),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof createCustomerPortalInvitationSchema>;
 
 const roleOptions = [
   { value: "member", label: "Member" },
@@ -53,7 +49,7 @@ export function InviteOrganizationMemberModal({ organizationId }: { organization
   const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(createCustomerPortalInvitationSchema),
     defaultValues: { email: "", role: "member" },
   });
 
