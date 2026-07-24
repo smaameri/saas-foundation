@@ -1,7 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { fetchSession } from "@/lib/auth/session";
 import { findAdminInvitationById } from "@/repositories/auth/invitationRepository";
+import { findUserByEmail } from "@/repositories/auth/userRepository";
 import { AcceptAdminInvitationForm } from "@/components/auth/accept-admin-invitation-form";
+import { AcceptExistingAdminInvitation } from "@/components/auth/accept-existing-admin-invitation";
 
 export default async function AcceptAdminInvitationPage({
   params,
@@ -55,15 +58,43 @@ export default async function AcceptAdminInvitationPage({
       </>
     );
   } else {
-    content = (
-      <>
-        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Join the Admin Portal</h1>
-        <p className="mb-8 text-sm text-muted-foreground">
-          Set your profile details and password to finish setting up your account.
-        </p>
-        <AcceptAdminInvitationForm invitationId={invitationId} email={invitation.email} />
-      </>
-    );
+    const existingUser = await findUserByEmail(invitation.email);
+
+    if (existingUser?.role) {
+      content = (
+        <>
+          <h1 className="mb-1 text-2xl font-semibold tracking-tight">Access already granted</h1>
+          <p className="text-sm text-muted-foreground">
+            This account already has access to the Admin Portal.
+          </p>
+        </>
+      );
+    } else if (existingUser) {
+      const session = await fetchSession();
+      content = (
+        <>
+          <h1 className="mb-1 text-2xl font-semibold tracking-tight">Join the Admin Portal</h1>
+          <AcceptExistingAdminInvitation
+            invitationId={invitationId}
+            email={invitation.email}
+            hasSession={Boolean(session)}
+            isSignedInAsInvitee={
+              session?.user.email.toLowerCase() === invitation.email.toLowerCase()
+            }
+          />
+        </>
+      );
+    } else {
+      content = (
+        <>
+          <h1 className="mb-1 text-2xl font-semibold tracking-tight">Join the Admin Portal</h1>
+          <p className="mb-8 text-sm text-muted-foreground">
+            Set your profile details and password to finish setting up your account.
+          </p>
+          <AcceptAdminInvitationForm invitationId={invitationId} email={invitation.email} />
+        </>
+      );
+    }
   }
 
   return (

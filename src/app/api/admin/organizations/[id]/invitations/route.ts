@@ -1,7 +1,7 @@
 import { listCustomerInvitationsSchema } from "./schema";
 import { CreateInvitationValidator } from "./validator";
 import { validateQuery } from "@/lib/api";
-import { sendInvitation } from "@/services/admin/invitationService";
+import { sendCustomerPortalInvitation } from "@/services/admin/invitations/customerPortalInvitationService";
 import { listInvitations } from "@/repositories/admin/invitationRepository";
 import { serializeInvitation } from "@/serializers/invitationSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
@@ -39,7 +39,7 @@ export const POST = withAdmin(async (request, { params }, { user }) => {
 
   const { email, role, organizationName } = validator.data;
 
-  await sendInvitation({
+  await sendCustomerPortalInvitation({
     email,
     role,
     organizationId,

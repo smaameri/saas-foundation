@@ -3,7 +3,7 @@ import { createCustomerPortalInvitation } from "@/repositories/admin/invitationR
 
 const INVITATION_EXPIRES_IN_DAYS = 2;
 
-type SendInvitationParams = {
+type SendCustomerPortalInvitationParams = {
   email: string;
   role: string;
   organizationId: string;
@@ -12,14 +12,14 @@ type SendInvitationParams = {
   inviterName: string;
 };
 
-export async function sendInvitation({
+export async function sendCustomerPortalInvitation({
   email,
   role,
   organizationId,
   organizationName,
   inviterId,
   inviterName,
-}: SendInvitationParams) {
+}: SendCustomerPortalInvitationParams) {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + INVITATION_EXPIRES_IN_DAYS);
 
@@ -31,13 +31,11 @@ export async function sendInvitation({
     expiresAt,
   });
 
-  const inviteLink = `${process.env.BETTER_AUTH_URL}/accept-invitation/customer-portal/${invitation.id}`;
-
   await sendOrganizationInvitationEmail({
     email,
     organizationName,
     invitedBy: inviterName,
-    inviteLink,
+    inviteLink: `${process.env.APP_URL}/accept-invitation/customer-portal/${invitation.id}`,
   });
 
   return invitation;

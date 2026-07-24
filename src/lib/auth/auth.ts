@@ -35,7 +35,7 @@ export const auth = betterAuth({
     enabled: true,
     resetPasswordTokenExpiresIn: 60 * 60 * 24 * 7, // 7 days
     sendResetPassword: async ({ user, token }) => {
-      const url = `${process.env.BETTER_AUTH_URL}/reset-password?token=${token}`;
+      const url = `${process.env.APP_URL}/reset-password?token=${token}`;
       void sendSetPasswordInviteEmail({ email: user.email, url });
     },
   },
@@ -51,7 +51,7 @@ export const auth = betterAuth({
           email: data.email,
           organizationName: data.organization.name,
           invitedBy: data.inviter.user.name,
-          inviteLink: `${process.env.BETTER_AUTH_URL}/accept-invitation/${data.id}`,
+          inviteLink: `${process.env.APP_URL}/accept-invitation/${data.id}`,
         });
       },
     }),

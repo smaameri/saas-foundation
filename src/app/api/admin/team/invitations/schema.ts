@@ -8,7 +8,7 @@ export const listAdminPortalInvitationsSchema = listSchema.extend({
 });
 
 export const createAdminPortalInvitationSchema = z.object({
-  email: z.string().email("Enter a valid email"),
+  email: z.string().trim().toLowerCase().email("Enter a valid email"),
   role: z.enum(["admin", "user"]),
 });
 

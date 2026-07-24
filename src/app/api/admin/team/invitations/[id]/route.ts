@@ -1,16 +1,21 @@
-import { CancelAdminTeamInvitationValidator } from "./validator";
-import { cancelInvitation } from "@/repositories/admin/invitationRepository";
+import { cancelPendingInvitation } from "@/repositories/admin/invitationRepository";
+import { findAdminInvitationById } from "@/repositories/auth/invitationRepository";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { noContentResponse, validationErrorResponse } from "@/app/api/response";
+import { conflictResponse, noContentResponse, notFoundResponse } from "@/app/api/response";
 
-export const DELETE = withAdmin(async (_request, { params }) => {
-  const { id } = await params;
+export const DELETE = withAdmin(
+  async (_request, { params }) => {
+    const { id } = await params;
 
-  const validator = new CancelAdminTeamInvitationValidator(id);
-  const isValid = await validator.validate();
-  if (!isValid) return validationErrorResponse(validator.errors);
+    const invitation = await findAdminInvitationById(id);
+    if (!invitation) return notFoundResponse("Invitation not found.");
 
-  await cancelInvitation(validator.data.invitationId);
+    const canceled = await cancelPendingInvitation(id);
+    if (!canceled) {
+      return conflictResponse("Only pending invitations can be canceled.");
+    }
 
-  return noContentResponse();
-});
+    return noContentResponse();
+  },
+  { invitation: ["cancel"] },
+);

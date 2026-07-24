@@ -2,11 +2,23 @@ import { redirect } from "next/navigation";
 import { fetchSession } from "@/lib/auth/session";
 import { LoginForm } from "@/components/auth/login-form";
 
-export default async function LoginPage() {
+function safeCallbackUrl(callbackUrl?: string) {
+  return callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
+    ? callbackUrl
+    : "/admin/dashboard";
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+  const { callbackUrl } = await searchParams;
+  const redirectTo = safeCallbackUrl(callbackUrl);
   const session = await fetchSession();
 
   if (session?.session) {
-    redirect("/admin/dashboard");
+    redirect(redirectTo);
   }
 
   return (
@@ -24,7 +36,7 @@ export default async function LoginPage() {
         <div className="w-full max-w-sm">
           <h1 className="mb-1 text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="mb-8 text-sm text-muted-foreground">Sign in to access your dashboard.</p>
-          <LoginForm />
+          <LoginForm callbackUrl={redirectTo} />
         </div>
       </div>
     </div>

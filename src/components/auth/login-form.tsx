@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { type LoginBody, loginSchema } from "@/app/api/auth/login/schema";
 
-export function LoginForm() {
+export function LoginForm({ callbackUrl = "/admin/dashboard" }: { callbackUrl?: string }) {
   const router = useRouter();
 
   const form = useForm<LoginBody>({
@@ -28,7 +28,7 @@ export function LoginForm() {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: LoginBody) => authApi.signIn(values),
-    onSuccess: () => router.push("/admin/dashboard"),
+    onSuccess: () => router.push(callbackUrl),
   });
 
   return (

@@ -53,11 +53,12 @@ export async function findInvitationById(id: string) {
   });
 }
 
-export async function cancelInvitation(id: string) {
-  return prisma.invitation.update({
-    where: { id },
+export async function cancelPendingInvitation(id: string) {
+  const { count } = await prisma.invitation.updateMany({
+    where: { id, status: "pending" },
     data: { status: "canceled" },
   });
+  return count > 0;
 }
 
 export async function createAdminPortalInvitation(params: {
