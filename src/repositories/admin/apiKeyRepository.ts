@@ -1,6 +1,6 @@
 import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { BaseListParams, SortOrder } from "@/repositories/types";
+import type { BaseListOptions, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
 
 type SortField = "name" | "createdAt" | "expiresAt";
@@ -12,7 +12,7 @@ type Filters = {
 };
 
 export type ListApiKeysParams = {
-  params: BaseListParams<SortField>;
+  params: BaseListOptions<SortField>;
   filters?: Filters;
 };
 

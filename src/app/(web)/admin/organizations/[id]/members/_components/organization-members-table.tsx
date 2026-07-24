@@ -1,6 +1,10 @@
 "use client";
 
+import { ChangeMemberRoleDialog } from "./change-member-role-dialog";
+import { MemberDetailsSheet } from "./member-details-sheet";
 import { memberColumns } from "./members-columns";
+import { OrganizationMembersProvider } from "./organization-members-provider";
+import { RemoveMembershipDialog } from "./remove-membership-dialog";
 import { membersApi } from "@/services/api/admin/membersApi";
 import { DataTable } from "@/components/data-table/data-table";
 import { useConnectedTable } from "@/hooks/use-connected-table";
@@ -11,7 +15,7 @@ const ROLE_FILTER_OPTIONS = [
   { label: "Admin", value: "admin" },
 ] as const;
 
-export function OrganizationMembersTable({ organizationId }: { organizationId: string }) {
+function MembersTable({ organizationId }: { organizationId: string }) {
   const { table } = useConnectedTable({
     queryKey: ["admin", "organizations", organizationId, "members"],
     queryFn: (params) => membersApi.listOrganizationMembers(organizationId, params),
@@ -31,5 +35,22 @@ export function OrganizationMembersTable({ organizationId }: { organizationId: s
         },
       ]}
     />
+  );
+}
+
+export function OrganizationMembersTable({
+  organizationId,
+  currentUserId,
+}: {
+  organizationId: string;
+  currentUserId: string;
+}) {
+  return (
+    <OrganizationMembersProvider organizationId={organizationId} currentUserId={currentUserId}>
+      <MembersTable organizationId={organizationId} />
+      <MemberDetailsSheet />
+      <ChangeMemberRoleDialog />
+      <RemoveMembershipDialog />
+    </OrganizationMembersProvider>
   );
 }

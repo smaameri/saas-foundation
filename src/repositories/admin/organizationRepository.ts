@@ -1,7 +1,7 @@
 import type { Prisma } from "@generated/prisma/client";
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
-import type { BaseListParams, SortOrder } from "@/repositories/types";
+import type { BaseListOptions, SortOrder } from "@/repositories/types";
 
 type CreateOrganizationInput = {
   name: string;
@@ -31,7 +31,7 @@ type OrganizationFilters = {
 };
 
 export type ListOrganizationsParams = {
-  params: BaseListParams<OrganizationSortField>;
+  params: BaseListOptions<OrganizationSortField>;
   filters?: OrganizationFilters;
 };
 

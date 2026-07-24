@@ -1,0 +1,85 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { useOrganizationMembers } from "./organization-members-provider";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { membersApi } from "@/services/api/admin/membersApi";
+import { CancelButton } from "@/components/buttons/cancel-button";
+import { PrimaryButton } from "@/components/buttons/primary-button";
+import { MutationError } from "@/components/feedback/mutation-error";
+import { RoleSelectField } from "@/components/forms/role-select-field";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Form } from "@/components/ui/form";
+import { type UpdateMemberBody, updateMemberSchema } from "@/app/api/admin/members/[id]/schema";
+
+const ORGANIZATION_ROLES = [
+  { value: "owner", label: "Owner" },
+  { value: "admin", label: "Admin" },
+  { value: "member", label: "Member" },
+] as const;
+
+export function ChangeMemberRoleDialog() {
+  const { open, setOpen, currentMember, organizationId, currentUserId } = useOrganizationMembers();
+  const queryClient = useQueryClient();
+  const form = useForm<UpdateMemberBody>({
+    resolver: zodResolver(updateMemberSchema),
+    values: {
+      role: (currentMember?.role as UpdateMemberBody["role"]) ?? "member",
+    },
+  });
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (values: UpdateMemberBody) => membersApi.updateMember(currentMember!.id, values),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["admin", "organizations", organizationId, "members"],
+      });
+      toast.success("Membership role updated.");
+      setOpen(null);
+    },
+  });
+
+  if (!currentMember || currentMember.user.id === currentUserId) return null;
+
+  return (
+    <Dialog open={open === "change-role"} onOpenChange={(value) => !value && setOpen(null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Change role</DialogTitle>
+          <DialogDescription>
+            Update the organization role for {currentMember.user.name}.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+            <RoleSelectField
+              control={form.control}
+              name="role"
+              label="Role"
+              options={ORGANIZATION_ROLES}
+            />
+            <MutationError
+              isError={isError}
+              error={error}
+              fallback="Failed to update membership role."
+            />
+            <div className="flex justify-end gap-2">
+              <CancelButton onClick={() => setOpen(null)} disabled={isPending} />
+              <PrimaryButton type="submit" isPending={isPending} pendingLabel="Saving...">
+                Save
+              </PrimaryButton>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

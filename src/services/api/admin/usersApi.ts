@@ -1,4 +1,5 @@
 import { adminApiClient } from "@/services/api/client";
+import type { BanUserBody } from "@/app/api/admin/users/[id]/ban/schema";
 import type { ListUsersParams } from "@/app/api/admin/users/schema";
 import type { PaginationData } from "@/app/api/response";
 import type { User, UserWithAccess } from "@/types/user";
@@ -14,7 +15,7 @@ export const usersApi = {
     return adminApiClient.delete(`/users/${id}`);
   },
 
-  banUser(id: string, body: { banReason?: string; banExpiresIn?: number }): Promise<User> {
+  banUser(id: string, body: BanUserBody): Promise<User> {
     return adminApiClient.post<User>(`/users/${id}/ban`, body);
   },
 

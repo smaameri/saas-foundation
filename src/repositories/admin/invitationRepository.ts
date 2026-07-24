@@ -1,6 +1,6 @@
 import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { BaseListParams, SortOrder } from "@/repositories/types";
+import type { BaseListOptions, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
 import { Portal, PortalValue } from "@/config/portals";
 
@@ -42,17 +42,17 @@ type OrganizationInvitationFilters = {
 };
 
 export type ListAdminInvitationsOptions = {
-  params: BaseListParams<InvitationSortField>;
+  params: BaseListOptions<InvitationSortField>;
   filters?: AdminInvitationFilters;
 };
 
 export type ListCustomerInvitationsOptions = {
-  params: BaseListParams<InvitationSortField>;
+  params: BaseListOptions<InvitationSortField>;
   filters?: CustomerInvitationFilters;
 };
 
 export type ListOrganizationInvitationsOptions = {
-  params: BaseListParams<InvitationSortField>;
+  params: BaseListOptions<InvitationSortField>;
   filters?: OrganizationInvitationFilters;
 };
 

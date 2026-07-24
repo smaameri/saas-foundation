@@ -1,6 +1,6 @@
 import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { BaseListParams, SortOrder } from "@/repositories/types";
+import type { BaseListOptions, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
 
 type MemberSortField = "createdAt" | "firstName" | "lastName" | "email" | "role" | "name";
@@ -13,7 +13,7 @@ type MemberFilters = {
 };
 
 export type ListMembersParams = {
-  params: BaseListParams<MemberSortField>;
+  params: BaseListOptions<MemberSortField>;
   filters?: MemberFilters;
 };
 
@@ -58,6 +58,12 @@ export async function updateMember(id: string, params: { role: string }) {
 
 export async function deleteMember(id: string) {
   return prisma.member.delete({ where: { id } });
+}
+
+export async function countOrganizationOwners(organizationId: string) {
+  return prisma.member.count({
+    where: { organizationId, role: "owner" },
+  });
 }
 
 function organizationsFilter(organizations?: string[]): Prisma.MemberWhereInput | undefined {

@@ -1,6 +1,6 @@
 import type { Prisma } from "@generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { BaseListParams, SortOrder } from "@/repositories/types";
+import type { BaseListOptions, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
 
 type UserSortField = "name" | "email" | "createdAt";
@@ -11,8 +11,8 @@ type UserFilters = {
   access?: string[];
 };
 
-export type ListUsersOptions = {
-  params: BaseListParams<UserSortField>;
+export type ListUsersParams = {
+  options: BaseListOptions<UserSortField>;
   filters?: UserFilters;
 };
 
@@ -27,8 +27,8 @@ export async function updateUser(id: string, data: { firstName: string; lastName
   });
 }
 
-export async function listUsers({ params, filters }: ListUsersOptions) {
-  const { page, perPage, sort, order } = params;
+export async function listUsers({ options, filters }: ListUsersParams) {
+  const { page, perPage, sort, order } = options;
   const where = combineFilters<Prisma.UserWhereInput>(
     searchFilter(filters?.search),
     statusFilter(filters?.status),
@@ -56,6 +56,37 @@ export async function listUsers({ params, filters }: ListUsersOptions) {
 export async function deleteUser(id: string) {
   const { count } = await prisma.user.deleteMany({ where: { id } });
   return count > 0;
+}
+
+export async function banUser(id: string, { banReason }: { banReason?: string }) {
+  return prisma.$transaction(async (transaction) => {
+    const { count } = await transaction.user.updateMany({
+      where: { id },
+      data: {
+        banned: true,
+        banReason: banReason || null,
+        banExpires: null,
+      },
+    });
+    if (count === 0) return null;
+
+    await transaction.session.deleteMany({ where: { userId: id } });
+    return transaction.user.findUnique({ where: { id } });
+  });
+}
+
+export async function unbanUser(id: string) {
+  const { count } = await prisma.user.updateMany({
+    where: { id },
+    data: {
+      banned: false,
+      banReason: null,
+      banExpires: null,
+    },
+  });
+  if (count === 0) return null;
+
+  return prisma.user.findUnique({ where: { id } });
 }
 
 function searchFilter(search?: string): Prisma.UserWhereInput | undefined {

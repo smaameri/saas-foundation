@@ -1,6 +1,6 @@
 export type SortOrder = "asc" | "desc";
 
-export type BaseListParams<SortOption extends string> = {
+export type BaseListOptions<SortOption extends string> = {
   page: number;
   perPage: number;
   order?: SortOrder;

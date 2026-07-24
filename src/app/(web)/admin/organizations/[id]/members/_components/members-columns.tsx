@@ -1,5 +1,6 @@
 "use client";
 
+import { MemberRowActions } from "./member-row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import type { Member } from "@/types/member";
@@ -45,5 +46,10 @@ export const memberColumns: ColumnDef<Member>[] = [
         {new Date(row.original.createdAt).toLocaleDateString()}
       </span>
     ),
+  },
+  {
+    id: "actions",
+    enableSorting: false,
+    cell: ({ row }) => <MemberRowActions row={row} />,
   },
 ];

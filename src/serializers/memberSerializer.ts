@@ -10,6 +10,7 @@ export function serializeMember(member: MemberWithUser): Member {
   return {
     id: member.id,
     role: member.role,
+    platformRole: member.user.role,
     user: serializeUser(member.user),
     createdAt: member.createdAt.toISOString(),
   };

@@ -11,7 +11,7 @@ export const GET = withAdmin(async (request) => {
     listUsersSchema,
   );
   const { data, total } = await listUsers({
-    params: { page, perPage, order, sort },
+    options: { page, perPage, order, sort },
     filters: { search, status, access },
   });
 

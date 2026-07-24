@@ -6,7 +6,6 @@ import { useUsers } from "./users-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { z } from "zod";
 import { usersApi } from "@/services/api/admin/usersApi";
 import { CancelButton } from "@/components/buttons/cancel-button";
 import { PrimaryButton } from "@/components/buttons/primary-button";
@@ -27,17 +26,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-
-const banUserSchema = z.object({
-  banReason: z.string().trim().max(255, "Reason must be 255 characters or fewer").optional(),
-});
-
-type BanUserValues = z.infer<typeof banUserSchema>;
+import { type BanUserBody, banUserSchema } from "@/app/api/admin/users/[id]/ban/schema";
 
 export function BanUserDialog() {
   const { open, setOpen, currentUser, currentUserId } = useUsers();
   const queryClient = useQueryClient();
-  const form = useForm<BanUserValues>({
+  const form = useForm<BanUserBody>({
     resolver: zodResolver(banUserSchema),
     defaultValues: { banReason: "" },
   });
@@ -47,10 +41,7 @@ export function BanUserDialog() {
   }, [open, form]);
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: BanUserValues) =>
-      usersApi.banUser(currentUser!.id, {
-        banReason: values.banReason || undefined,
-      }),
+    mutationFn: (values: BanUserBody) => usersApi.banUser(currentUser!.id, values),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
       toast.success("User banned.");

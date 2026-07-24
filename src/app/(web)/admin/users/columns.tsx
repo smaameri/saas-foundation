@@ -49,7 +49,7 @@ export const columns: ColumnDef<UserWithAccess>[] = [
   },
   {
     accessorKey: "access",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Portal Access" />,
     cell: ({ row }) => <AccessBadges access={row.original.access} />,
     enableSorting: false,
   },
