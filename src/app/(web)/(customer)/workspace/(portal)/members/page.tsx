@@ -1,13 +1,7 @@
-import { ContentLayout } from "@/components/platform/content-layout";
+import { requireSession } from "@/lib/auth/session";
+import { MembersTable } from "@/app/(web)/(customer)/workspace/(portal)/members/_components/members-table";
 
-export default function MembersPage() {
-  return (
-    <ContentLayout title="Members" description="Manage workspace access for your organization.">
-      <div className="rounded-lg border p-6">
-        <p className="text-sm text-muted-foreground">
-          Member management tools will appear here in a future update.
-        </p>
-      </div>
-    </ContentLayout>
-  );
+export default async function MembersPage() {
+  const { user } = await requireSession();
+  return <MembersTable currentUserId={user.id} />;
 }

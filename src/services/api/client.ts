@@ -95,3 +95,4 @@ export class ApiClient {
 
 export const apiClient = new ApiClient();
 export const adminApiClient = new ApiClient("/api/admin");
+export const customerApiClient = new ApiClient("/api/customer");

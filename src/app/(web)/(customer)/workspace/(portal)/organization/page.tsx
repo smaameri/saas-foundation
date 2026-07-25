@@ -1,17 +1,29 @@
+import { redirect } from "next/navigation";
+import { requireSession } from "@/lib/auth/session";
+import { findOrganizationById } from "@/repositories/customers/organizationRepository";
+import { serializeOrganization } from "@/serializers/organizationSerializer";
 import { ContentLayout } from "@/components/platform/content-layout";
+import { OrganizationSummary } from "@/app/(web)/(customer)/workspace/(portal)/organization/_components/organization-summary";
 
-export default function OrganizationPage() {
+export default async function OrganizationPage() {
+  const session = await requireSession();
+  const organizationId = session.session.activeOrganizationId;
+
+  if (!organizationId) {
+    redirect("/workspace/select-organization");
+  }
+
+  const organization = await findOrganizationById(organizationId);
+  if (!organization) {
+    redirect("/workspace/no-organization");
+  }
+
   return (
     <ContentLayout
       title="Organization"
       description="Review the organization details for this workspace."
     >
-      <div className="rounded-lg border p-6">
-        <p className="text-sm text-muted-foreground">
-          Organization profile information will surface here soon. For now, this page is a
-          placeholder.
-        </p>
-      </div>
+      <OrganizationSummary organization={serializeOrganization(organization)} />
     </ContentLayout>
   );
 }
