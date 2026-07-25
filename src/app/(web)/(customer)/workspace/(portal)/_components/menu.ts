@@ -1,7 +1,7 @@
 import { Building2, LayoutDashboard, Users } from "lucide-react";
 import type { SidebarData } from "@/components/layout/types";
 
-export const customerSidebarData: SidebarData = {
+export const menu: SidebarData = {
   navGroups: [
     {
       title: "General",

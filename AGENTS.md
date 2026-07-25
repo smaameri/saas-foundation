@@ -20,9 +20,9 @@ Read the relevant guide in `node_modules/next/dist/docs/` before writing any cod
 
 ## Project Structure
 
-### `src/api/` — Frontend API client layer
+### `src/services/api/` — Frontend API client layer
 
-Scoped by portal (e.g. `src/api/admin/`). Each domain has an `*Api.ts` file that exports a typed object calling `apiClient` (from `src/api/client.ts`). Types live in `src/api/types/`. The API client returns typed promises; all data flows through these service files — never call `fetch` directly from components.
+Scoped by portal or authentication context (e.g. `src/services/api/admin/` and `src/services/api/auth/`). Each domain has an `*Api.ts` file that exports a typed object calling `apiClient` from `src/services/api/client.ts`. Infer request types from colocated route schemas when possible and use shared application types for response DTOs. The API client returns typed promises; all frontend requests flow through these service files—never call `fetch` directly from components.
 
 ### `src/app/api/` — Route handlers (server)
 
@@ -42,9 +42,15 @@ Each domain has a `*Serializer.ts` file that maps Prisma entities to API DTOs (e
 
 Repository functions wrap Prisma queries. They accept loosely-typed params (e.g. `sort?: string`, `order?: SortOrder`) since validation happens upstream in the schema layer. Shared types (e.g. `SortOrder`) live in `src/repositories/types.ts`.
 
-### `src/validators/` — Complex server-side validation
+Keep admin and customer repositories separate, even when some queries currently look identical. This is an intentional portal trust boundary:
 
-For validation that requires database lookups (e.g. checking an invitation exists before cancelling), use a class extending `BaseValidator<T>`. Simple shape validation uses Zod schemas directly.
+- Customer portal code uses customer repositories. Customer queries are tenant-scoped and generally require an organization ID where organization-owned data is accessed.
+- Admin portal code uses admin repositories. Admin queries may operate platform-wide without implicit organization scoping.
+- Do not deduplicate functions across these repository namespaces merely because their present Prisma queries match. Preserve the boundary to prevent admin-level data access from leaking into customer code.
+
+### Server-side validation and pre-checks
+
+Use colocated Zod schemas directly for request shape validation. Keep database-backed existence checks, authorization, and business-rule pre-checks in the route handler by default. Extract them into a dedicated validator or service only when the logic is sufficiently complex or reused; extending `BaseValidator<T>` is available but not mandatory.
 
 ### Better Auth backend calls
 
@@ -56,7 +62,7 @@ Do not wrap a Better Auth server API call in `try/catch` merely to translate err
 
 ```
 Component → *Api.ts (apiClient) → route.ts (withAdmin → withErrorHandler)
-  → parseQuery/body.parse → Validator (if needed) → Repository → Serializer → Response
+  → parseQuery/body.parse → pre-checks → Repository → Serializer → Response
 ```
 
 ## Forms

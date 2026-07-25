@@ -9,7 +9,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export function CustomerTitle() {
+export function Title({ organizationName }: { organizationName: string }) {
   const { setOpenMobile } = useSidebar();
 
   return (
@@ -27,7 +27,7 @@ export function CustomerTitle() {
               className="grid flex-1 text-start text-sm leading-tight"
             >
               <span className="truncate font-bold">SaaS Foundation</span>
-              <span className="truncate text-xs">Customer Workspace</span>
+              <span className="truncate text-xs">{organizationName}</span>
             </Link>
             <ToggleSidebar />
           </div>

@@ -20,7 +20,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const user = serializeUser(session.user);
 
   return (
-    <AppShell header={<Header fixed />} sidebar={<Sidebar user={user} />}>
+    <AppShell header={<Header fixed shadowOnScroll={false} />} sidebar={<Sidebar user={user} />}>
       {children}
     </AppShell>
   );

@@ -26,7 +26,7 @@ export function AppTitle() {
               className="grid flex-1 text-start text-sm leading-tight"
             >
               <span className="truncate font-bold">SaaS Foundation</span>
-              <span className="truncate text-xs">Admin Dashboard</span>
+              <span className="truncate text-xs">Admin Portal</span>
             </Link>
             <ToggleSidebar />
           </div>

@@ -5,7 +5,9 @@ import { auth } from "@/lib/auth/auth";
 import { requireSession } from "@/lib/auth/session";
 import { listUserOrganizations } from "@/repositories/customers/organizationRepository";
 import { serializeUser } from "@/serializers/userSerializer";
-import { CustomerLayout } from "@/components/layout/customer/customer-layout";
+import { AppShell } from "@/components/layout/app-shell";
+import { Header } from "@/components/layout/header";
+import { Sidebar } from "@/app/(web)/(customer)/workspace/(portal)/_components/sidebar";
 
 export default async function CustomerPortalLayout({ children }: { children: ReactNode }) {
   const session = await requireSession();
@@ -17,32 +19,39 @@ export default async function CustomerPortalLayout({ children }: { children: Rea
   }
 
   const activeOrganizationId = session.session.activeOrganizationId;
-  const organizationIds = new Set(organizations.map((organization) => organization.id));
-  const hasValidActiveOrganization =
-    activeOrganizationId != null && organizationIds.has(activeOrganizationId);
+  let activeOrganization = organizations.find(
+    (organization) => organization.id === activeOrganizationId,
+  );
 
-  if (!hasValidActiveOrganization) {
+  if (!activeOrganization) {
     if (organizations.length === 1) {
-      const organization = organizations[0];
+      activeOrganization = organizations[0];
       await auth.api.setActiveOrganization({
         body: {
-          organizationId: organization.id,
-          organizationSlug: organization.slug ?? undefined,
+          organizationId: activeOrganization.id,
+          organizationSlug: activeOrganization.slug ?? undefined,
         },
         headers: requestHeaders,
       });
-      session.session.activeOrganizationId = organization.id;
     } else {
       redirect("/workspace/select-organization");
     }
   }
 
+  const user = serializeUser(session.user);
+
   return (
-    <CustomerLayout
-      user={serializeUser(session.user)}
-      activeOrganizationId={session.session.activeOrganizationId!}
+    <AppShell
+      header={<Header fixed shadowOnScroll={false} />}
+      sidebar={
+        <Sidebar
+          user={user}
+          activeOrganizationId={activeOrganization.id}
+          organizationName={activeOrganization.name}
+        />
+      }
     >
       {children}
-    </CustomerLayout>
+    </AppShell>
   );
 }
