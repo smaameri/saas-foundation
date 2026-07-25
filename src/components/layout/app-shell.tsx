@@ -5,17 +5,13 @@ import { cn } from "@/lib/utils";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { LayoutProvider } from "@/context/layout-provider";
 
-type BaseAuthenticatedLayoutProps = {
+type AppShellProps = {
   sidebar: React.ReactNode;
   header?: React.ReactNode;
   children?: React.ReactNode;
 };
 
-export function BaseAuthenticatedLayout({
-  header,
-  sidebar,
-  children,
-}: BaseAuthenticatedLayoutProps) {
+export function AppShell({ header, sidebar, children }: AppShellProps) {
   const defaultOpen = getCookie("sidebar_state") !== "false";
   return (
     <LayoutProvider>

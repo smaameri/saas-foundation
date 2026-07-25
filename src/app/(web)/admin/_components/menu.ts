@@ -1,7 +1,7 @@
-import { type SidebarData } from "../types";
 import { KeyRound, LayoutDashboard, UserCog, Users } from "lucide-react";
+import type { SidebarData } from "@/components/layout/types";
 
-export const sidebarData: SidebarData = {
+export const menu: SidebarData = {
   navGroups: [
     {
       title: "General",

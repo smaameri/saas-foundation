@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { BaseAuthenticatedLayout } from "@/components/layout/authenticated-layout";
+import { AppShell } from "@/components/layout/app-shell";
 import { CustomerSidebar } from "@/components/layout/customer/customer-sidebar";
 import { Header } from "@/components/layout/header";
 import { ProfileDropdown } from "@/components/profile-dropdown";
@@ -9,7 +9,7 @@ import type { User } from "@/types/user";
 
 export function CustomerLayout({ user, children }: { user: User; children?: ReactNode }) {
   return (
-    <BaseAuthenticatedLayout
+    <AppShell
       header={
         <Header fixed>
           <div className="ml-auto">
@@ -20,6 +20,6 @@ export function CustomerLayout({ user, children }: { user: User; children?: Reac
       sidebar={<CustomerSidebar user={user} />}
     >
       {children}
-    </BaseAuthenticatedLayout>
+    </AppShell>
   );
 }
