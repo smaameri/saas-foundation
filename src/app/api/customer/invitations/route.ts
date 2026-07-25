@@ -21,32 +21,35 @@ export const GET = withCustomer(async (request, _context, { organizationId }) =>
   return paginatedResponse(data.map(serializeInvitation), { page, perPage, total });
 });
 
-export const POST = withCustomer(async (request, _context, { organizationId, user }) => {
-  const { email, role } = createInvitationSchema.parse(await request.json());
+export const POST = withCustomer(
+  async (request, _context, { organizationId, user }) => {
+    const { email, role } = createInvitationSchema.parse(await request.json());
 
-  const existingMember = await findOrganizationMemberByEmail(organizationId, email);
-  if (existingMember) {
-    return conflictResponse("This person is already a member of the organization.");
-  }
+    const existingMember = await findOrganizationMemberByEmail(organizationId, email);
+    if (existingMember) {
+      return conflictResponse("This person is already a member of the organization.");
+    }
 
-  const existingInvitation = await findPendingInvitation(email, organizationId);
-  if (existingInvitation) {
-    return conflictResponse("This person already has a pending invitation.");
-  }
+    const existingInvitation = await findPendingInvitation(email, organizationId);
+    if (existingInvitation) {
+      return conflictResponse("This person already has a pending invitation.");
+    }
 
-  const organization = await findOrganizationById(organizationId);
-  if (!organization) {
-    throw new Error("The active organization could not be found.");
-  }
+    const organization = await findOrganizationById(organizationId);
+    if (!organization) {
+      throw new Error("The active organization could not be found.");
+    }
 
-  await sendOrganizationInvitation({
-    email,
-    role,
-    organizationId,
-    organizationName: organization.name,
-    inviterId: user.id,
-    inviterName: user.name,
-  });
+    await sendOrganizationInvitation({
+      email,
+      role,
+      organizationId,
+      organizationName: organization.name,
+      inviterId: user.id,
+      inviterName: user.name,
+    });
 
-  return createdResponse({ message: `Invitation sent to ${email}.` });
-});
+    return createdResponse({ message: `Invitation sent to ${email}.` });
+  },
+  { invitation: ["create"] },
+);

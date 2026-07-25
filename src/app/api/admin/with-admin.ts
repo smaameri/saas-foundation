@@ -1,5 +1,5 @@
 import type { Session, User } from "@generated/prisma/client";
-import { type Permissions } from "@/lib/auth/permissions";
+import { type AdminPermissions } from "@/lib/auth/admin-permissions";
 import { fetchSession } from "@/lib/auth/session";
 import { forbiddenResponse, unauthorizedResponse } from "@/app/api/response";
 import { withErrorHandler } from "@/app/api/with-error-handler";
@@ -18,7 +18,7 @@ type AdminHandler = (
   adminContext: AdminContext,
 ) => Promise<Response>;
 
-export function withAdmin(handler: AdminHandler, permissions?: Permissions) {
+export function withAdmin(handler: AdminHandler, permissions?: AdminPermissions) {
   return withErrorHandler(async (request, context) => {
     const result = await fetchSession();
 

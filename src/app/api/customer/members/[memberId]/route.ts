@@ -2,14 +2,17 @@ import { deleteMember, findOrganizationMember } from "@/repositories/customers/m
 import { withCustomer } from "@/app/api/customer/with-customer";
 import { forbiddenResponse, noContentResponse, notFoundResponse } from "@/app/api/response";
 
-export const DELETE = withCustomer(async (_request, { params }, { organizationId, user }) => {
-  const { memberId } = await params;
-  const member = await findOrganizationMember(organizationId, memberId);
-  if (!member) return notFoundResponse("Member not found.");
-  if (member.userId === user.id) {
-    return forbiddenResponse("You cannot remove your own membership.");
-  }
+export const DELETE = withCustomer(
+  async (_request, { params }, { organizationId, user }) => {
+    const { memberId } = await params;
+    const member = await findOrganizationMember(organizationId, memberId);
+    if (!member) return notFoundResponse("Member not found.");
+    if (member.userId === user.id) {
+      return forbiddenResponse("You cannot remove your own membership.");
+    }
 
-  await deleteMember(memberId);
-  return noContentResponse();
-});
+    await deleteMember(memberId);
+    return noContentResponse();
+  },
+  { member: ["delete"] },
+);

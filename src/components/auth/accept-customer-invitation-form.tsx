@@ -112,7 +112,7 @@ export function AcceptCustomerInvitationForm({
         />
 
         <PrimaryButton type="submit" isPending={isPending} pendingLabel="Joining...">
-          Join the customer portal
+          Join
         </PrimaryButton>
       </form>
     </Form>

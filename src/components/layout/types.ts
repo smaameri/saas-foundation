@@ -1,10 +1,10 @@
-import { type Permissions } from "@/lib/auth/permissions";
+import { type AdminPermissions } from "@/lib/auth/admin-permissions";
 
 type BaseNavItem = {
   title: string;
   badge?: string;
   icon?: React.ElementType;
-  permissions?: Permissions;
+  permissions?: AdminPermissions;
 };
 
 type NavLink = BaseNavItem & {

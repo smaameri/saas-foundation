@@ -1,5 +1,5 @@
+import { type AdminPermissions } from "@/lib/auth/admin-permissions";
 import { auth } from "@/lib/auth/auth";
-import { type Permissions } from "@/lib/auth/permissions";
 import { forbiddenResponse } from "@/app/api/response";
 
 type RouteHandler = (
@@ -7,7 +7,7 @@ type RouteHandler = (
   context: { params: Promise<Record<string, string>> },
 ) => Promise<Response>;
 
-export function withPermission(permissions: Permissions) {
+export function withPermission(permissions: AdminPermissions) {
   return (handler: RouteHandler): RouteHandler =>
     async (request, context) => {
       const session = await auth.api.getSession({ headers: request.headers });

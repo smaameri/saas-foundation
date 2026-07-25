@@ -1,7 +1,11 @@
 import { createAccessControl } from "better-auth/plugins/access";
-import { adminAc, defaultStatements, userAc } from "better-auth/plugins/admin/access";
+import {
+  adminAc as defaultAdminRole,
+  defaultStatements,
+  userAc as defaultUserRole,
+} from "better-auth/plugins/admin/access";
 
-export const ac = createAccessControl({
+export const adminAccessControl = createAccessControl({
   ...defaultStatements,
   apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"] as const,
   organization: ["create", "update", "delete"] as const,
@@ -9,22 +13,24 @@ export const ac = createAccessControl({
   invitation: ["create", "cancel"] as const,
 });
 
-export const adminRole = ac.newRole({
-  ...adminAc.statements,
+export const adminRole = adminAccessControl.newRole({
+  ...defaultAdminRole.statements,
   apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"],
   organization: ["create", "update", "delete"],
   member: ["create", "update", "delete"],
   invitation: ["create", "cancel"],
 });
 
-export const userRole = ac.newRole({
-  ...userAc.statements,
+export const userRole = adminAccessControl.newRole({
+  ...defaultUserRole.statements,
   apiKey: ["create", "read", "update", "delete"],
 });
 
 /**
  * @example { user: ["create"], apiKey: ["read", "read:any"],  }
  */
-export type Permissions = {
-  [K in keyof typeof ac.statements]?: (typeof ac.statements)[K][number][];
+export type AdminPermissions = {
+  [
+    K in keyof typeof adminAccessControl.statements
+  ]?: (typeof adminAccessControl.statements)[K][number][];
 };

@@ -3,7 +3,13 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin, organization } from "better-auth/plugins";
-import { ac, adminRole, userRole } from "@/lib/auth/permissions";
+import { adminAccessControl, adminRole, userRole } from "@/lib/auth/admin-permissions";
+import {
+  organizationAccessControl,
+  organizationAdminRole,
+  organizationMemberRole,
+  organizationOwnerRole,
+} from "@/lib/auth/organization-permissions";
 import { sendOrganizationInvitationEmail, sendSetPasswordInviteEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
@@ -42,10 +48,16 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     admin({
-      ac,
+      ac: adminAccessControl,
       roles: { admin: adminRole, user: userRole },
     }),
     organization({
+      ac: organizationAccessControl,
+      roles: {
+        owner: organizationOwnerRole,
+        admin: organizationAdminRole,
+        member: organizationMemberRole,
+      },
       async sendInvitationEmail(data) {
         await sendOrganizationInvitationEmail({
           email: data.email,
