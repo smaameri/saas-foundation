@@ -45,7 +45,7 @@ export function Sidebar({ user }: SidebarProps) {
     <AppSidebar
       header={<AppTitle />}
       navigationGroups={navGroups}
-      footer={<NavUser user={user} />}
+      footer={<NavUser user={user} portal="admin" accountUrl="/admin/account" />}
     />
   );
 }

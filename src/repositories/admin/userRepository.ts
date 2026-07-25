@@ -16,17 +16,6 @@ export type ListUsersParams = {
   filters?: UserFilters;
 };
 
-export async function updateUser(id: string, data: { firstName: string; lastName: string }) {
-  return prisma.user.update({
-    where: { id },
-    data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      name: `${data.firstName} ${data.lastName}`,
-    },
-  });
-}
-
 export async function listUsers({ options, filters }: ListUsersParams) {
   const { page, perPage, sort, order } = options;
   const where = combineFilters<Prisma.UserWhereInput>(

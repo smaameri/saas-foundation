@@ -4,9 +4,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { BadgeCheck, Building2, ChevronsUpDown, LogOut } from "lucide-react";
+import {
+  BadgeCheck,
+  Building2,
+  Check,
+  ChevronsUpDown,
+  LayoutDashboard,
+  LogOut,
+} from "lucide-react";
 import { toast } from "sonner";
-import { accountOrganizationsApi } from "@/services/api/admin/account/organizationsApi";
 import { authApi } from "@/services/api/auth/authApi";
 import {
   DropdownMenu,
@@ -31,22 +37,26 @@ import type { User } from "@/types/user";
 
 type NavUserProps = {
   user: User;
+  portal: "admin" | "customer";
+  accountUrl: string;
+  activeOrganizationId?: string | null;
 };
 
-export function NavUser({ user }: NavUserProps) {
+export function NavUser({ user, portal, accountUrl, activeOrganizationId }: NavUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { data: organizations } = useQuery({
-    queryKey: ["admin-account-organizations"],
-    queryFn: () => accountOrganizationsApi.listOrganizationsForCurrentUser(),
+    queryKey: ["session", "organizations"],
+    queryFn: () => authApi.listOrganizations(),
   });
   const organizationOptions = organizations ?? [];
   const hasOrganizations = organizationOptions.length > 0;
+  const hasAdminPortalAccess = user.role != null;
   const { mutate: setActiveOrganization, isPending: isSwitchingOrganization } = useMutation({
     mutationFn: (organizationId: string) => authApi.setActiveOrganization({ organizationId }),
     onSuccess: () => {
-      router.push("/workspace");
+      window.location.assign("/workspace");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to open the customer portal.");
@@ -103,33 +113,48 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/admin/account">
+                <Link href={accountUrl}>
                   <BadgeCheck />
                   Account
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            {hasOrganizations && (
+            {((portal === "customer" && hasAdminPortalAccess) || hasOrganizations) && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="gap-2">
-                      <Building2 className="size-4 text-muted-foreground" />
-                      Customer Portal
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                      {organizationOptions.map((organization) => (
-                        <DropdownMenuItem
-                          key={organization.id}
-                          disabled={isSwitchingOrganization}
-                          onSelect={() => setActiveOrganization(organization.id)}
-                        >
-                          {organization.name}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
+                  {portal === "customer" && hasAdminPortalAccess && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">
+                        <LayoutDashboard />
+                        Admin Portal
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {hasOrganizations && (
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="gap-2">
+                        <Building2 className="size-4 text-muted-foreground" />
+                        {portal === "admin" ? "Customer Portal" : "Organizations"}
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        {organizationOptions.map((organization) => (
+                          <DropdownMenuItem
+                            key={organization.id}
+                            disabled={
+                              isSwitchingOrganization || organization.id === activeOrganizationId
+                            }
+                            onSelect={() => setActiveOrganization(organization.id)}
+                          >
+                            {organization.name}
+                            {organization.id === activeOrganizationId && (
+                              <Check className="ms-auto" />
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                  )}
                 </DropdownMenuGroup>
               </>
             )}

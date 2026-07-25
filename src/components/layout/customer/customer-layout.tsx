@@ -2,12 +2,18 @@
 
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/layout/app-shell";
-import { CustomerSidebar } from "@/components/layout/customer/customer-sidebar";
 import { Header } from "@/components/layout/header";
 import { ProfileDropdown } from "@/components/profile-dropdown";
+import { Sidebar } from "@/app/(web)/(customer)/workspace/(portal)/_components/sidebar";
 import type { User } from "@/types/user";
 
-export function CustomerLayout({ user, children }: { user: User; children?: ReactNode }) {
+type CustomerLayoutProps = {
+  user: User;
+  activeOrganizationId: string;
+  children?: ReactNode;
+};
+
+export function CustomerLayout({ user, activeOrganizationId, children }: CustomerLayoutProps) {
   return (
     <AppShell
       header={
@@ -17,7 +23,7 @@ export function CustomerLayout({ user, children }: { user: User; children?: Reac
           </div>
         </Header>
       }
-      sidebar={<CustomerSidebar user={user} />}
+      sidebar={<Sidebar user={user} activeOrganizationId={activeOrganizationId} />}
     >
       {children}
     </AppShell>

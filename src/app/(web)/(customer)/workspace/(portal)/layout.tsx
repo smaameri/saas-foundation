@@ -37,5 +37,12 @@ export default async function CustomerPortalLayout({ children }: { children: Rea
     }
   }
 
-  return <CustomerLayout user={serializeUser(session.user)}>{children}</CustomerLayout>;
+  return (
+    <CustomerLayout
+      user={serializeUser(session.user)}
+      activeOrganizationId={session.session.activeOrganizationId!}
+    >
+      {children}
+    </CustomerLayout>
+  );
 }

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { accountApi } from "@/services/api/admin/accountApi";
+import { authApi } from "@/services/api/auth/authApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { type UpdateAccountBody, updateAccountSchema } from "@/app/api/admin/account/schema";
+import { type UpdateAccountBody, updateAccountSchema } from "@/app/api/auth/account/schema";
 import type { User } from "@/types/user";
 
 export function ProfileForm({ user }: { user: User }) {
@@ -30,7 +30,7 @@ export function ProfileForm({ user }: { user: User }) {
   });
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: (values: UpdateAccountBody) => accountApi.updateAccount(values),
+    mutationFn: (values: UpdateAccountBody) => authApi.updateAccount(values),
     onSuccess: () => toast.success("Profile updated."),
   });
 
