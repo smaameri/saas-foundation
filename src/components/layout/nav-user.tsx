@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { BadgeCheck, Building2, ChevronsUpDown, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { accountOrganizationsApi } from "@/services/api/admin/account/organizationsApi";
 import { authApi } from "@/services/api/auth/authApi";
 import {
@@ -42,6 +43,15 @@ export function NavUser({ user }: NavUserProps) {
   });
   const organizationOptions = organizations ?? [];
   const hasOrganizations = organizationOptions.length > 0;
+  const { mutate: setActiveOrganization, isPending: isSwitchingOrganization } = useMutation({
+    mutationFn: (organizationId: string) => authApi.setActiveOrganization({ organizationId }),
+    onSuccess: () => {
+      router.push("/workspace");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to open the customer portal.");
+    },
+  });
 
   const handleSignOut = () => {
     startTransition(async () => {
@@ -112,9 +122,8 @@ export function NavUser({ user }: NavUserProps) {
                       {organizationOptions.map((organization) => (
                         <DropdownMenuItem
                           key={organization.id}
-                          onSelect={(event) => {
-                            event.preventDefault();
-                          }}
+                          disabled={isSwitchingOrganization}
+                          onSelect={() => setActiveOrganization(organization.id)}
                         >
                           {organization.name}
                         </DropdownMenuItem>

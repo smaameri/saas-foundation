@@ -46,6 +46,12 @@ Repository functions wrap Prisma queries. They accept loosely-typed params (e.g.
 
 For validation that requires database lookups (e.g. checking an invitation exists before cancelling), use a class extending `BaseValidator<T>`. Simple shape validation uses Zod schemas directly.
 
+### Better Auth backend calls
+
+Before calling a Better Auth server API, perform all applicable checks in application code. Validate the request shape and pre-check records, ownership, membership, permissions, and other business constraints so only valid, authorized data is passed to Better Auth.
+
+Do not wrap a Better Auth server API call in `try/catch` merely to translate errors that the route should have prevented through these checks. After validation and authorization succeed, call Better Auth directly. If it still throws unexpectedly, allow the error to bubble to the global error handler and become a 500 response. Catch an error only when the application has a deliberate recovery path that cannot be handled through pre-checks.
+
 ### Request lifecycle
 
 ```
