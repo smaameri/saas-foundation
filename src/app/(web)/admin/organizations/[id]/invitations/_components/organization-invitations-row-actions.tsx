@@ -9,6 +9,7 @@ import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 import type { Invitation } from "@/types/invitation";
 
 export function OrganizationInvitationRowActions({
@@ -18,6 +19,7 @@ export function OrganizationInvitationRowActions({
   organizationId: string;
   row: Row<Invitation>;
 }) {
+  const { can } = useAdminPermissions();
   const invitation = row.original;
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -36,7 +38,7 @@ export function OrganizationInvitationRowActions({
     },
   });
 
-  if (invitation.status !== "pending") {
+  if (invitation.status !== "pending" || !can({ invitation: "cancel" })) {
     return null;
   }
 

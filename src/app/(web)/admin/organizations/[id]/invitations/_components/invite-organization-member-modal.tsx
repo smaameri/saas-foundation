@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createCustomerPortalInvitationSchema } from "@/app/api/admin/organizations/[id]/invitations/schema";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 
 type FormValues = z.infer<typeof createCustomerPortalInvitationSchema>;
 
@@ -45,6 +46,7 @@ const roleOptions = [
 ] as const;
 
 export function InviteOrganizationMemberModal({ organizationId }: { organizationId: string }) {
+  const { can } = useAdminPermissions();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -70,6 +72,10 @@ export function InviteOrganizationMemberModal({ organizationId }: { organization
       form.reset();
     }
   };
+
+  if (!can({ invitation: "create" })) {
+    return null;
+  }
 
   return (
     <>

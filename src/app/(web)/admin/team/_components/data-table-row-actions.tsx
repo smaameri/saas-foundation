@@ -5,6 +5,7 @@ import type { Row } from "@tanstack/react-table";
 import { ShieldCheck, UserMinus, UserSearch } from "lucide-react";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 import type { User } from "@/types/user";
 
 type DataTableRowActionsProps = {
@@ -13,7 +14,10 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow, currentUserId } = useMembers();
-  const canModify = currentUserId ? row.original.id !== currentUserId : true;
+  const { can } = useAdminPermissions();
+  const isCurrentUser = row.original.id === currentUserId;
+  const canChangeRole = can({ user: "set-role" });
+  const canRevokeAccess = !isCurrentUser && canChangeRole;
 
   return (
     <RowActionsDropdown>
@@ -26,18 +30,20 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         View details
         <UserSearch size={16} className="ml-auto" />
       </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem
-        onClick={() => {
-          setCurrentRow(row.original);
-          setOpen("change-role");
-        }}
-      >
-        Change role
-        <ShieldCheck size={16} className="ml-auto" />
-      </DropdownMenuItem>
-      {canModify && <DropdownMenuSeparator />}
-      {canModify && (
+      {(canChangeRole || canRevokeAccess) && <DropdownMenuSeparator />}
+      {canChangeRole && (
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(row.original);
+            setOpen("change-role");
+          }}
+        >
+          Change role
+          <ShieldCheck size={16} className="ml-auto" />
+        </DropdownMenuItem>
+      )}
+      {canChangeRole && canRevokeAccess && <DropdownMenuSeparator />}
+      {canRevokeAccess && (
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onClick={() => {

@@ -12,6 +12,7 @@ export const organizationAccessControl = createAccessControl({
 
 export const organizationOwnerRole = organizationAccessControl.newRole({
   ...defaultOwnerRole.statements,
+  organization: ["update"],
 });
 
 export const organizationAdminRole = organizationAccessControl.newRole({

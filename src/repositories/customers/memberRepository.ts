@@ -76,6 +76,10 @@ export async function findOrganizationMember(organizationId: string, memberId: s
   });
 }
 
+export async function countOrganizationOwners(organizationId: string) {
+  return prisma.member.count({ where: { organizationId, role: "owner" } });
+}
+
 export async function findOrganizationMemberByEmail(organizationId: string, email: string) {
   return prisma.member.findFirst({
     where: { organizationId, user: { is: { email: email.toLowerCase() } } },

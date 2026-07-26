@@ -34,6 +34,12 @@ export type AdminPermissions = {
   ]?: (typeof adminAccessControl.statements)[K][number][];
 };
 
+export type AdminPermissionCheck = {
+  [K in keyof typeof adminAccessControl.statements]?:
+    | (typeof adminAccessControl.statements)[K][number]
+    | (typeof adminAccessControl.statements)[K][number][];
+};
+
 const adminRoles = {
   admin: adminRole,
   user: userRole,

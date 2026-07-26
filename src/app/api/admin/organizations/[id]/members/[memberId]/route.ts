@@ -1,7 +1,17 @@
-import { deleteMember, findOrganizationMember } from "@/repositories/admin/memberRepository";
+import {
+  countOrganizationOwners,
+  deleteMember,
+  findOrganizationMember,
+} from "@/repositories/admin/memberRepository";
 import { serializeMember } from "@/serializers/memberSerializer";
 import { withAdmin } from "@/app/api/admin/with-admin";
-import { detailResponse, noContentResponse, notFoundResponse } from "@/app/api/response";
+import {
+  conflictResponse,
+  detailResponse,
+  forbiddenResponse,
+  noContentResponse,
+  notFoundResponse,
+} from "@/app/api/response";
 
 export const GET = withAdmin(async (_request, { params }) => {
   const { id: organizationId, memberId } = await params;
@@ -11,11 +21,17 @@ export const GET = withAdmin(async (_request, { params }) => {
 });
 
 export const DELETE = withAdmin(
-  async (_request, { params }) => {
+  async (_request, { params }, { user }) => {
     const { id: organizationId, memberId } = await params;
 
     const existing = await findOrganizationMember(organizationId, memberId);
     if (!existing) return notFoundResponse();
+    if (existing.userId === user.id) {
+      return forbiddenResponse("You cannot remove your own membership.");
+    }
+    if (existing.role === "owner" && (await countOrganizationOwners(organizationId)) <= 1) {
+      return conflictResponse("You cannot remove the organization's final owner.");
+    }
 
     await deleteMember(memberId);
     return noContentResponse();

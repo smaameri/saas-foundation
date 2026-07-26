@@ -5,12 +5,16 @@ import type { Row } from "@tanstack/react-table";
 import { Ban, RotateCcw, Trash2, UserSearch } from "lucide-react";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 import type { UserWithAccess } from "@/types/user";
 
 export function UserRowActions({ row }: { row: Row<UserWithAccess> }) {
   const { setOpen, setCurrentUser, currentUserId } = useUsers();
+  const { can } = useAdminPermissions();
   const user = row.original;
-  const canModify = user.id !== currentUserId;
+  const isCurrentUser = user.id === currentUserId;
+  const canBan = !isCurrentUser && can({ user: "ban" });
+  const canDelete = !isCurrentUser && can({ user: "delete" });
 
   const openDialog = (dialog: "view" | "ban" | "unban" | "delete") => {
     setCurrentUser(user);
@@ -23,8 +27,8 @@ export function UserRowActions({ row }: { row: Row<UserWithAccess> }) {
         View details
         <UserSearch size={16} className="ml-auto" />
       </DropdownMenuItem>
-      {canModify && <DropdownMenuSeparator />}
-      {canModify &&
+      {(canBan || canDelete) && <DropdownMenuSeparator />}
+      {canBan &&
         (user.banned ? (
           <DropdownMenuItem onClick={() => openDialog("unban")}>
             Unban user
@@ -39,8 +43,8 @@ export function UserRowActions({ row }: { row: Row<UserWithAccess> }) {
             <Ban size={16} className="ml-auto" />
           </DropdownMenuItem>
         ))}
-      {canModify && <DropdownMenuSeparator />}
-      {canModify && (
+      {canBan && canDelete && <DropdownMenuSeparator />}
+      {canDelete && (
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onClick={() => openDialog("delete")}

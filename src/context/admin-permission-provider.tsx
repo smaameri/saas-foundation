@@ -1,11 +1,11 @@
 "use client";
 
 import { type ReactNode, createContext, useCallback, useContext, useMemo } from "react";
-import type { AdminPermissions } from "@/lib/auth/admin-permissions";
+import type { AdminPermissionCheck, AdminPermissions } from "@/lib/auth/admin-permissions";
 
 type AdminPermissionContextValue = {
   permissions: AdminPermissions;
-  can: (requiredPermissions: AdminPermissions) => boolean;
+  can: (requiredPermissions: AdminPermissionCheck) => boolean;
 };
 
 const AdminPermissionContext = createContext<AdminPermissionContextValue | null>(null);
@@ -17,12 +17,13 @@ type AdminPermissionProviderProps = {
 
 export function AdminPermissionProvider({ children, permissions }: AdminPermissionProviderProps) {
   const can = useCallback(
-    (requiredPermissions: AdminPermissions) =>
+    (requiredPermissions: AdminPermissionCheck) =>
       Object.entries(requiredPermissions).every(([resource, actions]) => {
         const grantedActions = permissions[resource as keyof AdminPermissions] as
           readonly string[] | undefined;
+        const requiredActions = Array.isArray(actions) ? actions : [actions];
 
-        return actions.every((action) => grantedActions?.includes(action) ?? false);
+        return requiredActions.every((action) => grantedActions?.includes(action) ?? false);
       }),
     [permissions],
   );

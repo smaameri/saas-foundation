@@ -3,12 +3,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiKeysApi } from "@/services/api/admin/apiKeysApi";
 import { DeleteButton } from "@/components/buttons/delete-button";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 
 interface DeleteApiKeyButtonProps {
   id: string;
 }
 
 export function DeleteApiKeyButton({ id }: DeleteApiKeyButtonProps) {
+  const { can } = useAdminPermissions();
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
@@ -17,6 +19,10 @@ export function DeleteApiKeyButton({ id }: DeleteApiKeyButtonProps) {
       queryClient.invalidateQueries({ queryKey: ["admin", "api-keys"] });
     },
   });
+
+  if (!can({ apiKey: "delete:any" })) {
+    return null;
+  }
 
   return (
     <DeleteButton

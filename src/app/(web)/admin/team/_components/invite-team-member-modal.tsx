@@ -24,13 +24,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { platformRoleOptions } from "@/constants/roles";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 
 export function InviteTeamMemberModal() {
+  const { can } = useAdminPermissions();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
 
   const { form, mutate, isPending, isError, error } = useInviteTeamMemberForm(handleClose);
+
+  if (!can({ invitation: "create" })) {
+    return null;
+  }
 
   return (
     <>

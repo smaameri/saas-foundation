@@ -50,6 +50,10 @@ export async function findOrganizationMember(organizationId: string, memberId: s
   });
 }
 
+export async function countOrganizationOwners(organizationId: string) {
+  return prisma.member.count({ where: { organizationId, role: "owner" } });
+}
+
 export async function updateMemberRole(id: string, role: string) {
   return prisma.member.update({
     where: { id },

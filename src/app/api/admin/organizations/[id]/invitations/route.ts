@@ -34,26 +34,29 @@ export const GET = withAdmin(async (request, { params }) => {
   });
 });
 
-export const POST = withAdmin(async (request, { params }, { user }) => {
-  const { id: organizationId } = await params;
-  const { email, role } = createCustomerPortalInvitationSchema.parse(await request.json());
+export const POST = withAdmin(
+  async (request, { params }, { user }) => {
+    const { id: organizationId } = await params;
+    const { email, role } = createCustomerPortalInvitationSchema.parse(await request.json());
 
-  const organization = await findById(organizationId);
-  if (!organization) return notFoundResponse("Organization not found.");
+    const organization = await findById(organizationId);
+    if (!organization) return notFoundResponse("Organization not found.");
 
-  const existingInvitation = await findPendingInvitation(email, organizationId);
-  if (existingInvitation) {
-    return conflictResponse("This person already has a pending invitation.");
-  }
+    const existingInvitation = await findPendingInvitation(email, organizationId);
+    if (existingInvitation) {
+      return conflictResponse("This person already has a pending invitation.");
+    }
 
-  await sendCustomerPortalInvitation({
-    email,
-    role,
-    organizationId,
-    organizationName: organization.name,
-    inviterId: user.id,
-    inviterName: user.name,
-  });
+    await sendCustomerPortalInvitation({
+      email,
+      role,
+      organizationId,
+      organizationName: organization.name,
+      inviterId: user.id,
+      inviterName: user.name,
+    });
 
-  return createdResponse({ message: `Invitation sent to ${email}.` });
-});
+    return createdResponse({ message: `Invitation sent to ${email}.` });
+  },
+  { invitation: ["create"] },
+);

@@ -9,10 +9,12 @@ import { DeleteOrganizationDialog } from "@/app/(web)/admin/organizations/_compo
 import { OrganizationsProvider } from "@/app/(web)/admin/organizations/_components/organizations-provider";
 import { UpdateOrganizationDialog } from "@/app/(web)/admin/organizations/_components/update-organization-dialog";
 import { columns } from "@/app/(web)/admin/organizations/columns";
+import { useAdminPermissions } from "@/context/admin-permission-provider";
 
 const ORGANIZATIONS_QUERY_KEY = ["admin", "organizations"];
 
 export default function OrganizationsPage() {
+  const { can } = useAdminPermissions();
   const { table } = useConnectedTable({
     queryKey: ORGANIZATIONS_QUERY_KEY,
     queryFn: (params) => organizationsApi.listOrganizations(params),
@@ -24,7 +26,11 @@ export default function OrganizationsPage() {
       <ContentLayout
         title="Organizations"
         description="Manage organizations and members"
-        actions={<AddOrganizationModal queryKey={ORGANIZATIONS_QUERY_KEY} />}
+        actions={
+          can({ organization: "create" }) ? (
+            <AddOrganizationModal queryKey={ORGANIZATIONS_QUERY_KEY} />
+          ) : undefined
+        }
       >
         <DataTable table={table} showSearch searchPlaceholder="Search by name or slug..." />
       </ContentLayout>
