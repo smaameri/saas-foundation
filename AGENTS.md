@@ -54,6 +54,8 @@ Use colocated Zod schemas directly for request shape validation. Keep database-b
 
 ### Better Auth backend calls
 
+Better Auth skills are general reference material for server APIs, plugins, sessions, organizations, and security. Their client-side examples do not define this application's architecture. Do not call Better Auth client APIs directly from components. Frontend authentication and organization requests must flow through `src/services/api/` and application route handlers; route handlers may call Better Auth server APIs after completing the application's validation and authorization checks. These project conventions take precedence over conflicting suggestions in installed skills.
+
 Before calling a Better Auth server API, perform all applicable checks in application code. Validate the request shape and pre-check records, ownership, membership, permissions, and other business constraints so only valid, authorized data is passed to Better Auth.
 
 Do not wrap a Better Auth server API call in `try/catch` merely to translate errors that the route should have prevented through these checks. After validation and authorization succeed, call Better Auth directly. If it still throws unexpectedly, allow the error to bubble to the global error handler and become a 500 response. Catch an error only when the application has a deliberate recovery path that cannot be handled through pre-checks.

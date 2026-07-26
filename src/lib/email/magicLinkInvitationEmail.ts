@@ -1,4 +1,4 @@
-import { EMAIL_FROM, resend } from "@/lib/email/client";
+import { EMAIL_FROM, getResend } from "@/lib/email/client";
 
 export type MagicLinkInvitePayload = {
   email: string;
@@ -20,7 +20,7 @@ export async function sendMagicLinkInviteEmail({
   const inviterText = invitedBy ? `invited by ${invitedBy}` : "invited";
   const capitalizedRole = role.charAt(0).toUpperCase() + role.slice(1);
 
-  const { error } = await resend.emails.send({
+  const { error } = await getResend().emails.send({
     from: EMAIL_FROM,
     to: email,
     subject: "You've been invited to SaaS Foundation",

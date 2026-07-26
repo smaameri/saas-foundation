@@ -1,4 +1,4 @@
-import { EMAIL_FROM, resend } from "@/lib/email/client";
+import { EMAIL_FROM, getResend } from "@/lib/email/client";
 
 export type AdminPortalInvitationEmailPayload = {
   email: string;
@@ -17,7 +17,7 @@ export async function sendAdminPortalInvitationEmail({
 
   const inviterText = invitedBy ? `${invitedBy} has invited you` : "You've been invited";
 
-  const { error } = await resend.emails.send({
+  const { error } = await getResend().emails.send({
     from: EMAIL_FROM,
     to: email,
     subject: "You've been invited to join the SaaS Foundation Admin Portal",

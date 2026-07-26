@@ -1,4 +1,4 @@
-import { EMAIL_FROM, resend } from "@/lib/email/client";
+import { EMAIL_FROM, getResend } from "@/lib/email/client";
 
 export type SetPasswordInvitePayload = {
   email: string;
@@ -10,7 +10,7 @@ export async function sendSetPasswordInviteEmail({ email, url }: SetPasswordInvi
     throw new Error("Set password invite email requires both email and url.");
   }
 
-  const { error } = await resend.emails.send({
+  const { error } = await getResend().emails.send({
     from: EMAIL_FROM,
     to: email,
     subject: "You've been invited to SaaS Foundation",
