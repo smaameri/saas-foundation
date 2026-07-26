@@ -7,7 +7,7 @@ import {
 
 export const adminAccessControl = createAccessControl({
   ...defaultStatements,
-  apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"] as const,
+  apiKey: ["read:any", "delete:any"] as const,
   organization: ["create", "update", "delete"] as const,
   member: ["create", "update", "delete"] as const,
   invitation: ["create", "cancel"] as const,
@@ -15,7 +15,7 @@ export const adminAccessControl = createAccessControl({
 
 export const adminRole = adminAccessControl.newRole({
   ...defaultAdminRole.statements,
-  apiKey: ["create", "read", "read:any", "update", "delete", "delete:any"],
+  apiKey: ["read:any", "delete:any"],
   organization: ["create", "update", "delete"],
   member: ["create", "update", "delete"],
   invitation: ["create", "cancel"],
@@ -23,11 +23,10 @@ export const adminRole = adminAccessControl.newRole({
 
 export const userRole = adminAccessControl.newRole({
   ...defaultUserRole.statements,
-  apiKey: ["create", "read", "update", "delete"],
 });
 
 /**
- * @example { user: ["create"], apiKey: ["read", "read:any"]}
+ * @example { user: ["create"], apiKey: ["read:any"] }
  */
 export type AdminPermissions = {
   [
