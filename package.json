@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "admin:create": "tsx scripts/admin/seed-user.ts",
-    "seed": "tsx scripts/seed/index.ts",
+    "seed": "tsx scripts/demo-seed/index.ts",
     "prepare": "husky"
   },
   "dependencies": {
