@@ -2,12 +2,15 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { auth } from "@/lib/auth/auth";
+import { getOrganizationPermissions } from "@/lib/auth/organization-permissions";
 import { requireSession } from "@/lib/auth/session";
+import { findMemberByOrganizationAndUser } from "@/repositories/customers/memberRepository";
 import { listUserOrganizations } from "@/repositories/customers/organizationRepository";
 import { serializeUser } from "@/serializers/userSerializer";
 import { AppShell } from "@/components/layout/app-shell";
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/app/(web)/(customer)/workspace/(portal)/_components/sidebar";
+import { OrganizationPermissionProvider } from "@/context/organization-permission-provider";
 
 export default async function CustomerPortalLayout({ children }: { children: ReactNode }) {
   const session = await requireSession();
@@ -38,20 +41,28 @@ export default async function CustomerPortalLayout({ children }: { children: Rea
     }
   }
 
+  const membership = await findMemberByOrganizationAndUser(activeOrganization.id, session.user.id);
+  if (!membership) {
+    redirect("/workspace/select-organization");
+  }
+
   const user = serializeUser(session.user);
+  const permissions = getOrganizationPermissions(membership.role);
 
   return (
-    <AppShell
-      header={<Header fixed shadowOnScroll={false} />}
-      sidebar={
-        <Sidebar
-          user={user}
-          activeOrganizationId={activeOrganization.id}
-          organizationName={activeOrganization.name}
-        />
-      }
-    >
-      {children}
-    </AppShell>
+    <OrganizationPermissionProvider permissions={permissions}>
+      <AppShell
+        header={<Header fixed shadowOnScroll={false} />}
+        sidebar={
+          <Sidebar
+            user={user}
+            activeOrganizationId={activeOrganization.id}
+            organizationName={activeOrganization.name}
+          />
+        }
+      >
+        {children}
+      </AppShell>
+    </OrganizationPermissionProvider>
   );
 }

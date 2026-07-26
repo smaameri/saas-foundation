@@ -37,6 +37,7 @@ import {
   type CreateInvitationBody,
   createInvitationSchema,
 } from "@/app/api/customer/invitations/schema";
+import { useOrganizationPermissions } from "@/context/organization-permission-provider";
 
 const roleOptions = [
   { value: "member", label: "Member" },
@@ -45,6 +46,7 @@ const roleOptions = [
 ] as const;
 
 export function InviteMemberModal() {
+  const { can } = useOrganizationPermissions();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const form = useForm<CreateInvitationBody>({
@@ -65,6 +67,10 @@ export function InviteMemberModal() {
       handleOpenChange(false);
     },
   });
+
+  if (!can({ invitation: "create" })) {
+    return null;
+  }
 
   return (
     <>

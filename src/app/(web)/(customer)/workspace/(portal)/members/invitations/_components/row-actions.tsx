@@ -9,9 +9,11 @@ import { invitationsApi } from "@/services/api/customer/invitationsApi";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useOrganizationPermissions } from "@/context/organization-permission-provider";
 import type { Invitation } from "@/types/invitation";
 
 export function InvitationRowActions({ row }: { row: Row<Invitation> }) {
+  const { can } = useOrganizationPermissions();
   const invitation = row.original;
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -24,7 +26,7 @@ export function InvitationRowActions({ row }: { row: Row<Invitation> }) {
     onError: (error) => toast.error(error.message || "Failed to cancel invitation."),
   });
 
-  if (invitation.status !== "pending") return null;
+  if (invitation.status !== "pending" || !can({ invitation: "cancel" })) return null;
 
   return (
     <>
