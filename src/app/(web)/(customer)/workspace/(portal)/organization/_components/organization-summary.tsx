@@ -17,17 +17,15 @@ const details: Array<{ label: string; getValue: (organization: Organization) => 
 
 export function OrganizationSummary({ organization }: { organization: Organization }) {
   return (
-    <div className="rounded-lg border p-6">
-      <dl className="space-y-3">
-        {details.map(({ label, getValue }) => (
-          <div key={label} className="flex items-center gap-2">
-            <dt className="w-28 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {label}
-            </dt>
-            <dd className="text-sm text-foreground">{getValue(organization)}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
+    <dl className="space-y-3">
+      {details.map(({ label, getValue }) => (
+        <div key={label} className="flex items-center gap-2">
+          <dt className="w-28 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {label}
+          </dt>
+          <dd className="text-sm text-foreground">{getValue(organization)}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

@@ -20,7 +20,7 @@ export default async function CustomerHomePage() {
   return (
     <ContentLayout
       title={organization.name}
-      description={`You are viewing the workspace for ${organization.name}.`}
+      description="This is the place to manage your members, invitations, and organization details."
     >
       <CustomerDashboard />
     </ContentLayout>
