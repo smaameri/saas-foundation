@@ -15,6 +15,7 @@ export const authApi = {
   updateAccount: (body: UpdateAccountBody) => apiClient.patch<void>("/auth/account", body),
   signIn: (body: LoginBody) => apiClient.post<void>("/auth/login", body),
   signOut: () => apiClient.post<void>("/auth/logout", {}),
+  stopImpersonating: () => apiClient.post<void>("/auth/impersonation/stop", {}),
   changePassword: (body: ChangePasswordBody) => apiClient.post<void>("/auth/change-password", body),
   resetPassword: (body: ResetPasswordBody) => apiClient.post<void>("/auth/reset-password", body),
   getSession: () => apiClient.get<SessionResult>("/auth/session"),

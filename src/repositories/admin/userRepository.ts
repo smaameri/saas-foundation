@@ -42,6 +42,10 @@ export async function listUsers({ options, filters }: ListUsersParams) {
   return { data, total };
 }
 
+export async function findUserById(id: string) {
+  return prisma.user.findUnique({ where: { id } });
+}
+
 export async function deleteUser(id: string) {
   const { count } = await prisma.user.deleteMany({ where: { id } });
   return count > 0;

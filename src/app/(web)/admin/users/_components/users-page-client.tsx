@@ -3,6 +3,7 @@
 import { columns } from "../columns";
 import { BanUserDialog } from "./ban-user-dialog";
 import { DeleteUserDialog } from "./delete-user-dialog";
+import { ImpersonateUserDialog } from "./impersonate-user-dialog";
 import { UnbanUserDialog } from "./unban-user-dialog";
 import { UserDetailsSheet } from "./user-details-sheet";
 import { UsersProvider } from "./users-provider";
@@ -58,6 +59,7 @@ export function UsersPageClient({ currentUserId }: { currentUserId: string }) {
     <UsersProvider currentUserId={currentUserId}>
       <UsersTable />
       <UserDetailsSheet />
+      <ImpersonateUserDialog />
       <BanUserDialog />
       <UnbanUserDialog />
       <DeleteUserDialog />

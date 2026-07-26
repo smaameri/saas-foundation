@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import useDialogState from "@/hooks/use-dialog-state";
 import type { UserWithAccess } from "@/types/user";
 
-type UsersDialogType = "view" | "ban" | "unban" | "delete";
+type UsersDialogType = "view" | "impersonate" | "ban" | "unban" | "delete";
 
 type UsersContextType = {
   open: UsersDialogType | null;

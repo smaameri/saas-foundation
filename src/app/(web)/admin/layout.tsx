@@ -5,6 +5,7 @@ import { requireSession } from "@/lib/auth/session";
 import { serializeUser } from "@/serializers/userSerializer";
 import { AppShell } from "@/components/layout/app-shell";
 import { Header } from "@/components/layout/header";
+import { ImpersonationBanner } from "@/components/layout/impersonation-banner";
 import { Sidebar } from "@/app/(web)/admin/_components/sidebar";
 import { AdminPermissionProvider } from "@/context/admin-permission-provider";
 
@@ -24,6 +25,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <AdminPermissionProvider permissions={permissions}>
+      {session.session.impersonatedBy && <ImpersonationBanner userName={session.user.name} />}
       <AppShell header={<Header fixed shadowOnScroll={false} />} sidebar={<Sidebar user={user} />}>
         {children}
       </AppShell>

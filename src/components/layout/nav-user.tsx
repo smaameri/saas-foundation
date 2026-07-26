@@ -52,6 +52,8 @@ export function NavUser({ user, portal, accountUrl, activeOrganizationId }: NavU
   });
   const organizationOptions = organizations ?? [];
   const hasOrganizations = organizationOptions.length > 0;
+  const shouldShowOrganizations =
+    portal === "admin" ? hasOrganizations : organizationOptions.length > 1;
   const hasAdminPortalAccess = user.role != null;
   const { mutate: setActiveOrganization, isPending: isSwitchingOrganization } = useMutation({
     mutationFn: (organizationId: string) => authApi.setActiveOrganization({ organizationId }),
@@ -119,7 +121,7 @@ export function NavUser({ user, portal, accountUrl, activeOrganizationId }: NavU
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            {((portal === "customer" && hasAdminPortalAccess) || hasOrganizations) && (
+            {((portal === "customer" && hasAdminPortalAccess) || shouldShowOrganizations) && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -131,7 +133,7 @@ export function NavUser({ user, portal, accountUrl, activeOrganizationId }: NavU
                       </Link>
                     </DropdownMenuItem>
                   )}
-                  {hasOrganizations && (
+                  {shouldShowOrganizations && (
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger className="gap-2">
                         <Building2 className="size-4 text-muted-foreground" />

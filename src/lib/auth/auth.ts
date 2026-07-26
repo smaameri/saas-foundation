@@ -46,7 +46,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    nextCookies(),
     admin({
       ac: adminAccessControl,
       roles: { admin: adminRole, user: userRole },
@@ -73,6 +72,7 @@ export const auth = betterAuth({
         enabled: false,
       },
     }),
+    nextCookies(),
   ],
 });
 

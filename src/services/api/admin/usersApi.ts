@@ -22,4 +22,8 @@ export const usersApi = {
   unbanUser(id: string): Promise<User> {
     return adminApiClient.post<User>(`/users/${id}/unban`, {});
   },
+
+  impersonateUser(id: string): Promise<void> {
+    return adminApiClient.post<void>(`/users/${id}/impersonate`, {});
+  },
 };

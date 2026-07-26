@@ -2,7 +2,7 @@
 
 import { useUsers } from "./users-provider";
 import type { Row } from "@tanstack/react-table";
-import { Ban, RotateCcw, Trash2, UserSearch } from "lucide-react";
+import { Ban, RotateCcw, Trash2, UserRoundCog, UserSearch } from "lucide-react";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useAdminPermissions } from "@/context/admin-permission-provider";
@@ -13,10 +13,12 @@ export function UserRowActions({ row }: { row: Row<UserWithAccess> }) {
   const { can } = useAdminPermissions();
   const user = row.original;
   const isCurrentUser = user.id === currentUserId;
+  const isAdmin = user.role === "admin";
+  const canImpersonate = !isCurrentUser && !isAdmin && !user.banned && can({ user: "impersonate" });
   const canBan = !isCurrentUser && can({ user: "ban" });
   const canDelete = !isCurrentUser && can({ user: "delete" });
 
-  const openDialog = (dialog: "view" | "ban" | "unban" | "delete") => {
+  const openDialog = (dialog: "view" | "impersonate" | "ban" | "unban" | "delete") => {
     setCurrentUser(user);
     setOpen(dialog);
   };
@@ -27,6 +29,12 @@ export function UserRowActions({ row }: { row: Row<UserWithAccess> }) {
         View details
         <UserSearch size={16} className="ml-auto" />
       </DropdownMenuItem>
+      {canImpersonate && (
+        <DropdownMenuItem onClick={() => openDialog("impersonate")}>
+          Impersonate user
+          <UserRoundCog size={16} className="ml-auto" />
+        </DropdownMenuItem>
+      )}
       {(canBan || canDelete) && <DropdownMenuSeparator />}
       {canBan &&
         (user.banned ? (
