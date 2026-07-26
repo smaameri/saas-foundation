@@ -1,4 +1,5 @@
 import type { Prisma } from "@generated/prisma/client";
+import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 import type { BaseListOptions, SortOrder } from "@/repositories/types";
 import { combineFilters } from "@/repositories/utils";
@@ -47,6 +48,29 @@ export async function findOrganizationMember(organizationId: string, memberId: s
   return prisma.member.findFirst({
     where: { id: memberId, organizationId },
     include: { user: true },
+  });
+}
+
+export async function findOrganizationMemberByUserId(organizationId: string, userId: string) {
+  return prisma.member.findFirst({ where: { organizationId, userId } });
+}
+
+export async function createOrganizationMember({
+  userId,
+  organizationId,
+  role,
+}: {
+  userId: string;
+  organizationId: string;
+  role: string;
+}) {
+  return prisma.member.create({
+    data: {
+      id: randomUUID(),
+      userId,
+      organizationId,
+      role,
+    },
   });
 }
 

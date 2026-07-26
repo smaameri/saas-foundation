@@ -24,6 +24,10 @@ export async function findById(id: string) {
   });
 }
 
+export async function findBySlug(slug: string) {
+  return prisma.organization.findUnique({ where: { slug } });
+}
+
 type OrganizationSortField = "name" | "slug" | "createdAt";
 
 type OrganizationFilters = {

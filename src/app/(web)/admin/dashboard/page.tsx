@@ -35,7 +35,7 @@ const capabilities = [
   {
     title: "User management",
     description:
-      "Review users across the platform, inspect their access, and manage account-level restrictions.",
+      "Review users across the platform, inspect their access, impersonate accounts for support, and manage account-level restrictions.",
     href: "/admin/users",
     icon: Users,
   },
