@@ -27,10 +27,29 @@ export const userRole = adminAccessControl.newRole({
 });
 
 /**
- * @example { user: ["create"], apiKey: ["read", "read:any"],  }
+ * @example { user: ["create"], apiKey: ["read", "read:any"]}
  */
 export type AdminPermissions = {
   [
     K in keyof typeof adminAccessControl.statements
   ]?: (typeof adminAccessControl.statements)[K][number][];
 };
+
+const adminRoles = {
+  admin: adminRole,
+  user: userRole,
+} as const;
+
+export function getAdminPermissions(role: string | null): AdminPermissions {
+  if (role === null) {
+    return {};
+  }
+
+  const assignedRole = adminRoles[role as keyof typeof adminRoles];
+
+  if (!assignedRole) {
+    throw new Error(`Unknown admin role: ${role}`);
+  }
+
+  return assignedRole.statements as unknown as AdminPermissions;
+}
