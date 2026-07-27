@@ -2,8 +2,8 @@
 CREATE TABLE "user" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "first_name" TEXT,
-    "last_name" TEXT,
+    "first_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "email_verified" BOOLEAN NOT NULL DEFAULT false,
     "image" TEXT,
@@ -71,7 +71,6 @@ CREATE TABLE "organization" (
     "slug" TEXT,
     "logo" TEXT,
     "metadata" TEXT,
-    "portals" TEXT[],
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -94,13 +93,42 @@ CREATE TABLE "invitation" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "inviter_id" TEXT NOT NULL,
-    "organization_id" TEXT NOT NULL,
-    "role" TEXT,
+    "organization_id" TEXT,
+    "role" TEXT NOT NULL,
+    "portal" TEXT NOT NULL,
     "status" TEXT NOT NULL,
     "expires_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "invitation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "apikey" (
+    "id" TEXT NOT NULL,
+    "config_id" TEXT NOT NULL DEFAULT 'default',
+    "name" TEXT,
+    "start" TEXT,
+    "prefix" TEXT,
+    "key" TEXT NOT NULL,
+    "reference_id" TEXT NOT NULL,
+    "refill_interval" INTEGER,
+    "refill_amount" INTEGER,
+    "last_refill_at" TIMESTAMP(3),
+    "enabled" BOOLEAN,
+    "rate_limit_enabled" BOOLEAN,
+    "rate_limit_time_window" INTEGER,
+    "rate_limit_max" INTEGER,
+    "request_count" INTEGER,
+    "remaining" INTEGER,
+    "last_request" TIMESTAMP(3),
+    "expires_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "permissions" TEXT,
+    "metadata" TEXT,
+
+    CONSTRAINT "apikey_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -130,6 +158,15 @@ CREATE INDEX "member_organization_id_idx" ON "member"("organization_id");
 -- CreateIndex
 CREATE INDEX "invitation_organization_id_idx" ON "invitation"("organization_id");
 
+-- CreateIndex
+CREATE INDEX "apikey_reference_id_idx" ON "apikey"("reference_id");
+
+-- CreateIndex
+CREATE INDEX "apikey_config_id_idx" ON "apikey"("config_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "apikey_key_key" ON "apikey"("key");
+
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -147,3 +184,6 @@ ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviter_id_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "invitation" ADD CONSTRAINT "invitation_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "apikey" ADD CONSTRAINT "apikey_reference_id_fkey" FOREIGN KEY ("reference_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
