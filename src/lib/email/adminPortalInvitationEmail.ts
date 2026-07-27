@@ -1,4 +1,5 @@
 import { EMAIL_FROM, getResend } from "@/lib/email/client";
+import { appConfig } from "@/config/app";
 
 export type AdminPortalInvitationEmailPayload = {
   email: string;
@@ -20,9 +21,9 @@ export async function sendAdminPortalInvitationEmail({
   const { error } = await getResend().emails.send({
     from: EMAIL_FROM,
     to: email,
-    subject: "You've been invited to join the SaaS Foundation Admin Portal",
+    subject: `You've been invited to join the ${appConfig.name} Admin Portal`,
     html: `
-      <p>${inviterText} to join the SaaS Foundation Admin Portal.</p>
+      <p>${inviterText} to join the ${appConfig.name} Admin Portal.</p>
       <p>Click the link below to accept your invitation.</p>
       <p><a href="${inviteLink}">Accept invitation</a></p>
       <p>If you weren't expecting this email, you can safely ignore it.</p>

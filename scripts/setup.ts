@@ -107,7 +107,7 @@ async function waitForPostgres() {
         "-U",
         "app",
         "-d",
-        "saas_foundation_dev",
+        "app_dev",
       ])
     ) {
       log.success("PostgreSQL is ready.");
@@ -121,7 +121,7 @@ async function waitForPostgres() {
 }
 
 async function main() {
-  intro("Set up SaaS Foundation");
+  intro("Set up your application");
 
   note("Checking Docker and preparing local configuration.", "Environment");
   checkDocker();

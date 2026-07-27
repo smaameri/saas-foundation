@@ -5,6 +5,7 @@ import { findAdminInvitationById } from "@/repositories/auth/invitationRepositor
 import { findUserByEmail } from "@/repositories/auth/userRepository";
 import { AcceptAdminInvitationForm } from "@/components/auth/accept-admin-invitation-form";
 import { AcceptExistingAdminInvitation } from "@/components/auth/accept-existing-admin-invitation";
+import { appConfig } from "@/config/app";
 
 export default async function AcceptAdminInvitationPage({
   params,
@@ -101,9 +102,9 @@ export default async function AcceptAdminInvitationPage({
     <div className="flex min-h-screen">
       <div className="relative hidden w-1/2 flex-col bg-zinc-900 p-10 md:flex">
         <div className="text-white">
-          <p className="mt-1 text-xl font-semibold">SaaS Foundation</p>
+          <p className="mt-1 text-xl font-semibold">{appConfig.name}</p>
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-            {new Date().getFullYear()} Inc.
+            {new Date().getFullYear()} {appConfig.name}
           </p>
         </div>
       </div>

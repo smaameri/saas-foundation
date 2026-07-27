@@ -1,4 +1,5 @@
 import { EMAIL_FROM, getResend } from "@/lib/email/client";
+import { appConfig } from "@/config/app";
 
 export type MagicLinkInvitePayload = {
   email: string;
@@ -23,9 +24,9 @@ export async function sendMagicLinkInviteEmail({
   const { error } = await getResend().emails.send({
     from: EMAIL_FROM,
     to: email,
-    subject: "You've been invited to SaaS Foundation",
+    subject: `You've been invited to ${appConfig.name}`,
     html: `
-      <p>You've been ${inviterText} to join SaaS Foundation as <strong>${capitalizedRole}</strong>.</p>
+      <p>You've been ${inviterText} to join ${appConfig.name} as <strong>${capitalizedRole}</strong>.</p>
       <p>Click the link below to accept your invitation and set up your account. This link is single-use and will expire shortly.</p>
       <p><a href="${link}">Accept invitation</a></p>
       <p>If you weren't expecting this email, you can safely ignore it.</p>

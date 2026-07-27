@@ -8,6 +8,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { appConfig } from "@/config/app";
 
 export function Title({ organizationName }: { organizationName: string }) {
   const { setOpenMobile } = useSidebar();
@@ -26,7 +27,7 @@ export function Title({ organizationName }: { organizationName: string }) {
               onClick={() => setOpenMobile(false)}
               className="grid flex-1 text-start text-sm leading-tight"
             >
-              <span className="truncate font-bold">SaaS Foundation</span>
+              <span className="truncate font-bold">{appConfig.name}</span>
               <span className="truncate text-xs">{organizationName}</span>
             </Link>
             <ToggleSidebar />

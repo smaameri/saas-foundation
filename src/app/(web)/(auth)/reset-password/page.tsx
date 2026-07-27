@@ -1,4 +1,5 @@
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
+import { appConfig } from "@/config/app";
 
 export default async function ResetPasswordPage({
   searchParams,
@@ -11,9 +12,9 @@ export default async function ResetPasswordPage({
     <div className="flex min-h-screen">
       <div className="relative hidden w-1/2 flex-col bg-zinc-900 p-10 md:flex">
         <div className="text-white">
-          <p className="mt-1 text-xl font-semibold">SaaS Foundation</p>
+          <p className="mt-1 text-xl font-semibold">{appConfig.name}</p>
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-            {new Date().getFullYear()} Inc.
+            {new Date().getFullYear()} {appConfig.name}
           </p>
         </div>
       </div>
