@@ -2,6 +2,12 @@
 
 A Next.js starter for building B2B SaaS products, with auth, a database, forms, and a component library all wired up out of the box.
 
+> [!NOTE]
+> **Pre-release:** SaaS Foundation is still in pre-release mode, and more comprehensive setup documentation is coming soon.
+>
+> That said, the Getting Started commands below should do the job, do feel free to try it out in the meantime, and
+> If you get stuck or have any questions, shoot me an email on [ssmaameri@gmail.com](mailto:ssmaameri@gmail.com).
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/)
