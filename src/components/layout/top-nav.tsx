@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,11 +30,15 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="start">
           {links.map(({ title, href, isActive, disabled }) => (
-            <DropdownMenuItem key={`${title}-${href}`} asChild>
+            <DropdownMenuItem key={`${title}-${href}`} asChild disabled={disabled}>
               <Link
-                to={href}
+                href={href}
                 className={!isActive ? "text-muted-foreground" : ""}
-                disabled={disabled}
+                aria-disabled={disabled}
+                tabIndex={disabled ? -1 : undefined}
+                onClick={(event) => {
+                  if (disabled) event.preventDefault();
+                }}
               >
                 {title}
               </Link>
@@ -50,8 +54,12 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         {links.map(({ title, href, isActive, disabled }) => (
           <Link
             key={`${title}-${href}`}
-            to={href}
-            disabled={disabled}
+            href={href}
+            aria-disabled={disabled}
+            tabIndex={disabled ? -1 : undefined}
+            onClick={(event) => {
+              if (disabled) event.preventDefault();
+            }}
             className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? "" : "text-muted-foreground"}`}
           >
             {title}
