@@ -12,8 +12,7 @@
     "admin:create": "tsx scripts/admin/seed-user.ts",
     "seed": "tsx scripts/demo-seed/index.ts",
     "prepare": "husky",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma migrate deploy && next build"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@better-auth/api-key": "^1.6.23",
