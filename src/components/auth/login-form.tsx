@@ -18,12 +18,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { type LoginBody, loginSchema } from "@/app/api/auth/login/schema";
 
-export function LoginForm({ callbackUrl = "/admin/dashboard" }: { callbackUrl?: string }) {
+type LoginFormProps = {
+  callbackUrl?: string;
+  initialEmail?: string;
+};
+
+export function LoginForm({ callbackUrl = "/admin/dashboard", initialEmail = "" }: LoginFormProps) {
   const router = useRouter();
 
   const form = useForm<LoginBody>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: initialEmail, password: "" },
   });
 
   const { mutate, isPending, isError, error } = useMutation({

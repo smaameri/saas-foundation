@@ -12,10 +12,14 @@ function safeCallbackUrl(callbackUrl?: string) {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{
+    callbackUrl?: string | string[];
+    email?: string | string[];
+  }>;
 }) {
-  const { callbackUrl } = await searchParams;
-  const redirectTo = safeCallbackUrl(callbackUrl);
+  const { callbackUrl, email } = await searchParams;
+  const redirectTo = safeCallbackUrl(typeof callbackUrl === "string" ? callbackUrl : undefined);
+  const initialEmail = typeof email === "string" ? email : email?.[0];
   const session = await fetchSession();
 
   if (session?.session) {
@@ -34,7 +38,7 @@ export default async function LoginPage({
         <div className="w-full max-w-sm">
           <h1 className="mb-1 text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="mb-8 text-sm text-muted-foreground">Sign in to access your dashboard.</p>
-          <LoginForm callbackUrl={redirectTo} />
+          <LoginForm callbackUrl={redirectTo} initialEmail={initialEmail} />
         </div>
       </div>
     </div>
