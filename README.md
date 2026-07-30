@@ -1,58 +1,69 @@
-# SaaS Foundation
+<p align="center">
+  <a href="https://saasfoundation.dev">
+    <img src=".github/assets/saas-foundation-mark.svg" width="104" alt="SaaS Foundation">
+  </a>
+</p>
 
-A Next.js starter for building B2B SaaS products, with auth, a database, forms, and a component library all wired up out of the box.
+<h1 align="center">SaaS Foundation</h1>
 
-> [!NOTE]
-> **Pre-release:** SaaS Foundation is still in pre-release mode, and more comprehensive setup documentation is coming soon.
->
-> That said, the Getting Started commands below should do the job, do feel free to try it out in the meantime, and
-> If you get stuck or have any questions, shoot me an email on [ssmaameri@gmail.com](mailto:ssmaameri@gmail.com).
+<p align="center">
+  A B2B SaaS multi-tenant starter kit for TypeScript based on Next.js, Prisma and Better Auth.
+</p>
+
+<p align="center">
+  <a href="https://saasfoundation.dev">Website</a> ·
+  <a href="https://demo.saasfoundation.dev">Live Demo</a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+</p>
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/)
 - [pnpm](https://pnpm.io/installation)
-- [Docker](https://docs.docker.com/get-docker/), with Docker running
+- [Docker](https://docs.docker.com/get-docker/)
 
 ## Getting Started
 
-1. Install dependencies:
+1. Clone the repo:
+
+   ```bash
+   git clone git@github.com:smaameri/saas-foundation.git
+   cd saas-foundation
+   ```
+
+2. Install dependencies:
 
    ```bash
    pnpm install
    ```
 
-2. Set up the environment, auth secret, database, admin account, and optional demo data:
+3. Set up the environment, auth secret, database, admin account, and optional demo data:
 
    ```bash
    pnpm app:setup
    ```
 
-3. Start the development server:
+4. Start the development server:
 
    ```bash
    pnpm dev
    ```
 
-### Manual Setup
+## Next Steps
 
-To run each setup step yourself:
+To send invitation and account emails, configure the following values in `.env`:
 
-```bash
-cp .env.example .env
-docker compose up -d
-npx prisma migrate dev
-pnpm admin:create
-pnpm seed
-pnpm dev
-```
+1. Create an account with [Resend](https://resend.com), generate an API key, and add it to your environment:
 
-## Tech Stack
+   ```dotenv
+   RESEND_API_KEY=re_...
+   ```
 
-- **[Next.js](https://nextjs.org)** — React framework for the web app
-- **[Prisma](https://www.prisma.io)** — ORM for database access and migrations
-- **[PostgreSQL](https://www.postgresql.org)** — Database, run locally via Docker
-- **[Better Auth](https://better-auth.com)** — Authentication library, also generates the user/session Prisma schema
-- **[ShadCN](https://ui.shadcn.com)** — Component and design library
-- **[Zod](https://zod.dev)** — Schema validation
-- **[React Hook Form](https://react-hook-form.com)** — Form state management
+2. Verify your sending domain in Resend, then set the address you want emails to come from:
+
+   ```dotenv
+   EMAIL_FROM="notifications@your-domain.com"
+   ```
