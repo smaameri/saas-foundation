@@ -1,4 +1,5 @@
 import { EMAIL_FROM, getResend } from "@/lib/email/client";
+import { appConfig } from "@/config/app";
 
 export type OrganizationInvitationPayload = {
   email: string;
@@ -22,9 +23,9 @@ export async function sendOrganizationInvitationEmail({
   const { error } = await getResend().emails.send({
     from: EMAIL_FROM,
     to: email,
-    subject: `You've been invited to join ${organizationName}`,
+    subject: `You've been invited to join ${organizationName} on ${appConfig.name}`,
     html: `
-      <p>${inviterText} to join <strong>${organizationName}</strong>.</p>
+      <p>${inviterText} to join <strong>${organizationName}</strong> on the ${appConfig.name} platform.</p>
       <p>Click the link below to accept your invitation.</p>
       <p><a href="${inviteLink}">Accept invitation</a></p>
       <p>If you weren't expecting this email, you can safely ignore it.</p>

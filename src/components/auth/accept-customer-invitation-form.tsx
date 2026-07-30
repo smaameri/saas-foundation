@@ -43,7 +43,7 @@ export function AcceptCustomerInvitationForm({
     mutationFn: (values: AcceptCustomerInvitationFormValues) =>
       authApi.acceptCustomerInvitation({ invitationId, ...values }),
     onSuccess: () => {
-      router.push("/customer");
+      router.push("/workspace");
     },
   });
 
