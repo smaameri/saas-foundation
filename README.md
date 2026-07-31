@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://saasfoundation.dev">Website</a> ·
-  <a href="https://demo.saasfoundation.dev">Live Demo</a>
+  <a href="#live-demo">Live Demo</a>
 </p>
 
 <p align="center">
@@ -67,3 +67,10 @@ To send invitation and account emails, configure the following values in `.env`:
    ```dotenv
    EMAIL_FROM="notifications@your-domain.com"
    ```
+
+## Live Demo
+
+Try the [live demo](https://demo.saasfoundation.dev/login?email=admin%40example.test) with these credentials:
+
+- Username: `admin@example.test`
+- Password: `Demo1234!`
