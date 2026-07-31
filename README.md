@@ -12,6 +12,7 @@
 
 <p align="center">
   <a href="https://saasfoundation.dev">Website</a> ·
+  <a href="https://docs.saasfoundation.dev">Docs</a> ·
   <a href="#live-demo">Live Demo</a>
 </p>
 
@@ -57,6 +58,8 @@ Try the [live demo](https://demo.saasfoundation.dev/login?email=admin%40example.
    ```bash
    pnpm dev
    ```
+
+For more detail, follow the [Quickstart guide](https://docs.saasfoundation.dev/quickstart).
 
 ## Next Steps
 
