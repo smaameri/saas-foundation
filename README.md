@@ -19,6 +19,12 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 
+## Live Demo
+
+Try the [live demo](https://demo.saasfoundation.dev/login?email=admin%40example.test) with these credentials:
+
+- Password: `Demo1234!`
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/)
@@ -67,10 +73,3 @@ To send invitation and account emails, configure the following values in `.env`:
    ```dotenv
    EMAIL_FROM="notifications@your-domain.com"
    ```
-
-## Live Demo
-
-Try the [live demo](https://demo.saasfoundation.dev/login?email=admin%40example.test) with these credentials:
-
-- Username: `admin@example.test`
-- Password: `Demo1234!`
