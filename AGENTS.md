@@ -13,6 +13,10 @@ Read the relevant guide in `node_modules/next/dist/docs/` before writing any cod
 - React Hook Form handles form state; Zod schemas validate inputs on both client and server.
 - ShadCN supplies reusable UI primitives.
 
+## Verification
+
+- Do not run production builds (for example, `pnpm build` or `next build`). The developer will handle builds separately.
+
 ## Conventions
 
 - Use the `@/…` path alias for imports (supports files in `src` and project-level scripts). The alias resolves to the `src` directory via `baseUrl`/`paths` in `tsconfig.json`—prefer it over deep relative paths.
