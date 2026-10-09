@@ -121,6 +121,7 @@ model Invitation {
   role           String
   portal         String        @map("portal")
   status         String
+  emailStatus    String?       @map("email_status")
   expiresAt      DateTime      @map("expires_at")
   createdAt      DateTime      @default(now()) @map("created_at")
   inviter        User          @relation(fields: [inviterId], references: [id], onDelete: Cascade)

@@ -40,7 +40,7 @@ export const POST = withCustomer(
       throw new Error("The active organization could not be found.");
     }
 
-    await sendOrganizationInvitation({
+    const invitation = await sendOrganizationInvitation({
       email,
       role,
       organizationId,
@@ -49,7 +49,7 @@ export const POST = withCustomer(
       inviterName: user.name,
     });
 
-    return createdResponse({ message: `Invitation sent to ${email}.` });
+    return createdResponse(serializeInvitation(invitation));
   },
   { invitation: ["create"] },
 );

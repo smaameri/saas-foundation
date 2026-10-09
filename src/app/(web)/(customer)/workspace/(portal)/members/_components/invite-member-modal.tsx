@@ -9,6 +9,10 @@ import { toast } from "sonner";
 import { invitationsApi } from "@/services/api/customer/invitationsApi";
 import { PrimaryButton } from "@/components/buttons/primary-button";
 import { MutationError } from "@/components/feedback/mutation-error";
+import {
+  InvitationLink,
+  getInvitationCreatedDescription,
+} from "@/components/invitations/invitation-link";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,6 +42,7 @@ import {
   createInvitationSchema,
 } from "@/app/api/customer/invitations/schema";
 import { useOrganizationPermissions } from "@/context/organization-permission-provider";
+import type { Invitation } from "@/types/invitation";
 
 const roleOptions = [
   { value: "member", label: "Member" },
@@ -48,6 +53,7 @@ const roleOptions = [
 export function InviteMemberModal() {
   const { can } = useOrganizationPermissions();
   const [open, setOpen] = useState(false);
+  const [invitation, setInvitation] = useState<Invitation | null>(null);
   const queryClient = useQueryClient();
   const form = useForm<CreateInvitationBody>({
     resolver: zodResolver(createInvitationSchema),
@@ -56,15 +62,16 @@ export function InviteMemberModal() {
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
+    if (!nextOpen) setInvitation(null);
     if (!nextOpen) form.reset();
   };
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: CreateInvitationBody) => invitationsApi.create(values),
-    onSuccess: () => {
+    onSuccess: (createdInvitation) => {
+      setInvitation(createdInvitation);
       void queryClient.invalidateQueries({ queryKey: ["customer", "invitations"] });
-      toast.success("Invitation sent.");
-      handleOpenChange(false);
+      toast.success("Invitation created.");
     },
   });
 
@@ -81,60 +88,68 @@ export function InviteMemberModal() {
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Invite a member</DialogTitle>
-            <DialogDescription>Send an invitation to join this organization.</DialogDescription>
+            <DialogTitle>{invitation ? "Invitation created" : "Invite a member"}</DialogTitle>
+            <DialogDescription>
+              {invitation
+                ? getInvitationCreatedDescription(invitation)
+                : "Send an invitation to join this organization."}
+            </DialogDescription>
           </DialogHeader>
-          <Form {...form}>
-            <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="jane@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Organization role</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+          {invitation ? (
+            <InvitationLink invitation={invitation} />
+          ) : (
+            <Form {...form}>
+              <form className="space-y-5" onSubmit={form.handleSubmit((values) => mutate(values))}>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
+                        <Input type="email" placeholder="jane@example.com" {...field} />
                       </FormControl>
-                      <SelectContent>
-                        {roleOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <MutationError
-                isError={isError}
-                error={error}
-                fallback="Failed to send the invitation."
-              />
-              <div className="flex justify-end">
-                <PrimaryButton type="submit" isPending={isPending} pendingLabel="Sending...">
-                  Send invitation
-                </PrimaryButton>
-              </div>
-            </form>
-          </Form>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Organization role</FormLabel>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {roleOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <MutationError
+                  isError={isError}
+                  error={error}
+                  fallback="Failed to send the invitation."
+                />
+                <div className="flex justify-end">
+                  <PrimaryButton type="submit" isPending={isPending} pendingLabel="Sending...">
+                    Send invitation
+                  </PrimaryButton>
+                </div>
+              </form>
+            </Form>
+          )}
         </DialogContent>
       </Dialog>
     </>

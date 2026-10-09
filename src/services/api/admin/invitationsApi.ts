@@ -18,7 +18,7 @@ export const invitationsApi = {
   },
 
   sendInvitation(organizationId: string, params: CreateCustomerPortalInvitationBody) {
-    return adminApiClient.post(`/organizations/${organizationId}/invitations`, params);
+    return adminApiClient.post<Invitation>(`/organizations/${organizationId}/invitations`, params);
   },
 
   cancelOrganizationInvitation(organizationId: string, invitationId: string) {

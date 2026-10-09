@@ -94,3 +94,14 @@ To send invitation and account emails, configure the following values in `.env`:
    ```dotenv
    EMAIL_FROM="notifications@your-domain.com"
    ```
+
+To share admin and organization invitation links without sending email, set:
+
+```dotenv
+INVITATION_EMAIL_ENABLED=false
+```
+
+These invitations record an email status of `not_sent`. Set this to `true` (the
+default when unset) to attempt sending when `RESEND_API_KEY` is configured.
+Password reset emails are unaffected. Restart the development server after
+changing environment variables.

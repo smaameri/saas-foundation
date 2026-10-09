@@ -7,10 +7,11 @@ import { toast } from "sonner";
 import type { z } from "zod";
 import { teamApi } from "@/services/api/admin/teamApi";
 import { createAdminPortalInvitationSchema } from "@/app/api/admin/team/invitations/schema";
+import type { Invitation } from "@/types/invitation";
 
 export type InviteTeamMemberFormValues = z.infer<typeof createAdminPortalInvitationSchema>;
 
-export function useInviteTeamMemberForm(onSuccess: () => void) {
+export function useInviteTeamMemberForm(onSuccess: (invitation: Invitation) => void) {
   const queryClient = useQueryClient();
 
   const form = useForm<InviteTeamMemberFormValues>({
@@ -20,11 +21,11 @@ export function useInviteTeamMemberForm(onSuccess: () => void) {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (values: InviteTeamMemberFormValues) => teamApi.inviteMember(values),
-    onSuccess: () => {
+    onSuccess: (invitation) => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
-      toast.success("Invitation sent.");
+      toast.success("Invitation created.");
       form.reset();
-      onSuccess();
+      onSuccess(invitation);
     },
   });
 

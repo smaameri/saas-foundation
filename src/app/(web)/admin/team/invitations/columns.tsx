@@ -36,8 +36,24 @@ export const columns: ColumnDef<Invitation>[] = [
     ),
   },
   {
+    accessorKey: "emailStatus",
+    header: "Email delivery",
+    enableSorting: false,
+    cell: ({ row }) => (
+      <Badge variant={row.original.emailStatus === "failed" ? "destructive" : "outline"}>
+        {row.original.emailStatus === "sent"
+          ? "Sent"
+          : row.original.emailStatus === "failed"
+            ? "Failed"
+            : row.original.emailStatus === "not_sent"
+              ? "Not sent"
+              : "Unknown"}
+      </Badge>
+    ),
+  },
+  {
     accessorKey: "createdAt",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Sent" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
     cell: ({ row }) => (
       <span className="text-muted-foreground">
         {new Date(row.original.createdAt).toLocaleDateString()}

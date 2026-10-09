@@ -1,8 +1,10 @@
 import { APIError } from "better-auth";
 import { auth } from "@/lib/auth/auth";
 import { sendOrganizationInvitationEmail } from "@/lib/email";
+import { attemptInvitationEmail } from "@/lib/email/invitation-delivery";
 import { prisma } from "@/lib/prisma";
 import { markInvitationAccepted } from "@/repositories/auth/invitationRepository";
+import { updateInvitationEmailStatus } from "@/repositories/customers/invitationRepository";
 import { createCustomerPortalInvitation } from "@/repositories/customers/invitationRepository";
 import { createMember } from "@/repositories/customers/memberRepository";
 import { updateUserProfileByEmail } from "@/repositories/customers/userRepository";
@@ -101,12 +103,14 @@ export async function sendOrganizationInvitation({
     expiresAt,
   });
 
-  await sendOrganizationInvitationEmail({
-    email,
-    organizationName,
-    invitedBy: inviterName,
-    inviteLink: `${process.env.APP_URL}/accept-invitation/customer-portal/${invitation.id}`,
-  });
+  const emailStatus = await attemptInvitationEmail(() =>
+    sendOrganizationInvitationEmail({
+      email,
+      organizationName,
+      invitedBy: inviterName,
+      inviteLink: `${process.env.APP_URL}/accept-invitation/customer-portal/${invitation.id}`,
+    }),
+  );
 
-  return invitation;
+  return updateInvitationEmailStatus(invitation.id, emailStatus);
 }

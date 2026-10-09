@@ -19,8 +19,8 @@ export const invitationsApi = {
     });
   },
 
-  create(body: CreateInvitationBody): Promise<{ message: string }> {
-    return customerApiClient.post("/invitations", body);
+  create(body: CreateInvitationBody): Promise<Invitation> {
+    return customerApiClient.post<Invitation>("/invitations", body);
   },
 
   cancel(invitationId: string): Promise<void> {

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { invitationsApi } from "@/services/api/admin/invitationsApi";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
+import { CopyInvitationLinkItem } from "@/components/invitations/invitation-link";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useAdminPermissions } from "@/context/admin-permission-provider";
 import type { Invitation } from "@/types/invitation";
@@ -38,20 +39,23 @@ export function OrganizationInvitationRowActions({
     },
   });
 
-  if (invitation.status !== "pending" || !can({ invitation: "cancel" })) {
+  if (invitation.status !== "pending") {
     return null;
   }
 
   return (
     <>
       <RowActionsDropdown>
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onClick={() => setOpen(true)}
-        >
-          Cancel invitation
-          <XCircle size={16} className="ml-auto" />
-        </DropdownMenuItem>
+        <CopyInvitationLinkItem invitation={invitation} />
+        {can({ invitation: "cancel" }) && (
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={() => setOpen(true)}
+          >
+            Cancel invitation
+            <XCircle size={16} className="ml-auto" />
+          </DropdownMenuItem>
+        )}
       </RowActionsDropdown>
 
       <DeleteDialog

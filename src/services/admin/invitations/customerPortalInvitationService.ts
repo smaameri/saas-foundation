@@ -1,4 +1,6 @@
 import { sendOrganizationInvitationEmail } from "@/lib/email";
+import { attemptInvitationEmail } from "@/lib/email/invitation-delivery";
+import { updateInvitationEmailStatus } from "@/repositories/admin/invitationRepository";
 import { createCustomerPortalInvitation } from "@/repositories/admin/invitationRepository";
 
 const INVITATION_EXPIRES_IN_DAYS = 2;
@@ -31,12 +33,14 @@ export async function sendCustomerPortalInvitation({
     expiresAt,
   });
 
-  await sendOrganizationInvitationEmail({
-    email,
-    organizationName,
-    invitedBy: inviterName,
-    inviteLink: `${process.env.APP_URL}/accept-invitation/customer-portal/${invitation.id}`,
-  });
+  const emailStatus = await attemptInvitationEmail(() =>
+    sendOrganizationInvitationEmail({
+      email,
+      organizationName,
+      invitedBy: inviterName,
+      inviteLink: `${process.env.APP_URL}/accept-invitation/customer-portal/${invitation.id}`,
+    }),
+  );
 
-  return invitation;
+  return updateInvitationEmailStatus(invitation.id, emailStatus);
 }

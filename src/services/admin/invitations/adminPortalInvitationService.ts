@@ -1,4 +1,6 @@
 import { sendAdminPortalInvitationEmail } from "@/lib/email";
+import { attemptInvitationEmail } from "@/lib/email/invitation-delivery";
+import { updateInvitationEmailStatus } from "@/repositories/admin/invitationRepository";
 import { createAdminPortalInvitation } from "@/repositories/admin/invitationRepository";
 
 const INVITATION_EXPIRES_IN_DAYS = 2;
@@ -26,11 +28,13 @@ export async function sendAdminPortalInvitation({
     expiresAt,
   });
 
-  await sendAdminPortalInvitationEmail({
-    email,
-    invitedBy: inviterName,
-    inviteLink: `${process.env.APP_URL}/accept-invitation/admin-portal/${invitation.id}`,
-  });
+  const emailStatus = await attemptInvitationEmail(() =>
+    sendAdminPortalInvitationEmail({
+      email,
+      invitedBy: inviterName,
+      inviteLink: `${process.env.APP_URL}/accept-invitation/admin-portal/${invitation.id}`,
+    }),
+  );
 
-  return invitation;
+  return updateInvitationEmailStatus(invitation.id, emailStatus);
 }

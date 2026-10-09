@@ -47,7 +47,7 @@ export const POST = withAdmin(
       return conflictResponse("This person already has a pending invitation.");
     }
 
-    await sendCustomerPortalInvitation({
+    const invitation = await sendCustomerPortalInvitation({
       email,
       role,
       organizationId,
@@ -56,7 +56,7 @@ export const POST = withAdmin(
       inviterName: user.name,
     });
 
-    return createdResponse({ message: `Invitation sent to ${email}.` });
+    return createdResponse(serializeInvitation(invitation));
   },
   { invitation: ["create"] },
 );

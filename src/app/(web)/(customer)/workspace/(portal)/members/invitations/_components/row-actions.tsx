@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { invitationsApi } from "@/services/api/customer/invitationsApi";
 import { RowActionsDropdown } from "@/components/data-table/row-actions-dropdown";
 import { DeleteDialog } from "@/components/dialogs/delete-dialog";
+import { CopyInvitationLinkItem } from "@/components/invitations/invitation-link";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useOrganizationPermissions } from "@/context/organization-permission-provider";
 import type { Invitation } from "@/types/invitation";
@@ -26,15 +27,18 @@ export function InvitationRowActions({ row }: { row: Row<Invitation> }) {
     onError: (error) => toast.error(error.message || "Failed to cancel invitation."),
   });
 
-  if (invitation.status !== "pending" || !can({ invitation: "cancel" })) return null;
+  if (invitation.status !== "pending") return null;
 
   return (
     <>
       <RowActionsDropdown>
-        <DropdownMenuItem variant="destructive" onClick={() => setOpen(true)}>
-          Cancel invitation
-          <XCircle className="ml-auto" />
-        </DropdownMenuItem>
+        <CopyInvitationLinkItem invitation={invitation} />
+        {can({ invitation: "cancel" }) && (
+          <DropdownMenuItem variant="destructive" onClick={() => setOpen(true)}>
+            Cancel invitation
+            <XCircle className="ml-auto" />
+          </DropdownMenuItem>
+        )}
       </RowActionsDropdown>
       <DeleteDialog
         open={open}

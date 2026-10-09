@@ -93,3 +93,10 @@ function statusFilter(statuses?: string[]): Prisma.InvitationWhereInput | undefi
   if (values.length === 0) return undefined;
   return values.length === 1 ? { status: values[0] } : { status: { in: values } };
 }
+
+export async function updateInvitationEmailStatus(
+  id: string,
+  emailStatus: "not_sent" | "sent" | "failed",
+) {
+  return prisma.invitation.update({ where: { id }, data: { emailStatus } });
+}

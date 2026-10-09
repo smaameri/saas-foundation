@@ -145,3 +145,10 @@ function statusFilter(status?: StatusFilter): Prisma.InvitationWhereInput | unde
 function buildOrderBy(sort: InvitationSortField | undefined, order: SortOrder | undefined) {
   return { [sort ?? "createdAt"]: order ?? "desc" } as const;
 }
+
+export async function updateInvitationEmailStatus(
+  id: string,
+  emailStatus: "not_sent" | "sent" | "failed",
+) {
+  return prisma.invitation.update({ where: { id }, data: { emailStatus } });
+}
