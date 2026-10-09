@@ -61,6 +61,24 @@ Try the [live demo](https://demo.saasfoundation.dev/login?email=admin%40example.
 
 For more detail, follow the [Quickstart guide](https://docs.saasfoundation.dev/quickstart).
 
+## Background Jobs
+
+Inngest is configured in `src/inngest/client.ts` and served at `/api/inngest`.
+Register background functions in the route handler's `functions` array when adding jobs.
+
+For local development, set `INNGEST_DEV=1` in `.env.development.local`, run
+`pnpm dev`, and start the Inngest Dev Server in another terminal:
+
+```bash
+pnpm dlx inngest-cli@latest dev -u http://localhost:3000/api/inngest
+```
+
+Open http://localhost:8288 to inspect functions and runs. No cloud keys are required locally.
+
+For Inngest Cloud, set `INNGEST_EVENT_KEY` and `INNGEST_SIGNING_KEY` in your
+deployment environment and sync `/api/inngest` in Inngest. Leave `INNGEST_DEV`
+unset or set it to `0` in production.
+
 ## Next Steps
 
 To send invitation and account emails, configure the following values in `.env`:
