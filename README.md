@@ -34,11 +34,11 @@ Try the [live demo](https://demo.saasfoundation.dev/login?email=admin%40example.
 
 ## Getting Started
 
-1. Clone the repo:
+1. Clone the repo into your own project folder. Replace `my-app` with your actual project name:
 
    ```bash
-   git clone git@github.com:smaameri/saas-foundation.git
-   cd saas-foundation
+   git clone git@github.com:smaameri/saas-foundation.git my-app
+   cd my-app
    ```
 
 2. Install dependencies:
